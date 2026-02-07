@@ -1,19 +1,23 @@
 import { defineConfig, type UserConfigExport } from '@tarojs/cli'
+import path from 'path'
 
 import devConfig from './dev'
 import prodConfig from './prod'
 
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
-export default defineConfig<'vite'>(async (merge, { command, mode }) => {
+export default defineConfig<'vite'>(async (merge) => {
   const baseConfig: UserConfigExport<'vite'> = {
     projectName: 'Hotel_Booking_Platform',
     date: '2026-2-1',
-    designWidth: 750,
+    designWidth: 375,
     deviceRatio: {
       640: 2.34 / 2,
       750: 1,
-      375: 2,
+      375: 2 / 1,
       828: 1.81 / 2
+    },
+    alias: {
+      '@': path.resolve(__dirname, '..', 'src'),
     },
     sourceRoot: 'src',
     outputRoot: 'dist',
