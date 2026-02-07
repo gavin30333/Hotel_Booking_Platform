@@ -7,9 +7,10 @@ interface FormFieldsProps {
   fields: FieldConfig[];
   formData: Partial<SearchParams>;
   onUpdate: (key: keyof SearchParams, value: any) => void;
+  onSearch?: (data: any) => void;
 }
 
-export const FormFields: React.FC<FormFieldsProps> = ({ fields, formData, onUpdate }) => {
+export const FormFields: React.FC<FormFieldsProps> = ({ fields, formData, onUpdate, onSearch }) => {
   const renderField = (config: FieldConfig) => {
     const value = formData[config.key as keyof SearchParams];
     
@@ -20,6 +21,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({ fields, formData, onUpda
             key={config.key} 
             config={config} 
             value={value as LocationData} 
+            keyword={formData.keyword}
             onChange={(val) => onUpdate(config.key as keyof SearchParams, val)} 
           />
         );
@@ -45,7 +47,23 @@ export const FormFields: React.FC<FormFieldsProps> = ({ fields, formData, onUpda
         return (
           <TagField 
             key={config.key} 
-            config={config} 
+            config={config}
+            value={formData.keyword}
+            onChange={(val) => {
+              // Update both keyword and tags array
+              onUpdate('keyword', val);
+              // Also update tags array with the single selected tag
+              onUpdate('tags', val ? [val] : []);
+            }}
+            onSearch={(val) => {
+              if (onSearch) {
+                // Pass the immediate values as overrides to avoid stale state issues
+                onSearch({ 
+                  keyword: val, 
+                  tags: val ? [val] : [] 
+                });
+              }
+            }}
           />
         );
       default:

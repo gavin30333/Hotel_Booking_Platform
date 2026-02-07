@@ -17,11 +17,16 @@ export const QueryCard: React.FC<QueryCardProps> = ({ defaultTab = TabType.DOMES
   
   const currentConfig = SCENE_CONFIGS[activeTab];
 
-  const handleSearch = () => {
+  const handleSearch = (overrides?: any) => {
+    // Merge overrides (e.g. from immediate tag selection) with current formData
+    // Note: formData might be stale in this closure if state update hasn't propagated,
+    // so overrides are crucial for immediate actions.
+    const searchData = { ...formData, ...(overrides || {}), scene: activeTab };
+    
     if (onSearch) {
-      onSearch({ ...formData, scene: activeTab });
+      onSearch(searchData);
     } else {
-      console.log('Search:', { ...formData, scene: activeTab });
+      console.log('Search:', searchData);
     }
   };
 
@@ -49,6 +54,7 @@ export const QueryCard: React.FC<QueryCardProps> = ({ defaultTab = TabType.DOMES
           fields={currentConfig.fields} 
           formData={formData} 
           onUpdate={updateField} 
+          onSearch={handleSearch}
         />
 
         <SearchButton onClick={handleSearch} />

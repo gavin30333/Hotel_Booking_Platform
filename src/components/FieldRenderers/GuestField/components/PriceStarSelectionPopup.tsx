@@ -101,15 +101,18 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
               />
             </View>
             <View className='presets-grid'>
-              {PRICE_PRESETS.map((preset, idx) => (
-                <View 
-                  key={idx} 
-                  className='preset-item'
-                  onClick={() => setPriceRange([preset.min, preset.max])}
-                >
-                  <Text>{preset.label}</Text>
-                </View>
-              ))}
+              {PRICE_PRESETS.map((preset, idx) => {
+                const isActive = priceRange[0] === preset.min && priceRange[1] === preset.max;
+                return (
+                  <View 
+                    key={idx} 
+                    className={`preset-item ${isActive ? 'active' : ''}`}
+                    onClick={() => setPriceRange([preset.min, preset.max])}
+                  >
+                    <Text>{preset.label}</Text>
+                  </View>
+                );
+              })}
             </View>
           </View>
 

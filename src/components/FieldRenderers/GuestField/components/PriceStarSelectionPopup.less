@@ -71,6 +71,12 @@
           border-radius: 4px;
           font-size: 12px;
           color: #333;
+
+          &.active {
+            color: @primary-color;
+            background: fade(@primary-color, 10%);
+            font-weight: 500;
+          }
         }
       }
 

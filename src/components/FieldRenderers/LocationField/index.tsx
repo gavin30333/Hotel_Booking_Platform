@@ -7,10 +7,11 @@ import './LocationField.less';
 interface LocationFieldProps {
   config: FieldConfig;
   value: LocationData;
+  keyword?: string;
   onChange: (value: LocationData) => void;
 }
 
-export const LocationField: React.FC<LocationFieldProps> = ({ config, value }) => {
+export const LocationField: React.FC<LocationFieldProps> = ({ config, value, keyword }) => {
   const { props } = config;
   const isInternational = props?.isInternational;
   const showSettings = props?.showSettings;
@@ -34,8 +35,8 @@ export const LocationField: React.FC<LocationFieldProps> = ({ config, value }) =
         
         <View className='divider' />
         
-        <Text className='placeholder-text'>
-          {config.placeholder}
+        <Text className={`placeholder-text ${keyword ? 'active' : ''}`}>
+          {keyword || config.placeholder}
         </Text>
       </View>
 

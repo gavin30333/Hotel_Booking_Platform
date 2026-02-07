@@ -29,13 +29,13 @@ export const HomestayGuestSelectionPopup: React.FC<Props> = ({
   // All support multiple selection now
   
   const initArray = (val: number | number[] | undefined): (number | string)[] => {
-    if (val === undefined) return [1];
+    if (val === undefined) return []; // Default to empty
     const arr = Array.isArray(val) ? val : [val];
-    // Filter out 0 or invalid values, replace 0 with 1
-    const validArr = arr.map(v => (typeof v === 'number' && v < 1) ? 1 : v);
+    // Filter out 0 or invalid values
+    const validArr = arr.map(v => (typeof v === 'number' && v < 1) ? 0 : v).filter(v => v !== 0);
     // Deduplicate
     const unique = Array.from(new Set(validArr));
-    return unique.length > 0 ? unique : [1];
+    return unique;
   };
 
   const [people, setPeople] = useState<(number | string)[]>(initArray(value.adults));
@@ -84,9 +84,9 @@ export const HomestayGuestSelectionPopup: React.FC<Props> = ({
   };
 
   const handleClear = () => {
-    setPeople([1]);
-    setBeds([1]);
-    setRooms([1]);
+    setPeople([]);
+    setBeds([]);
+    setRooms([]);
   };
 
   const toggleExpand = (section: keyof typeof expandedSections) => {
@@ -107,7 +107,7 @@ export const HomestayGuestSelectionPopup: React.FC<Props> = ({
     
     if (exists) {
       const newVal = cleanCurrent.filter(item => item !== val);
-      setter(newVal.length > 0 ? newVal : [1]); // Fallback to 1 if empty
+      setter(newVal);
     } else {
       if (cleanCurrent.length >= 4) {
         Toast.show({

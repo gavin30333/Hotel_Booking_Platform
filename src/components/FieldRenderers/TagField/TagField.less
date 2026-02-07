@@ -10,14 +10,23 @@
    gap: @spacing-sm;
    
    .tag-item {
-     padding: 4px 8px;
-     background-color: @page-bg;
-     border-radius: @border-radius-sm;
-     flex-shrink: 0;
-     
-     .tag-text {
-       font-size: @font-size-sm;
-       color: @text-color;
-     }
-   }
+    padding: 4px 8px;
+    background-color: @page-bg;
+    border-radius: @border-radius-sm;
+    flex-shrink: 0;
+    
+    .tag-text {
+      font-size: @font-size-sm;
+      color: @text-color;
+    }
+
+    &.selected {
+      background-color: fade(@primary-color, 10%);
+      
+      .tag-text {
+        color: @primary-color;
+        font-weight: 500;
+      }
+    }
+  }
 }

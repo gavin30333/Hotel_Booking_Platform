@@ -44,7 +44,11 @@ export const useQueryStore = create<QueryState>((set) => ({
   scenes: {
     [TabType.DOMESTIC]: { ...DEFAULT_PARAMS, scene: TabType.DOMESTIC },
     [TabType.INTERNATIONAL]: { ...DEFAULT_PARAMS, scene: TabType.INTERNATIONAL, location: { city: '东京', country: '日本' } },
-    [TabType.HOMESTAY]: { ...DEFAULT_PARAMS, scene: TabType.HOMESTAY },
+    [TabType.HOMESTAY]: { 
+      ...DEFAULT_PARAMS, 
+      scene: TabType.HOMESTAY,
+      guests: { rooms: [], adults: [], children: [] } // Initialize with empty arrays for homestay
+    },
     [TabType.HOURLY]: { ...DEFAULT_PARAMS, scene: TabType.HOURLY, dates: { ...DEFAULT_DATE_RANGE, nights: 0 } }
   },
   

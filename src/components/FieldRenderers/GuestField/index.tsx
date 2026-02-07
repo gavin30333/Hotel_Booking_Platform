@@ -23,7 +23,7 @@ export const GuestField: React.FC<GuestFieldProps> = ({ config, value, onChange 
     // Helper function to format a list of numbers (with sorting and grouping)
     const formatNumberList = (val: number | number[], suffix: string) => {
       const arr = Array.isArray(val) ? val : [val];
-      if (arr.length === 0) return `1${suffix}`; // Default fallback
+      if (arr.length === 0) return ''; // Empty return for empty selection
       
       const sorted = [...arr].sort((a, b) => a - b);
       const parts: string[] = [];
@@ -37,7 +37,6 @@ export const GuestField: React.FC<GuestFieldProps> = ({ config, value, onChange 
         } else {
            if (s === 100) parts.push('自定义');
            else if (e === 100) {
-              // Should not happen if 100 is sorted to end and treated separately, but just in case
               parts.push(`${s}${suffix}`);
               parts.push('自定义');
            } else {
@@ -65,45 +64,31 @@ export const GuestField: React.FC<GuestFieldProps> = ({ config, value, onChange 
     const childrenText = formatNumberList(value.children, '床');
     const roomsText = formatNumberList(value.rooms, '居');
 
-    return `${adultsText} ${childrenText} ${roomsText}`;
+    const parts = [adultsText, childrenText, roomsText].filter(p => p !== '');
+    if (parts.length === 0) return ''; // Return empty string if no selections
+    return parts.join(' ');
   };
 
   const displayText = useMemo(() => {
     if (isHomestay) {
-       // Check if user has made a selection? 
-       // If value is default (1,1,1), maybe still show placeholder?
-       // But user might explicitly want 1,1,1. 
-       // Strategy: If customText is provided, use it as placeholder until changed?
-       // But 'value' is controlled from outside. 
-       // Let's assume if value matches default exactly AND we haven't touched it?
-       // Hard to track "touched" here. 
-       // Better approach: If customText is provided, show it initially?
-       // Actually, the requirement is "after selection, update here".
-       // So we should show formatted text always, UNLESS it's the very initial state?
-       // Let's try to show formatted text. If it looks like default "1人 1床 1居", maybe that's fine?
-       // Or compare with a "default" state if we want to show placeholder.
-       
-       // Let's assume we always show the dynamic text for Homestay if it's not the initial "empty" state.
-       // But QueryConfig provides default values.
-       // Let's toggle: if customText is present, use it ONLY if we think it's "unset".
-       // But 'unset' is ambiguous.
-       // Let's simply replace customText logic with dynamic text for Homestay 
-       // and use customText as a fallback or label if needed.
-       // Actually, the user wants the text to update.
-       return getHomestayText();
+       const text = getHomestayText();
+       // If text is empty, show default placeholder "人/床/居数不限"
+       if (!text) return customText || '人/床/居数不限';
+       return text;
     }
     return customText;
   }, [value, isHomestay, customText]);
+
+  const isPlaceholder = isHomestay && (!getHomestayText());
 
   return (
     <View className='field-row guest-field'>
       {isHomestay ? (
         <>
-          <Text className='custom-text' onClick={() => setShowGuestPopup(true)}>
-             {/* If we have a placeholder-like customText and values are defaults, maybe show placeholder? 
-                 Let's simply show the formatted text as requested. 
-                 If the user wants "Placeholder" initially, we might need a flag. 
-                 For now, displaying current value is the standard behavior for input fields. */}
+          <Text 
+            className={`custom-text ${isPlaceholder ? 'placeholder' : ''}`} 
+            onClick={() => setShowGuestPopup(true)}
+          >
              {displayText}
           </Text>
           <HomestayGuestSelectionPopup
