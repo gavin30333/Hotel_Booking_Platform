@@ -48,9 +48,15 @@ export interface DateRange {
 }
 
 export interface GuestInfo {
-  rooms: number;
-  adults: number;
-  children: number;
+  rooms: number | number[];
+  adults: number | number[];
+  children: number | number[];
+  childAges?: number[];
+  priceStar?: {
+    minPrice?: number;
+    maxPrice?: number;
+    starRatings?: string[];
+  };
 }
 
 export interface SearchParams {

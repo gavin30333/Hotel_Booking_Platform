@@ -98,7 +98,7 @@ export const SCENE_CONFIGS: Record<TabType, SceneConfig> = {
         type: 'guest',
         key: 'guests',
         label: '人数',
-        props: { customText: '人/床/居数不限' }
+        props: { customText: '人/床/居数不限', isHomestay: true }
       },
       {
         type: 'tags',
