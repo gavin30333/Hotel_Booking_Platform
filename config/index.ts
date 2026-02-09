@@ -1,22 +1,26 @@
 import { defineConfig, type UserConfigExport } from '@tarojs/cli'
-import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
+import path from 'path'
+
 import devConfig from './dev'
 import prodConfig from './prod'
 
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
-export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
-  const baseConfig: UserConfigExport<'webpack5'> = {
-    projectName: 'Hotel_Booking_Platform_User',
-    date: '2026-1-31',
-    designWidth: 750,
+export default defineConfig<'vite'>(async (merge) => {
+  const baseConfig: UserConfigExport<'vite'> = {
+    projectName: 'Hotel_Booking_Platform',
+    date: '2026-2-1',
+    designWidth: 375,
     deviceRatio: {
       640: 2.34 / 2,
       750: 1,
-      375: 2,
+      375: 2 / 1,
       828: 1.81 / 2
     },
+    alias: {
+      '@': path.resolve(__dirname, '..', 'src'),
+    },
     sourceRoot: 'src',
-    outputRoot: 'dist',
+    outputRoot: `dist/${process.env.TARO_ENV}`,
     plugins: [
       "@tarojs/plugin-generator"
     ],
@@ -29,10 +33,7 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
       }
     },
     framework: 'react',
-    compiler: 'webpack5',
-    cache: {
-      enable: true, // Webpack 持久化缓存配置，建议开启。默认配置请参考：https://docs.taro.zone/docs/config-detail#cache
-    },
+    compiler: 'vite',
     mini: {
       postcss: {
         pxtransform: {
@@ -49,17 +50,11 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
           }
         }
       },
-      webpackChain(chain) {
-        chain.resolve.plugin('tsconfig-paths').use(TsconfigPathsPlugin)
-      }
     },
     h5: {
       publicPath: '/',
       staticDirectory: 'static',
-      output: {
-        filename: 'js/[name].[hash:8].js',
-        chunkFilename: 'js/[name].[chunkhash:8].js'
-      },
+
       miniCssExtractPluginOption: {
         ignoreOrder: true,
         filename: 'css/[name].[hash].css',
@@ -78,12 +73,6 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
           }
         }
       },
-      devServer: {
-        open: true,
-      },
-      webpackChain(chain) {
-        chain.resolve.plugin('tsconfig-paths').use(TsconfigPathsPlugin)
-      }
     },
     rn: {
       appName: 'taroDemo',
@@ -95,7 +84,6 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
     }
   }
 
-  process.env.BROWSERSLIST_ENV = process.env.NODE_ENV
 
   if (process.env.NODE_ENV === 'development') {
     // 本地开发构建配置（不混淆压缩）
