@@ -20,7 +20,7 @@ export default defineConfig<'vite'>(async (merge) => {
       '@': path.resolve(__dirname, '..', 'src'),
     },
     sourceRoot: 'src',
-    outputRoot: 'dist',
+    outputRoot: `dist/${process.env.TARO_ENV}`,
     plugins: [
       "@tarojs/plugin-generator"
     ],

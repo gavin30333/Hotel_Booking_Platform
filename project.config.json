@@ -1,5 +1,5 @@
 {
-  "miniprogramRoot": "./dist",
+  "miniprogramRoot": "./dist/weapp",
   "projectname": "Hotel_Booking_Platform",
   "description": "task for ctrip hotel booking system",
   "appid": "touristappid",
