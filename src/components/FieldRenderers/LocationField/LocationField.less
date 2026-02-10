@@ -3,26 +3,26 @@
 .location-field {
   justify-content: space-between;
   width: 100%;
-  
+
   .location-main {
     display: flex;
     align-items: center;
     flex: 1;
-    
+
     .city-section {
       margin-right: @spacing-md;
-      
+
       .country-text {
         font-size: @font-size-sm;
         color: #999;
         display: block;
         margin-bottom: 2px;
       }
-      
+
       .city-wrapper {
          display: flex;
          align-items: center;
-         
+
          .city-text {
            font-size: @font-size-xl;
            font-weight: bold;
@@ -30,27 +30,49 @@
          }
       }
     }
-    
+
     .divider {
       height: 20px;
       width: 1px;
       background: #eee;
       margin: 0 @spacing-md;
     }
-    
+
     .placeholder-text {
       font-size: @font-size-md;
       color: @text-placeholder;
       flex: 1;
-      
+
       &.active {
         color: @text-color;
         font-weight: 500;
       }
     }
   }
-  
+
   .location-icon {
     margin-left: @spacing-md;
+    transition: opacity 0.2s;
+
+    &.clickable {
+      cursor: pointer;
+
+      &:active {
+        opacity: 0.6;
+      }
+    }
+
+    &.rotating {
+      animation: rotate 1s linear infinite;
+    }
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }

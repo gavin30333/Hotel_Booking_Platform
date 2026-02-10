@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text } from '@tarojs/components';
-import { TabBar, FormFields, SearchButton } from './components';
 import { useQueryForm } from '@/hooks/useQueryForm';
 import { SCENE_CONFIGS } from '@/constants/QueryConfig';
 import { TabType, SpecialFeature } from '@/types/query.types';
 import { SoundOutline, SmileOutline } from 'antd-mobile-icons';
+import { View, Text } from '@tarojs/components';
+import { TabBar, FormFields, SearchButton } from './components';
+
 import './QueryCard.less';
 
 interface QueryCardProps {
@@ -14,7 +15,7 @@ interface QueryCardProps {
 
 export const QueryCard: React.FC<QueryCardProps> = ({ defaultTab = TabType.DOMESTIC, onSearch }) => {
   const { activeTab, formData, handleTabChange, updateField } = useQueryForm(defaultTab);
-  
+
   const currentConfig = SCENE_CONFIGS[activeTab];
 
   const handleSearch = (overrides?: any) => {
@@ -22,7 +23,7 @@ export const QueryCard: React.FC<QueryCardProps> = ({ defaultTab = TabType.DOMES
     // Note: formData might be stale in this closure if state update hasn't propagated,
     // so overrides are crucial for immediate actions.
     const searchData = { ...formData, ...(overrides || {}), scene: activeTab };
-    
+
     if (onSearch) {
       onSearch(searchData);
     } else {
@@ -46,14 +47,14 @@ export const QueryCard: React.FC<QueryCardProps> = ({ defaultTab = TabType.DOMES
   return (
     <View className='query-card'>
       <TabBar activeTab={activeTab} onTabChange={handleTabChange} />
-      
+
       <View className='card-content'>
         {currentConfig.specialFeatures?.filter(f => f.type === 'notice').map((f, i) => renderSpecialFeature(f, i))}
 
-        <FormFields 
-          fields={currentConfig.fields} 
-          formData={formData} 
-          onUpdate={updateField} 
+        <FormFields
+          fields={currentConfig.fields}
+          formData={formData}
+          onUpdate={updateField}
           onSearch={handleSearch}
         />
 

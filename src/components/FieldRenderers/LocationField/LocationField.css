@@ -1,0 +1,63 @@
+.location-field {
+  justify-content: space-between;
+  width: 100%;
+}
+.location-field .location-main {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+.location-field .location-main .city-section {
+  margin-right: 14px;
+}
+.location-field .location-main .city-section .country-text {
+  font-size: 13px;
+  color: #999;
+  display: block;
+  margin-bottom: 2px;
+}
+.location-field .location-main .city-section .city-wrapper {
+  display: flex;
+  align-items: center;
+}
+.location-field .location-main .city-section .city-wrapper .city-text {
+  font-size: 22px;
+  font-weight: bold;
+  margin-right: 4px;
+}
+.location-field .location-main .divider {
+  height: 20px;
+  width: 1px;
+  background: #eee;
+  margin: 0 14px;
+}
+.location-field .location-main .placeholder-text {
+  font-size: 17px;
+  color: #cccccc;
+  flex: 1;
+}
+.location-field .location-main .placeholder-text.active {
+  color: #333333;
+  font-weight: 500;
+}
+.location-field .location-icon {
+  margin-left: 14px;
+  transition: opacity 0.2s;
+}
+.location-field .location-icon.clickable {
+  cursor: pointer;
+}
+.location-field .location-icon.clickable:active {
+  opacity: 0.6;
+}
+.location-field .location-icon.rotating {
+  animation: rotate 1s linear infinite;
+}
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
