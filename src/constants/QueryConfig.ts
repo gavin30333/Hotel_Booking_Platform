@@ -127,12 +127,5 @@ export const SCENE_CONFIGS: Record<TabType, SceneConfig> = {
         props: { singleDay: true }
       }
     ],
-    specialFeatures: [
-      {
-        type: 'notice',
-        content: '当前定位获取失败，请重新尝试获取',
-        style: 'gray'
-      }
-    ]
   }
 };
