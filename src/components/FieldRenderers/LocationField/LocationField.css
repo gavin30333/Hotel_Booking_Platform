@@ -1,0 +1,98 @@
+.location-field {
+  width: 100%;
+}
+.location-field .location-info {
+  background-color: rgba(24, 144, 255, 0.1);
+  border: 1px solid rgba(24, 144, 255, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: slideDown 0.3s ease-out;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.location-field .location-info .location-info-text {
+  font-size: 12px;
+  color: #1890ff;
+  line-height: 1.4;
+  text-align: center;
+  word-break: break-word;
+}
+.location-field .location-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.location-field .location-content .location-main {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+.location-field .location-content .location-main .city-section {
+  margin-right: 14px;
+}
+.location-field .location-content .location-main .city-section .country-text {
+  font-size: 12px;
+  color: #999;
+  display: block;
+  margin-bottom: 2px;
+}
+.location-field .location-content .location-main .city-section .city-wrapper {
+  display: flex;
+  align-items: center;
+}
+.location-field .location-content .location-main .city-section .city-wrapper .city-text {
+  font-size: 18px;
+  font-weight: bold;
+  margin-right: 4px;
+}
+.location-field .location-content .location-main .divider {
+  height: 20px;
+  width: 1px;
+  background: #eee;
+  margin: 0 14px;
+}
+.location-field .location-content .location-main .placeholder-text {
+  font-size: 16px;
+  color: #cccccc;
+  flex: 1;
+}
+.location-field .location-content .location-main .placeholder-text.active {
+  color: #333333;
+  font-weight: 500;
+}
+.location-field .location-content .location-icon {
+  margin-left: 14px;
+  transition: opacity 0.2s;
+}
+.location-field .location-content .location-icon.clickable {
+  cursor: pointer;
+}
+.location-field .location-content .location-icon.clickable:active {
+  opacity: 0.6;
+}
+.location-field .location-content .location-icon.rotating {
+  animation: rotate 1s linear infinite;
+}
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

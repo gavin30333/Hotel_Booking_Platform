@@ -127,7 +127,7 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
   };
 
   const sliderValue = [priceRange[0], Math.min(priceRange[1], sliderMax)];
-  
+
   return (
     <Popup
       visible={visible}
@@ -149,10 +149,10 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
               {isInternational && (
                 <View className='tax-toggle'>
                   <Text className='toggle-label'>主价格展示为含税价</Text>
-                  <Switch 
-                    checked={isTaxIncluded} 
+                  <Switch
+                    checked={isTaxIncluded}
                     onChange={setIsTaxIncluded}
-                    style={{ '--height': '24px', '--width': '40px' }} 
+                    style={{ '--height': '24px', '--width': '40px' }}
                   />
                 </View>
               )}
@@ -160,18 +160,18 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
 
             <View className='slider-container'>
                {/* Custom floating labels */}
-               <View 
-                 className='slider-labels' 
-                 style={{ 
-                   position: 'relative', 
-                   height: '24px', 
+               <View
+                 className='slider-labels'
+                 style={{
+                   position: 'relative',
+                   height: '24px',
                    marginBottom: '10px'
                  }}
                >
-                 <View 
-                   className='floating-label' 
-                   style={{ 
-                     position: 'absolute', 
+                 <View
+                   className='floating-label'
+                   style={{
+                     position: 'absolute',
                      left: `${(sliderValue[0] / sliderMax) * 100}%`,
                     transform: 'translateX(-50%)',
                     backgroundColor: '#0086F6',
@@ -187,10 +187,10 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
                   ¥{sliderValue[0]}
                 </View>
                 {/* Only show max label if different enough to avoid overlap, or implement collision logic */}
-                <View 
-                  className='floating-label' 
-                  style={{ 
-                    position: 'absolute', 
+                <View
+                  className='floating-label'
+                  style={{
+                    position: 'absolute',
                     left: `${(sliderValue[1] / sliderMax) * 100}%`,
                     transform: 'translateX(-50%)',
                     backgroundColor: '#0086F6',
@@ -210,7 +210,7 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
                <Slider
                 range
                 min={0}
-                max={sliderMax} 
+                max={sliderMax}
                 step={50}
                 value={[priceRange[0], Math.min(priceRange[1], sliderMax)]}
                 onChange={(val) => {
@@ -222,7 +222,7 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
                   } else if (max !== prevMax) {
                     setActiveThumb('max');
                   }
-                  
+
                   lastValueRef.current = [min, max];
                   setPriceRange([min, max === sliderMax ? maxLimit : max]);
                 }}
@@ -236,7 +236,7 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
                     <Text className='label'>最低</Text>
                     <View className='input-wrapper'>
                         <Text className='currency'>¥</Text>
-                        <Input 
+                        <Input
                             className='price-input'
                             type='number'
                             value={priceRange[0].toString()}
@@ -249,7 +249,7 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
                     <Text className='label'>最高</Text>
                     <View className='input-wrapper'>
                         <Text className='currency'>¥</Text>
-                        <Input 
+                        <Input
                             className='price-input'
                             type='number'
                             value={priceRange[1] >= maxLimit ? sliderMax.toString() : priceRange[1].toString()}
@@ -263,11 +263,11 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
             <View className='presets-grid'>
               {pricePresets.map((preset, idx) => {
                 // Approximate matching for active state
-                const isActive = priceRange[0] === preset.min && 
+                const isActive = priceRange[0] === preset.min &&
                                  (priceRange[1] === preset.max || (preset.max === maxLimit && priceRange[1] >= maxLimit));
                 return (
-                  <View 
-                    key={idx} 
+                  <View
+                    key={idx}
                     className={`preset-item ${isActive ? 'active' : ''}`}
                     onClick={() => setPriceRange([preset.min, preset.max])}
                   >
@@ -290,7 +290,7 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
               options={starOptions}
               value={selectedStars}
               onChange={v => setSelectedStars(v)}
-              style={{ 
+              style={{
                   '--gap': '8px',
                   '--border-radius': '4px',
                   '--checked-color': '#e6f7ff',
@@ -314,10 +314,10 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
           </Button>
         </View>
       </View>
-      
-      <StarExplanationPopup 
-        visible={showExplanation} 
-        onClose={() => setShowExplanation(false)} 
+
+      <StarExplanationPopup
+        visible={showExplanation}
+        onClose={() => setShowExplanation(false)}
       />
     </Popup>
   );

@@ -9,9 +9,9 @@ interface SearchButtonProps {
 export const SearchButton: React.FC<SearchButtonProps> = ({ onClick }) => {
   return (
     <View className='search-btn-container'>
-      <Button 
-        block 
-        type='submit' 
+      <Button
+        block
+        type='submit'
         className='search-btn'
         onClick={onClick}
       >

@@ -32,7 +32,17 @@
   .popup-content {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 16px;
+
+    .adm-selector-item {
+      font-size: @font-size-sm;
+      color: #333;
+    }
+    .adm-selector-item-description{
+      font-size: @font-size-xs;
+      color: #999;
+    }
 
     .section {
       margin-bottom: 32px;
@@ -41,7 +51,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 24px;
+        margin-bottom: @spacing-sm;
 
         .section-title {
           font-size: 16px;
@@ -75,7 +85,7 @@
 
         .input-box {
           flex: 1;
-          
+
           .label {
             font-size: 12px;
             color: #999;
@@ -90,7 +100,7 @@
             border-radius: 4px;
             padding: 8px 12px;
             background: #fff;
-            
+
             .currency {
               font-size: 14px;
               color: #333;
@@ -116,9 +126,12 @@
       }
 
       .slider-container {
-        padding: 0 12px;
         margin-bottom: 24px;
+        width: 100%;
         // Customize slider styles if needed, but props handled color
+      }
+      .adm-slider {
+        width: 85%;
       }
 
       .presets-grid {

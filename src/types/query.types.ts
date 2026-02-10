@@ -39,6 +39,12 @@ export interface LocationData {
   city: string;
   district?: string;
   country?: string;
+  address?: string;
+  formattedAddress?: string;
+  longitude?: number;
+  latitude?: number;
+  province?: string;
+  adcode?: string;
 }
 
 export interface DateRange {

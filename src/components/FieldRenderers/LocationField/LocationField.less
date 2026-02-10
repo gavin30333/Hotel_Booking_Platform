@@ -1,56 +1,119 @@
 @import '../../../styles/variables.less';
 
 .location-field {
-  justify-content: space-between;
   width: 100%;
-  
-  .location-main {
+
+  // 定位信息提示框
+  .location-info {
+    background-color: rgba(24, 144, 255, 0.1);
+    border: 1px solid rgba(24, 144, 255, 0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
-    flex: 1;
-    
-    .city-section {
-      margin-right: @spacing-md;
-      
-      .country-text {
-        font-size: @font-size-sm;
-        color: #999;
-        display: block;
-        margin-bottom: 2px;
-      }
-      
-      .city-wrapper {
-         display: flex;
-         align-items: center;
-         
-         .city-text {
-           font-size: @font-size-xl;
-           font-weight: bold;
-           margin-right: 4px;
-         }
-      }
+    justify-content: center;
+    animation: slideDown 0.3s ease-out;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    .location-info-text {
+      font-size: 12px;
+      color: #1890ff;
+      line-height: 1.4;
+      text-align: center;
+      word-break: break-word;
     }
-    
-    .divider {
-      height: 20px;
-      width: 1px;
-      background: #eee;
-      margin: 0 @spacing-md;
-    }
-    
-    .placeholder-text {
-      font-size: @font-size-md;
-      color: @text-placeholder;
+  }
+
+  // 主要内容区域
+  .location-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    .location-main {
+      display: flex;
+      align-items: center;
       flex: 1;
-      
-      &.active {
-        color: @text-color;
-        font-weight: 500;
+
+      .city-section {
+        margin-right: @spacing-md;
+
+        .country-text {
+          font-size: @font-size-sm;
+          color: #999;
+          display: block;
+          margin-bottom: 2px;
+        }
+
+        .city-wrapper {
+           display: flex;
+           align-items: center;
+
+           .city-text {
+             font-size: @font-size-lg;
+             font-weight: bold;
+             margin-right: 4px;
+           }
+        }
+      }
+
+      .divider {
+        height: 20px;
+        width: 1px;
+        background: #eee;
+        margin: 0 @spacing-md;
+      }
+
+      .placeholder-text {
+        font-size: @font-size-md;
+        color: @text-placeholder;
+        flex: 1;
+
+        &.active {
+          color: @text-color;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .location-icon {
+      margin-left: @spacing-md;
+      transition: opacity 0.2s;
+
+      &.clickable {
+        cursor: pointer;
+
+        &:active {
+          opacity: 0.6;
+        }
+      }
+
+      &.rotating {
+        animation: rotate 1s linear infinite;
       }
     }
   }
-  
-  .location-icon {
-    margin-left: @spacing-md;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
