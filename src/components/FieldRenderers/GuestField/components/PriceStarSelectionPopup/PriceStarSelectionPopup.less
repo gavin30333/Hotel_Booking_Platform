@@ -37,26 +37,88 @@
     .section {
       margin-bottom: 32px;
 
-      .section-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 16px;
-        display: block;
-      }
-
-      .price-display {
+      .price-header {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         margin-bottom: 24px;
-        color: @primary-color;
-        font-size: 16px;
-        font-weight: 600;
+
+        .section-title {
+          font-size: 16px;
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 0;
+        }
+
+        .tax-toggle {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .toggle-label {
+            font-size: 12px;
+            color: #666;
+          }
+        }
+      }
+
+      .price-inputs {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+
+        .separator {
+          color: #ccc;
+          font-size: 14px;
+        }
+
+        .input-box {
+          flex: 1;
+          
+          .label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+            display: block;
+          }
+
+          .input-wrapper {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px 12px;
+            background: #fff;
+            
+            .currency {
+              font-size: 14px;
+              color: #333;
+              margin-right: 4px;
+              font-weight: 600;
+            }
+
+            .price-input {
+              flex: 1;
+              font-size: 16px;
+              font-weight: 600;
+              color: #333;
+              min-width: 0;
+            }
+
+            .suffix {
+              font-size: 14px;
+              color: #333;
+              margin-left: 4px;
+            }
+          }
+        }
       }
 
       .slider-container {
         padding: 0 12px;
         margin-bottom: 24px;
+        // Customize slider styles if needed, but props handled color
       }
 
       .presets-grid {
