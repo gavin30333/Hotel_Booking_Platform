@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Input } from '@tarojs/components';
 import { Popup, Button, Slider, Selector, Switch } from 'antd-mobile';
 import { GuestInfo } from '@/types/query.types';
+import { StarExplanationPopup } from './StarExplanationPopup';
 import './PriceStarSelectionPopup.less';
 
 interface Props {
@@ -63,6 +64,7 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
   const [selectedStars, setSelectedStars] = useState<string[]>([]);
   const [isTaxIncluded, setIsTaxIncluded] = useState(false);
   const [activeThumb, setActiveThumb] = useState<'min' | 'max' | null>(null);
+  const [showExplanation, setShowExplanation] = useState(false);
   const lastValueRef = useRef<[number, number]>([0, 10000]);
 
   const starOptions = isInternational ? INTERNATIONAL_STAR_OPTIONS : DOMESTIC_STAR_OPTIONS;
@@ -273,7 +275,7 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
           <View className='section'>
             <View className='section-header'>
               <Text className='section-title'>星级/钻级</Text>
-              <Text className='link'>国内星级/钻级说明 &gt;</Text>
+              <Text className='link' onClick={() => setShowExplanation(true)}>国内星级/钻级说明 &gt;</Text>
             </View>
             <Selector
               columns={3}
@@ -290,6 +292,9 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
                   '--color': '#f5f5f5'
               }}
             />
+            <Text className='disclaimer-text'>
+              酒店未参加星级评定但设施服务达到相应水平，采用钻级分类，仅供参考
+            </Text>
           </View>
         </View>
 
@@ -302,6 +307,11 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
           </Button>
         </View>
       </View>
+      
+      <StarExplanationPopup 
+        visible={showExplanation} 
+        onClose={() => setShowExplanation(false)} 
+      />
     </Popup>
   );
 };

@@ -43,9 +43,9 @@ export const HomestayGuestSelectionPopup: React.FC<Props> = ({
   const [rooms, setRooms] = useState<(number | string)[]>(initArray(value.rooms));
 
   const [expandedSections, setExpandedSections] = useState({
-    people: true,
-    beds: true,
-    rooms: true
+    people: false,
+    beds: false,
+    rooms: false
   });
 
   useEffect(() => {
