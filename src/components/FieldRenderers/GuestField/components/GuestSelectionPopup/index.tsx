@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text } from '@tarojs/components';
 import { Popup, Stepper, Button } from 'antd-mobile';
 import { GuestInfo } from '@/types/query.types';
-import { ChildAgeSelectionPopup } from './ChildAgeSelectionPopup';
+import { ChildAgeSelectionPopup } from '../ChildAgeSelectionPopup';
 import './GuestSelectionPopup.less';
 
 interface Props {
