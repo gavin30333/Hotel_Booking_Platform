@@ -1,0 +1,204 @@
+.hotel-list {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+
+  // 筛选标签栏
+  .filter-tags {
+    background-color: #fff;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    white-space: nowrap;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    position: relative;
+    z-index: 10;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    :global {
+      .taro-scroll-view__scrollbar {
+        display: none;
+      }
+      .taro-scroll-view {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
+      }
+    }
+
+    .filter-tag {
+      display: inline-flex;
+      align-items: center;
+      margin-right: 16px;
+      padding: 8px 16px;
+      border-radius: 3px;
+      font-size: 20px;
+      color: #666;
+      cursor: pointer;
+      background-color: #f8f8f8;
+      transition: all 0.2s ease;
+
+      &:active {
+        background-color: #f0f0f0;
+      }
+
+      .arrow {
+        margin-left: 6px;
+        font-size: 16px;
+        color: #999;
+      }
+
+      .filter-tag-close {
+        margin-left: 8px;
+        font-size: 16px;
+        color: #fff;
+        cursor: pointer;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.3);
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.5);
+        }
+      }
+    }
+
+    .filter-tag-active {
+      background-color: #1890ff;
+      color: #fff;
+
+      text {
+        color: #fff;
+      }
+    }
+  }
+
+  .loading-more {
+    text-align: center;
+    padding: 20px;
+    font-size: 20px;
+    color: #999;
+  }
+
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+
+    text {
+      font-size: 20px;
+      color: #999;
+    }
+  }
+
+  .no-data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    font-size: 20px;
+    color: #999;
+  }
+
+  .error {
+    text-align: center;
+    padding: 20px;
+    font-size: 20px;
+    color: #ff4d4f;
+  }
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 375px) {
+  .hotel-list {
+    .filter-tags {
+      padding: 12px 14px;
+
+      .filter-tag {
+        margin-right: 12px;
+        padding: 8px 16px;
+        font-size: 22px;
+
+        .arrow {
+          font-size: 18px;
+        }
+
+        .filter-tag-close {
+          width: 22px;
+          height: 22px;
+          font-size: 18px;
+        }
+      }
+    }
+
+    .loading-more {
+      padding: 20px;
+      font-size: 22px;
+    }
+
+    .loading {
+      text {
+        font-size: 22px;
+      }
+    }
+
+    .no-data {
+      font-size: 22px;
+    }
+
+    .error {
+      padding: 20px;
+      font-size: 22px;
+    }
+  }
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .hotel-list {
+    max-width: 700px;
+    margin: 0 auto;
+
+    .filter-tags {
+      padding: 10px 16px;
+    }
+  }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1023px) {
+  .hotel-list {
+    max-width: 900px;
+    margin: 0 auto;
+
+    .filter-tags {
+      padding: 10px 20px;
+    }
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .hotel-list {
+    max-width: 1000px;
+    margin: 0 auto;
+
+    .filter-tags {
+      padding: 10px 24px;
+    }
+  }
+}
