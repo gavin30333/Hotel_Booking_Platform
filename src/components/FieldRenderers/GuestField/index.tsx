@@ -14,7 +14,7 @@ interface GuestFieldProps {
 }
 
 export const GuestField: React.FC<GuestFieldProps> = ({ config, value, onChange }) => {
-  const { customText, priceLabel, isHomestay } = config.props || {};
+  const { customText, priceLabel, isHomestay, isInternational } = config.props || {};
   const [showGuestPopup, setShowGuestPopup] = useState(false);
   const [showPricePopup, setShowPricePopup] = useState(false);
 
@@ -136,6 +136,7 @@ export const GuestField: React.FC<GuestFieldProps> = ({ config, value, onChange 
              onClose={() => setShowPricePopup(false)}
              value={value}
              onChange={onChange}
+             isInternational={isInternational}
            />
         </View>
       )}

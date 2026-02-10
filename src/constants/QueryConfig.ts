@@ -54,7 +54,7 @@ export const SCENE_CONFIGS: Record<TabType, SceneConfig> = {
         type: 'guest',
         key: 'guests',
         label: '人数',
-        props: { showPriceFilter: true, priceLabel: '价格/钻级' }
+        props: { showPriceFilter: true, priceLabel: '价格/钻级', isInternational: true }
       },
       {
         type: 'tags',
