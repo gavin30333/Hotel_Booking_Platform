@@ -81,6 +81,7 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
       setPriceRange([min, max]);
       lastValueRef.current = [min, Math.min(max, sliderMax)];
       setSelectedStars(ps.starRatings || []);
+      setIsTaxIncluded(ps.isTaxIncluded || false);
     }
   }, [visible, value, sliderMax]);
 
@@ -91,6 +92,11 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
         minPrice: priceRange[0],
         maxPrice: priceRange[1],
         starRatings: selectedStars,
+        /**
+         * 税费包含标识
+         * 业务规则：仅在海外场景下传递该字段，国内场景保持为 undefined 以减少传输数据冗余
+         */
+        isTaxIncluded: isInternational ? isTaxIncluded : undefined,
       }
     });
     onClose();
@@ -99,6 +105,7 @@ export const PriceStarSelectionPopup: React.FC<Props> = ({
   const handleClear = () => {
     setPriceRange([0, maxLimit]);
     setSelectedStars([]);
+    setIsTaxIncluded(false);
   };
 
   const handleMinInput = (e) => {
