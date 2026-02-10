@@ -15,7 +15,7 @@
     display: flex;
     align-items: flex-end;
     padding: 0;
-    
+
     .tab-item {
       flex: 1;
       text-align: center;
@@ -26,7 +26,7 @@
       position: relative;
       transition: all 0.3s;
       border-radius: @border-radius-lg @border-radius-lg 0 0;
-      
+
       &:last-child {
         margin-right: 0;
       }
@@ -39,7 +39,7 @@
         padding: @spacing-md @spacing-lg;
         box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
         z-index: 1;
-        
+
         // Custom blue underline/wave
         &::before {
             content: '';
@@ -71,7 +71,7 @@
       align-items: center;
       padding: @spacing-lg 0;
       border-bottom: 1px solid @border-color;
-      
+
       &:last-child {
         border-bottom: none;
       }
@@ -81,7 +81,8 @@
   }
 
   .search-btn {
-    margin-top: @spacing-xxl;
+    margin-top: @spacing-md;
+    margin-bottom: @spacing-md;
     background: linear-gradient(90deg, @primary-gradient-start, @primary-gradient-end); // Implicit 0% and 100%
     border: none;
     height: 50px; // Slightly taller button
@@ -89,6 +90,7 @@
     font-weight: 600;
     box-shadow: @shadow-btn;
     border-radius: @border-radius-xl;
+    color: #fff;
   }
 
   .special-feature {
@@ -96,8 +98,7 @@
     align-items: center;
     padding: 8px 12px;
     border-radius: 4px;
-    margin-bottom: 12px;
-    font-size: 12px;
+    font-size: 10px;
 
     &.blue {
       background: rgba(24, 144, 255, 0.1);
@@ -105,7 +106,9 @@
     }
 
     &.green {
-      background: rgba(82, 196, 26, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: #52c41a;
     }
 
@@ -113,7 +116,7 @@
       background: #f5f5f5;
       color: @text-secondary;
     }
-    
+
     .icon {
         margin-right: 6px;
     }

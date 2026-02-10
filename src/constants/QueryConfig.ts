@@ -86,7 +86,7 @@ export const SCENE_CONFIGS: Record<TabType, SceneConfig> = {
         key: 'location',
         label: '城市',
         placeholder: '关键词/位置',
-        props: { showSettings: true }
+        props: { showSettings: false }
       },
       {
         type: 'date',
@@ -118,7 +118,7 @@ export const SCENE_CONFIGS: Record<TabType, SceneConfig> = {
         key: 'location',
         label: '城市',
         placeholder: '位置/品牌/酒店',
-        props: { showSettings: true }
+        props: { showSettings: false }
       },
       {
         type: 'date',

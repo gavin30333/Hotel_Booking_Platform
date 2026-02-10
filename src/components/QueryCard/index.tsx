@@ -49,7 +49,7 @@ export const QueryCard: React.FC<QueryCardProps> = ({ defaultTab = TabType.DOMES
       <TabBar activeTab={activeTab} onTabChange={handleTabChange} />
 
       <View className='card-content'>
-        {currentConfig.specialFeatures?.filter(f => f.type === 'notice').map((f, i) => renderSpecialFeature(f, i))}
+
 
         <FormFields
           fields={currentConfig.fields}
@@ -57,6 +57,7 @@ export const QueryCard: React.FC<QueryCardProps> = ({ defaultTab = TabType.DOMES
           onUpdate={updateField}
           onSearch={handleSearch}
         />
+        {currentConfig.specialFeatures?.filter(f => f.type === 'notice').map((f, i) => renderSpecialFeature(f, i))}
 
         <SearchButton onClick={handleSearch} />
 

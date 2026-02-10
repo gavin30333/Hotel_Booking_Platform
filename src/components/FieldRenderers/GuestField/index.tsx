@@ -24,7 +24,7 @@ export const GuestField: React.FC<GuestFieldProps> = ({ config, value, onChange 
     const formatNumberList = (val: number | number[], suffix: string) => {
       const arr = Array.isArray(val) ? val : [val];
       if (arr.length === 0) return ''; // Empty return for empty selection
-      
+
       const sorted = [...arr].sort((a, b) => a - b);
       const parts: string[] = [];
       let start = sorted[0];
@@ -56,7 +56,7 @@ export const GuestField: React.FC<GuestFieldProps> = ({ config, value, onChange 
         }
       }
       pushRange(start, prev);
-      
+
       return parts.join(',');
     };
 
@@ -85,8 +85,8 @@ export const GuestField: React.FC<GuestFieldProps> = ({ config, value, onChange 
     <View className='field-row guest-field'>
       {isHomestay ? (
         <>
-          <Text 
-            className={`custom-text ${isPlaceholder ? 'placeholder' : ''}`} 
+          <Text
+            className={`custom-text ${isPlaceholder ? 'placeholder' : ''}`}
             onClick={() => setShowGuestPopup(true)}
           >
              {displayText}
@@ -101,7 +101,7 @@ export const GuestField: React.FC<GuestFieldProps> = ({ config, value, onChange 
       ) : customText ? (
         <>
           <Text className='custom-text' onClick={() => setShowGuestPopup(true)}>{customText}</Text>
-          <GuestSelectionPopup 
+          <GuestSelectionPopup
             visible={showGuestPopup}
             onClose={() => setShowGuestPopup(false)}
             value={value}
@@ -116,7 +116,8 @@ export const GuestField: React.FC<GuestFieldProps> = ({ config, value, onChange 
              </Text>
              <DownOutline fontSize={10} color='#333' />
            </View>
-           
+
+
            {priceLabel && (
              <View className='price-info' onClick={() => setShowPricePopup(true)}>
                <View className='divider' />
@@ -124,7 +125,7 @@ export const GuestField: React.FC<GuestFieldProps> = ({ config, value, onChange 
              </View>
            )}
 
-           <GuestSelectionPopup 
+           <GuestSelectionPopup
              visible={showGuestPopup}
              onClose={() => setShowGuestPopup(false)}
              value={value}

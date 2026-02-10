@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import Taro from '@tarojs/taro';
 import { amapService, LocationData, AMapError } from '@/utils/amap';
 
@@ -6,8 +6,8 @@ export interface UseLocationReturn {
   location: LocationData | null;
   loading: boolean;
   error: string | null;
-  locateByIP: () => Promise<void>;
-  locateByGPS: () => Promise<void>;
+  locateByIP: () => Promise<LocationData | null>;
+  locateByGPS: () => Promise<LocationData | null>;
   resetError: () => void;
 }
 
@@ -15,56 +15,46 @@ export const useLocation = (): UseLocationReturn => {
   const [location, setLocation] = useState<LocationData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const locationRef = useRef<LocationData | null>(null);
+
+  useEffect(() => {
+    if (location) {
+      locationRef.current = location;
+    }
+  }, [location]);
 
   const resetError = useCallback(() => {
     setError(null);
   }, []);
 
-  const locateByIP = useCallback(async () => {
+  const locateByIP = useCallback(async (): Promise<LocationData | null> => {
     setLoading(true);
     setError(null);
 
     try {
       const result = await amapService.getIPLocation();
       setLocation(result);
-      Taro.showToast({
-        title: `已定位到${result.city}`,
-        icon: 'success',
-        duration: 2000
-      });
+      return result;
     } catch (err) {
-      const errorMsg = err instanceof AMapError ? err.info : '定位失败，请重试';
+      const errorMsg = (err instanceof AMapError ? err.info : '定位失败，请重试') || '定位失败，请重试';
       setError(errorMsg);
-      Taro.showToast({
-        title: errorMsg,
-        icon: 'none',
-        duration: 2000
-      });
+      return null;
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const locateByGPS = useCallback(async () => {
+  const locateByGPS = useCallback(async (): Promise<LocationData | null> => {
     setLoading(true);
     setError(null);
 
     try {
       const result = await amapService.getCurrentLocation();
       setLocation(result);
-      Taro.showToast({
-        title: `已定位到${result.city}`,
-        icon: 'success',
-        duration: 2000
-      });
+      return result;
     } catch (err) {
-      const errorMsg = err instanceof AMapError ? err.info : '定位失败，请重试';
+      const errorMsg = (err instanceof AMapError ? err.info : '定位失败，请重试') || '定位失败，请重试';
       setError(errorMsg);
-      Taro.showToast({
-        title: errorMsg,
-        icon: 'none',
-        duration: 2000
-      });
 
       if (err instanceof AMapError && err.code === 'PERMISSION_DENIED') {
         Taro.showModal({
@@ -79,6 +69,7 @@ export const useLocation = (): UseLocationReturn => {
           }
         });
       }
+      return null;
     } finally {
       setLoading(false);
     }
