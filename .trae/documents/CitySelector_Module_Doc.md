@@ -2,8 +2,21 @@
 
 ## 1. 模块概述
 
-本模块实现了基于 `antd-mobile` 的全屏城市选择器，支持国内/海外城市切换、热门搜素、热门城市推荐、历史搜索记录以及 A-Z 字母索引导航。
-针对移动端交互进行了深度优化，实现了 Tab 栏吸顶、自定义侧边索引栏 (Sidebar) 及滚动联动高亮功能，旨在为用户提供高效、流畅的地理位置选择体验。
+本模块实现了基于 `antd-mobile` 的全屏城市选择器，旨在提供原生 App 级别的交互体验。核心特性包括：
+
+* **统一滚动上下文**：采用单一滚动容器 (`city-selector-body`)，避免嵌套滚动带来的冲突与性能问题。
+
+* **多级吸顶交互**：
+
+  * **一级吸顶**：搜索框 (`SearchHeader`) 始终固定在顶部。
+
+  * **二级吸顶**：Tab 切换栏 (`Tabs`) 在滚动时吸附于搜索框下方。
+
+  * **三级吸顶**：城市列表的分组标题（如 "A", "B", "热门"）在 Tab 栏下方继续吸顶。
+
+* **高性能索引导航**：支持点击与**滑动**（Touch Move）两种方式触发侧边索引定位。
+
+* **多维度数据视图**：无缝切换“国内”、“海外”、“热门搜索”三种视图，且针对不同视图优化了布局策略（如海外城市的侧边栏 Sticky 布局）。
 
 **模块路径**: `src/components/CitySelector`
 
@@ -13,132 +26,128 @@
 
 ### 2.1 核心功能
 
-* **多源数据切换**: 通过顶部 Tab 栏切换“国内”、“海外”、“热门搜索”三个维度的数据视图。
-* **Tab 栏吸顶**: 当列表向上滚动时，Tab 栏会自动吸顶，保证分类切换随时可用。
+* **多源数据切换**: 通过顶部 Tab 栏切换不同维度的数据视图。
+
+* **智能吸顶 (Sticky Headers)**: 利用 CSS `position: sticky` 实现多层级吸顶，无需复杂的 JS 滚动计算，性能更优。
+
 * **快速定位**:
-  * **当前定位**: 顶部展示当前定位城市状态 (LocationStatus)。
-  * **历史记录**: 自动记录并展示用户最近选择的城市。
-  * **热门推荐**: 网格化展示高频选择城市。
-  * **自定义字母索引**: 右侧悬浮自定义索引栏 (Sidebar)，支持点击跳转至对应首字母区域，并支持滚动监听自动高亮当前字母。
-* **UI 细节优化**:
-  * 城市列表去除默认箭头，保持界面简洁。
-  * 分组标题 (Sticky Header) 吸顶效果。
+
+  * **当前定位**: 顶部展示当前定位城市状态。
+
+  * **历史记录**: 自动记录最近选择。
+
+  * **热门推荐**: 网格化展示。
+
+  * **交互式索引**: 右侧悬浮索引栏支持手指滑动快速检索，根据 Y 轴坐标实时计算命中字母。
+
+* **海外城市适配**: 针对海外城市数据层级（区域 -> 国家/城市），采用左侧导航吸顶、右侧内容滚动的布局。
 
 ### 2.2 交互流程
 
-1. **唤起**: 用户点击 `LocationField` 组件中的城市名称区域。
-2. **展示**: 底部向上弹出全屏 Popup，默认展示“国内”标签页。
+1. **唤起**: 用户点击 `LocationField`。
+2. **展示**: 底部弹出全屏 Popup。
 3. **操作**:
-   * **切换 Tab**: 点击顶部 Tab 切换 国内/海外/热门搜索 视图。
-   * **滚动/索引**: 滑动列表，右侧索引栏自动更新高亮；点击右侧字母，列表瞬间跳转至对应位置。
-   * **选择**: 点击任意城市项 -> 触发 `onSelect` 回调 -> 关闭弹窗 -> 更新父组件状态。
-4. **关闭**: 点击左上角“取消”按钮或点击遮罩层关闭弹窗。
+
+   * **滚动**: 整个内容区域共用一个滚动条，Tab 栏和分组标题自动吸顶。
+
+   * **索引**: 在右侧字母栏滑动手指，列表实时滚动到对应分组。
+
+   * **切换 Tab**: 点击 Tab，重置滚动位置（可选）并展示新内容。
+4. **关闭**: 选择城市或点击关闭按钮。
 
 ***
 
-## 3. 组件结构
+## 3. 组件结构与职责
 
-模块采用原子化设计，遵循**组件目录化**（Component-per-folder）原则，每个组件拥有独立的目录、入口文件及样式文件。
+模块采用**统一滚动源**的设计模式，核心状态由父组件管理并下发。
 
 ```
 src/components/CitySelector/
-├── index.tsx                 # 模块入口 (CitySelector 主逻辑)
-├── types.ts                  # 类型定义
-├── CitySelector.less         # 主样式
-├── utils/
-│   └── cityData.ts           # 静态模拟数据源 (含国内、海外、热搜数据)
-└── components/
-    ├── SearchHeader/
-    │   ├── index.tsx         # 搜索组件实现
-    │   └── SearchHeader.less # 搜索组件样式
-    ├── LocationStatus/       # [新增] 定位状态组件
-    │   ├── index.tsx
-    │   └── LocationStatus.less
-    ├── HistorySection/
-    │   ├── index.tsx         # 历史记录组件
-    │   └── HistorySection.less
-    ├── HotCitiesSection/
-    │   ├── index.tsx         # 热门城市组件
-    │   └── HotCitiesSection.less
-    └── CityIndexList/
-        ├── index.tsx         # 列表组件 (含自定义索引栏逻辑)
-        └── CityIndexList.less
+├── index.tsx                 # [核心] 负责 Popup 容器、滚动引用 (scrollRef) 管理、Tab 状态
+├── CitySelector.less         # [核心] 定义统一滚动容器 (.city-selector-body) 及吸顶样式
+├── components/
+│   ├── TabContent/
+│   │   ├── DomesticTab/      # 国内城市 Tab
+│   │   │   ├── index.tsx     # 接收 scrollRef 并传递给列表
+│   │   │   └── components/CityIndexList/
+│   │   │       ├── index.tsx # [核心] 实现索引计算、滑动监听 (TouchMove)、吸顶标题
+│   │   ├── OverseasTab/      # 海外城市 Tab
+│   │   │   ├── index.tsx     # 采用 Flex 布局 + Sticky Sidebar
+│   │   │   └── components/RegionSidebar/
+│   │   └── HotSearchTab/     # 热门搜索 Tab
+└── ...
 ```
 
 ### 3.1 核心组件职责
 
-* **CitySelector/index.tsx**: 负责弹窗的可见性控制 (`visible`)、Tab 状态管理 (`activeTab`)、Tab 吸顶逻辑以及数据源的分发。
-* **components/CityIndexList/index.tsx**: 
-  * 实现了自定义的侧边索引栏 (`sidebar-item`)。
-  * 实现了 `scrollToAnchor` 点击跳转逻辑。
-  * 实现了 `scroll` 事件监听与 Active Index 自动计算。
-  * 列表项去除了默认箭头 (`arrow={false}`)。
+* **CitySelector (index.tsx)**:
+
+  * **滚动容器**: 维护 `useRef<HTMLDivElement>` (`scrollRef`)，指向 `.city-selector-body`。这是整个组件唯一的纵向滚动区域。
+
+  * **状态管理**: 控制 `activeTab`。
+
+  * **Context 提供**: 将 `scrollRef` 传递给子组件（如 `DomesticTab`），以便子组件进行滚动位置计算（如 `scrollTo`）。
+
+* **DomesticTab**:
+
+  * 作为中间层，将 `scrollRef` 透传给 `CityIndexList`。
+
+* **CityIndexList**:
+
+  * **索引逻辑**: 监听 `scrollRef.current` 的 `scroll` 事件，计算当前可视区域对应的字母分组。
+
+  * **滑动交互**: 监听侧边栏的 `onTouchMove` 事件，根据触摸点坐标 (`document.elementFromPoint`) 实时触发滚动跳转 (`scrollTo`)。
+
+  * **吸顶偏移**: 动态计算吸顶高度（SearchHeader 高度 + Tab 高度），确保分组标题准确吸附在 Tab 栏下方。
+
+* **OverseasTab**:
+
+  * **布局策略**: 利用 `position: sticky` 将左侧区域导航固定在视口左侧，右侧内容随主容器滚动。
 
 ***
 
 ## 4. 状态管理
 
-组件内部状态较少，主要依赖 Props 通信，符合展示型组件特征。
-
-| 状态名          | 类型                         | 描述           | 管理位置                  |
-| :----------- | :------------------------- | :----------- | :-------------------- |
-| `visible`    | `boolean`                  | 控制弹窗显示/隐藏    | 父组件 (`LocationField`) |
-| `activeTab`  | `'domestic' \| 'overseas' \| 'hotSearch'` | 当前激活的 Tab 面板 | `CitySelector`        |
-| `activeIndex`| `string`                   | 当前高亮的索引字母   | `CityIndexList`       |
-
-**数据流向**:
-`LocationField` (State: `citySelectorVisible`) -> Props -> `CitySelector` -> Props -> `CityIndexList` -> Event -> `onSelect` 回调。
+| 状态名           | 类型          | 描述        | 管理位置            |
+| :------------ | :---------- | :-------- | :-------------- |
+| `activeTab`   | `CityTab`   | 当前激活的 Tab | `CitySelector`  |
+| `scrollRef`   | `RefObject` | 滚动容器引用    | `CitySelector`  |
+| `activeIndex` | `string`    | 当前高亮索引    | `CityIndexList` |
 
 ***
 
-## 5. 接口调用与数据源
+## 5. 关键实现细节
 
-目前使用本地 Mock 数据 (`utils/cityData.ts`)。
+### 5.1 统一滚动与 CSS Sticky
 
-### 5.1 数据结构 (`types.ts`)
+放弃了在每个 Tab 内部使用 `ScrollView` 的做法，改为外层统一 `div` (`.city-selector-body`) 开启 `overflow-y: auto`。
+
+* **优势**: 解决了不同 Tab 切换时滚动条状态管理复杂的问题，同时让 `position: sticky` 能够跨组件生效（只要在同一个滚动容器内）。
+
+* **Tab 吸顶**: `.adm-tabs-header` 设置 `position: sticky; top: 0`。
+
+* **分组标题吸顶**: `.city-group-title` 设置 `position: sticky; top: 42px` (Tab 栏高度)。
+
+### 5.2 触摸滑动索引 (Touch-to-Scroll)
+
+为了解决 `onClick` 只能点选的问题，实现了类似原生 App 的滑动索引：
 
 ```typescript
-export interface CityGroup {
-  title: string;   // 索引标题，如 "A", "Hot"
-  items: string[]; // 城市名称列表
-}
-
-export type CityTab = 'domestic' | 'overseas' | 'hotSearch';
+const handleTouchMove = (e: ITouchEvent) => {
+  e.stopPropagation();
+  const touch = e.touches[0];
+  // 根据坐标获取当前手指下的元素
+  const target = document.elementFromPoint(touch.clientX, touch.clientY);
+  const sidebarItem = target?.closest('.sidebar-item');
+  // ...触发滚动
+};
 ```
 
 ***
 
-## 6. 样式规范与实现细节
+## 6. 性能优化
 
-* **Tab 吸顶实现**:
-  * 使用 CSS `position: sticky; top: 0; z-index: 99;` 实现 Tab 栏在滚动时的吸顶效果。
-  * 索引标题 (`.city-group-title`) 同样使用了 `sticky` 定位，但 `top` 值设为 Tab 栏高度 (约 42px)，形成层叠吸顶效果。
+1. **原生滚动**: 使用浏览器原生滚动而非 JS 模拟滚动，保证在低端设备上的流畅度。
+2. **DOM 操作最小化**: 仅在 `scroll` 事件和触摸滑动时进行必要的 DOM 查询（如 `getBoundingClientRect`），并利用 `requestAnimationFrame` (待实现) 或节流控制。
+3. **层级优化**: 减少不必要的嵌套 `View`，扁平化 DOM 结构。
 
-* **自定义 IndexBar**:
-  * 放弃 `antd-mobile` 原生 `IndexBar`，改为自定义实现，以解决 Flex 布局冲突和特定交互需求。
-  * 使用 `position: fixed` 将侧边栏固定在屏幕右侧垂直居中位置。
-
-* **列表样式**:
-  * `List.Item` 显式设置 `arrow={false}` 去除右侧箭头。
-  * 历史记录与热门城市板块增加了顶部/底部间距，提升视觉呼吸感。
-
-***
-
-## 7. 性能优化要点
-
-1. **滚动监听节流**: 目前 `scroll` 事件直接绑定，若后续性能有瓶颈，建议使用 `lodash.throttle` 对 `handleScroll` 进行节流处理。
-2. **长列表渲染**: 若城市数据量极大（>5000），建议替换为 `react-window` 或 `react-virtualized` 进行虚拟滚动优化。
-3. **Memoization**: 对 `CityIndexList` 进行 `React.memo` 包裹，防止父组件状态更新导致不必要的列表重渲染。
-
-***
-
-## 8. 测试用例
-
-| ID   | 测试场景                 | 预期结果                      |
-| :--- | :------------------- | :------------------------ |
-| TC01 | 点击 LocationField 城市名 | 唤起城市选择器弹窗，默认选中“国内”Tab     |
-| TC02 | 向上滑动列表              | Tab 栏吸顶，不随列表滚动消失；右侧索引随内容自动高亮 |
-| TC03 | 切换 Tab 至“海外”         | 列表更新为海外热门及 A-Z 数据         |
-| TC04 | 切换 Tab 至“热门搜索”      | 展示热搜榜单列表                    |
-| TC05 | 点击右侧索引“G”            | 列表瞬间跳转至“G”分组顶部              |
-| TC06 | 验证列表项样式             | 城市名称右侧无箭头图标                |
