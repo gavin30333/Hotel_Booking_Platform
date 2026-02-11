@@ -1,9 +1,53 @@
 .city-index-list {
-  flex: 1;
-  height: 100%;
-  // Ensure IndexBar takes full remaining height
-  
-  .adm-index-bar {
-    height: 100%;
+  position: relative;
+  padding-right: 30px; // Reserve space for sidebar
+
+  .city-group-title {
+    padding: 8px 16px;
+    background: #f5f5f5;
+    color: #999;
+    font-size: 13px;
+    font-weight: bold;
+    position: sticky;
+    top: 42px; // Below the Tab header
+    z-index: 98; // Below Tab header (99)
+  }
+
+  .city-sidebar {
+    position: fixed;
+    right: 6px;
+    top: 50%; // Center vertically
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: transparent;
+    padding: 8px 0;
+    border-radius: 12px;
+    
+    // Ensure sidebar is only visible when this tab is active? 
+    // Actually, fixed position is relative to viewport. 
+    // If we switch tabs, this component unmounts, so sidebar disappears. Correct.
+    
+    // However, top: 50% might be too high if header is large.
+    // It should be fine.
+
+    .sidebar-item {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 2px 0;
+      font-size: 11px;
+      color: #666;
+      border-radius: 50%;
+      
+      &.active {
+        background: #1677ff;
+        color: #fff;
+      }
+    }
   }
 }

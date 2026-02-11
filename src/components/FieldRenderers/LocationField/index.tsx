@@ -163,6 +163,7 @@ export const LocationField: React.FC<LocationFieldProps> = ({ config, value, key
         visible={citySelectorVisible}
         onClose={() => setCitySelectorVisible(false)}
         onSelect={handleCitySelect}
+        currentCity={value.city}
       />
     </View>
   );

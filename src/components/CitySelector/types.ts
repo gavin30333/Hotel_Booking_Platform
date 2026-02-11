@@ -3,4 +3,4 @@ export interface CityGroup {
   items: string[];
 }
 
-export type CityTab = 'domestic' | 'overseas';
+export type CityTab = 'domestic' | 'overseas' | 'hot_search';

@@ -118,3 +118,7 @@ export const overseasCities: CityGroup[] = [
     items: ['东京', '迪拜', '都柏林', '多伦多']
   }
 ];
+
+export const hotSearchList: string[] = [
+  '春熙路', '太古里', '大熊猫基地', '锦里', '宽窄巷子', '武侯祠', '杜甫草堂', '青城山', '都江堰', '建设路', '玉林路', '天府广场'
+];
