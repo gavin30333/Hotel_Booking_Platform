@@ -16,7 +16,7 @@ const DEFAULT_GUESTS: GuestInfo = {
 };
 
 const DEFAULT_LOCATION: LocationData = {
-  city: '北京',
+  city: '杭州',
   country: '中国'
 };
 

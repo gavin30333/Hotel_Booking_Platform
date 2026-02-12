@@ -18,11 +18,36 @@ export const QueryCard: React.FC<QueryCardProps> = ({ defaultTab = TabType.DOMES
 
   const currentConfig = SCENE_CONFIGS[activeTab];
 
-  const handleSearch = (overrides?: any) => {
+  const handleSearch = async (overrides?: any) => {
     // Merge overrides (e.g. from immediate tag selection) with current formData
     // Note: formData might be stale in this closure if state update hasn't propagated,
     // so overrides are crucial for immediate actions.
     const searchData = { ...formData, ...(overrides || {}), scene: activeTab };
+
+    // 调用后端API查询酒店
+    try {
+      const response = await fetch('http://localhost:3000/api/hotel/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          city: searchData.location.city,
+          checkInDate: searchData.dates.startDate,
+          checkOutDate: searchData.dates.endDate,
+          filters: {
+            star: []
+          },
+          pageNum: 1,
+          pageSize: 20
+        })
+      });
+
+      const data = await response.json();
+      console.log('API Response:', data);
+    } catch (error) {
+      console.error('API Error:', error);
+    }
 
     if (onSearch) {
       onSearch(searchData);

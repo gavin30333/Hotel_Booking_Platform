@@ -25,6 +25,6 @@
     },
     "types": ["node"]
   },
-  "include": ["./src", "./types", "./config"],
+  "include": ["./src/components", "./src/pages", "./src/schemas", "./src/store", "./src/types", "./src/utils", "./src/app.tsx", "./src/app.config.ts", "./src/api", "./types", "./config"],
   "compileOnSave": false
 }
