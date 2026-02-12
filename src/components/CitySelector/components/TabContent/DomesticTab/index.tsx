@@ -11,6 +11,7 @@ interface DomesticTabProps {
   currentCity?: string;
   onSelect: (city: string) => void;
   scrollRef: React.RefObject<HTMLDivElement>;
+  scrollEnabled?: boolean;
 }
 
 export const DomesticTab: React.FC<DomesticTabProps> = ({
@@ -18,7 +19,8 @@ export const DomesticTab: React.FC<DomesticTabProps> = ({
   hotCities,
   currentCity,
   onSelect,
-  scrollRef
+  scrollRef,
+  scrollEnabled = true
 }) => {
   return (
     <View className='domestic-tab'>
@@ -26,6 +28,7 @@ export const DomesticTab: React.FC<DomesticTabProps> = ({
         groups={groups} 
         onSelect={onSelect}
         scrollRef={scrollRef}
+        scrollEnabled={scrollEnabled}
       >
         <HotCitiesSection 
           title='国内热门城市'

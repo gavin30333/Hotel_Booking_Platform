@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { View } from '@tarojs/components';
 import { Popup, Tabs } from 'antd-mobile';
+import { useThrottleFn } from 'ahooks';
 import { SearchHeader } from './components/SearchHeader';
 import { HistorySection } from './components/HistorySection';
 import { LocationStatus } from './components/LocationStatus';
@@ -31,12 +32,31 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
   currentCity 
 }) => {
   const [activeTab, setActiveTab] = useState<CityTab>('domestic');
+  const [isSticky, setIsSticky] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   
   const handleSelect = (city: string) => {
     onSelect(city);
     onClose();
   };
+
+  const { run: handleScroll } = useThrottleFn(
+    (e: React.UIEvent<HTMLDivElement>) => {
+      const container = e.target as HTMLDivElement;
+      const scrollTop = container.scrollTop;
+      const headerHeight = headerRef.current?.clientHeight || 0;
+      
+      // When scrollTop reaches header height, tabs header becomes sticky
+      // We add a small buffer (e.g., 2px) to ensure smooth transition
+      const stickyState = scrollTop >= headerHeight - 2;
+      
+      if (stickyState !== isSticky) {
+        setIsSticky(stickyState);
+      }
+    },
+    { wait: 16 } // ~60fps
+  );
 
   return (
     <Popup
@@ -51,8 +71,12 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
         onCancel={onClose}
       />
       
-      <View className='city-selector-body'>
-        <View className='city-selector-header'>
+      <div 
+        className='city-selector-body' 
+        onScroll={handleScroll}
+        ref={scrollRef}
+      >
+        <div ref={headerRef} className='city-selector-header'>
           <LocationStatus status='disabled' />
           <HistorySection 
             cities={historyCities} 
@@ -60,7 +84,7 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
             onClear={() => console.log('Clear history')} 
           />
           <View className='header-divider' />
-        </View>
+        </div>
         
         <Tabs 
           activeKey={activeTab} 
@@ -73,17 +97,21 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
               hotCities={hotCities} 
               currentCity={currentCity}
               onSelect={handleSelect}
-              scrollRef={scrollRef}
+              scrollRef={scrollRef} // This ref might need adjustment if DomesticTab needs its own scroll control
+              scrollEnabled={isSticky}
             />
           </Tabs.Tab>
           <Tabs.Tab title='海外' key='overseas'>
-            <OverseasTab onSelect={handleSelect} />
+            <OverseasTab 
+              onSelect={handleSelect} 
+              scrollEnabled={isSticky}
+            />
           </Tabs.Tab>
           <Tabs.Tab title='成都热搜' key='hot_search'>
             <HotSearchTab onSelect={handleSelect} />
           </Tabs.Tab>
         </Tabs>
-      </View>
+      </div>
     </Popup>
   );
 };

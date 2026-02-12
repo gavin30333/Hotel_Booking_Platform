@@ -9,9 +9,16 @@ interface CityIndexListProps {
   onSelect: (city: string) => void;
   children?: React.ReactNode;
   scrollRef: React.RefObject<HTMLDivElement>;
+  scrollEnabled?: boolean;
 }
 
-export const CityIndexList: React.FC<CityIndexListProps> = ({ groups, onSelect, children, scrollRef }) => {
+export const CityIndexList: React.FC<CityIndexListProps> = ({ 
+  groups, 
+  onSelect, 
+  children, 
+  scrollRef,
+  // scrollEnabled = true // Unused in this component but kept in interface for consistency
+}) => {
   const [activeIndex, setActiveIndex] = useState<string>('');
   
   // Calculate sidebar items: "热门" if children exists, then group titles
@@ -104,7 +111,29 @@ export const CityIndexList: React.FC<CityIndexListProps> = ({ groups, onSelect, 
   };
 
   return (
-    <View className='city-index-list'>
+    <View 
+      className='city-index-list' 
+      style={{ 
+        // Note: In DomesticTab, the scroll container is passed from parent (scrollRef).
+        // The CityIndexList content is just children inside that container.
+        // So pointerEvents 'none' might prevent clicking items, which is bad.
+        // We actually want to disable SCROLLING, but this component doesn't control the scroll container directly.
+        // However, since DomesticTab uses the main container for scrolling, 
+        // we rely on the main container's scroll behavior.
+        // The 'scrollEnabled' logic for DomesticTab is mainly implicit because
+        // if the main container is not sticky, scrolling moves the header.
+        // Once sticky, the main container KEEPS scrolling.
+        // Wait, for DomesticTab, it shares the SAME scroll container as the header?
+        // Yes, scrollRef points to .city-selector-body.
+        // So for DomesticTab, we don't need to do anything special about locking *internal* scroll
+        // because it doesn't HAVE internal scroll (it uses the main window/body scroll).
+        // The only thing is to ensure that if we had a separate internal scroll (like OverseasTab), we would lock it.
+        // But DomesticTab content flows naturally in the main container.
+        // So sticky logic applies automatically: header sticks, and content continues to scroll under it.
+        // Thus, no style changes are strictly needed here for standard flow.
+        // But to be consistent with the requested architecture, we accept the prop.
+      }}
+    >
       <View className='city-list-content'>
         {children && (
           <View id='anchor-热门'>
