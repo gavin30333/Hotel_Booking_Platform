@@ -1,6 +1,12 @@
 .city-index-list {
   position: relative;
   padding-right: 30px; // Reserve space for sidebar
+  height: 100%;
+
+  .city-list-content {
+    height: 600px;
+    overflow-y: auto;
+  }
 
   .city-group-title {
     padding: 8px 16px;
@@ -9,12 +15,12 @@
     font-size: 13px;
     font-weight: bold;
     position: sticky;
-    top: 42px; // Stick below the Tabs header
+    top: 0; // Stick at the top of the scroll container
     z-index: 98;
   }
 
   .city-sidebar {
-    position: fixed;
+    position: absolute;
     right: 6px;
     top: 50%; // Center vertically
     transform: translateY(-50%);
@@ -25,13 +31,9 @@
     background: transparent;
     padding: 8px 0;
     border-radius: 12px;
-    
-    // Ensure sidebar is only visible when this tab is active? 
-    // Actually, fixed position is relative to viewport. 
-    // If we switch tabs, this component unmounts, so sidebar disappears. Correct.
-    
-    // However, top: 50% might be too high if header is large.
-    // It should be fine.
+
+    // Now positioned relative to .city-index-list container
+    // Will stay within the tab content area
 
     .sidebar-item {
       width: 20px;
@@ -43,7 +45,7 @@
       font-size: 11px;
       color: #666;
       border-radius: 50%;
-      
+
       &.active {
         background: #1677ff;
         color: #fff;

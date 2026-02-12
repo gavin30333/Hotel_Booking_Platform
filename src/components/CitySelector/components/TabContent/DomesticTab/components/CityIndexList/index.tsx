@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ITouchEvent } from '@tarojs/components';
-import { List } from 'antd-mobile';
-import { CityGroup } from '../../../../../types';
-import './CityIndexList.less';
+import React, { useEffect, useState } from "react";
+import { View, Text, ITouchEvent } from "@tarojs/components";
+import { List } from "antd-mobile";
+import { CityGroup } from "../../../../../types";
+import "./CityIndexList.less";
 
 interface CityIndexListProps {
   groups: CityGroup[];
@@ -11,42 +11,57 @@ interface CityIndexListProps {
   scrollRef: React.RefObject<HTMLDivElement>;
 }
 
-export const CityIndexList: React.FC<CityIndexListProps> = ({ groups, onSelect, children, scrollRef }) => {
-  const [activeIndex, setActiveIndex] = useState<string>('');
-  
+export const CityIndexList: React.FC<CityIndexListProps> = ({
+  groups,
+  onSelect,
+  children,
+  scrollRef,
+}) => {
+  const [activeIndex, setActiveIndex] = useState<string>("");
+
   // Calculate sidebar items: "热门" if children exists, then group titles
   const sidebarItems = [
-    ...(children ? ['热门'] : []),
-    ...groups.map(g => g.title)
+    ...(children ? ["热门"] : []),
+    ...groups.map((g) => g.title),
   ];
 
   const getHeaderHeight = () => {
-    const tabsHeader = document.querySelector('.adm-tabs-header');
-    return tabsHeader ? tabsHeader.clientHeight : 44;
+    // 尝试多种选择器获取标签栏高度
+    let tabsHeader = document.querySelector(".adm-tabs-header");
+    if (!tabsHeader) {
+      tabsHeader = document.querySelector(".city-tabs");
+    }
+    if (!tabsHeader) {
+      tabsHeader = document.querySelector(".adm-tabs");
+    }
+
+    // 如果还是找不到，返回一个较大的默认值
+    const height = tabsHeader ? tabsHeader.clientHeight : 80;
+    return height;
   };
 
   const scrollToAnchor = (index: string) => {
     // 1. Find the anchor element
     const id = `anchor-${index}`;
     const element = document.getElementById(id);
+
     // 2. Use the ref for container
     const container = scrollRef.current;
-    
+
     if (element && container) {
+      // 获取标签栏高度
       const headerHeight = getHeaderHeight();
-      
-      // Calculate absolute offset in scroll container
-      const elementRect = element.getBoundingClientRect();
-      const containerRect = container.getBoundingClientRect();
-      const offset = elementRect.top - containerRect.top + container.scrollTop;
-      
-      const top = offset - headerHeight;
-      
+
+      // 计算目标滚动位置，只减去标签栏高度
+      const elementTop = element.offsetTop;
+      const targetScrollTop = elementTop - headerHeight;
+
+      // 执行平滑滚动
       container.scrollTo({
-        top: top,
-        behavior: 'auto'
+        top: targetScrollTop,
+        behavior: "smooth",
       });
-      
+
       setActiveIndex(index);
     }
   };
@@ -58,7 +73,7 @@ export const CityIndexList: React.FC<CityIndexListProps> = ({ groups, onSelect, 
     const handleScroll = () => {
       const headerHeight = getHeaderHeight();
       const containerRect = container.getBoundingClientRect();
-      
+
       // Find the current active anchor
       for (let i = sidebarItems.length - 1; i >= 0; i--) {
         const index = sidebarItems[i];
@@ -67,9 +82,9 @@ export const CityIndexList: React.FC<CityIndexListProps> = ({ groups, onSelect, 
           const elementRect = element.getBoundingClientRect();
           // Calculate relative top position of element in container
           const relativeTop = elementRect.top - containerRect.top;
-          
+
           // Check if element is near the sticky header position
-          if (relativeTop <= headerHeight + 10) { 
+          if (relativeTop <= headerHeight + 10) {
             setActiveIndex(index);
             return;
           }
@@ -77,26 +92,34 @@ export const CityIndexList: React.FC<CityIndexListProps> = ({ groups, onSelect, 
       }
     };
 
-    container.addEventListener('scroll', handleScroll);
-    return () => container.removeEventListener('scroll', handleScroll);
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
   }, [sidebarItems, scrollRef]);
 
   // Touch sliding logic
-  const handleTouchMove = (e: ITouchEvent) => {
+  const handleTouchMove = (e: any) => {
     e.stopPropagation();
-    
+
     // Get touch position
-    const touch = e.touches[0];
-    const clientY = touch.clientY;
-    
+    const touch =
+      e.touches && e.touches[0]
+        ? e.touches[0]
+        : e.changedTouches && e.changedTouches[0]
+          ? e.changedTouches[0]
+          : null;
+    if (!touch) return;
+
+    const clientX = touch.clientX || touch.pageX;
+    const clientY = touch.clientY || touch.pageY;
+
     // Find element at this position
-    const target = document.elementFromPoint(touch.clientX, clientY);
+    const target = document.elementFromPoint(clientX, clientY);
     if (!target) return;
-    
+
     // Check if it's a sidebar item or inside one
-    const sidebarItem = target.closest('.sidebar-item');
+    const sidebarItem = target.closest(".sidebar-item");
     if (sidebarItem) {
-      const index = sidebarItem.getAttribute('data-index');
+      const index = sidebarItem.getAttribute("data-index");
       if (index && index !== activeIndex) {
         scrollToAnchor(index);
       }
@@ -104,18 +127,18 @@ export const CityIndexList: React.FC<CityIndexListProps> = ({ groups, onSelect, 
   };
 
   return (
-    <View className='city-index-list'>
-      <View className='city-list-content'>
+    <View className="city-index-list">
+      <View className="city-list-content" ref={scrollRef}>
         {children && (
-          <View id='anchor-热门'>
-             <View className='city-group-title'>热门城市</View>
-             {children}
+          <View id="anchor-热门">
+            <View className="city-group-title">热门城市</View>
+            {children}
           </View>
         )}
-        
+
         {groups.map((group) => (
           <View key={group.title} id={`anchor-${group.title}`}>
-            <View className='city-group-title'>{group.title}</View>
+            <View className="city-group-title">{group.title}</View>
             <List>
               {group.items.map((city) => (
                 <List.Item key={city} onClick={() => onSelect(city)}>
@@ -127,20 +150,25 @@ export const CityIndexList: React.FC<CityIndexListProps> = ({ groups, onSelect, 
         ))}
       </View>
 
-      <View 
-        className='city-sidebar'
-        onTouchStart={(e) => { e.stopPropagation(); }} 
+      <View
+        className="city-sidebar"
+        onTouchStart={(e) => {
+          e.stopPropagation();
+        }}
         onTouchMove={handleTouchMove}
+        onTouchEnd={(e) => {
+          e.stopPropagation();
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {sidebarItems.map((item) => (
-          <View 
-            key={item} 
+          <View
+            key={item}
             data-index={item}
-            className={`sidebar-item ${activeIndex === item ? 'active' : ''}`}
+            className={`sidebar-item ${activeIndex === item ? "active" : ""}`}
             onClick={() => scrollToAnchor(item)}
           >
-            <Text>{item === '热门' ? '热' : item}</Text>
+            <Text>{item === "热门" ? "热" : item}</Text>
           </View>
         ))}
       </View>
