@@ -42,15 +42,15 @@
 
         // Custom blue underline/wave
         &::before {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 24px;
-            height: 3px;
-            background: @primary-color;
-            border-radius: 2px;
+          content: '';
+          position: absolute;
+          bottom: 4px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 24px;
+          height: 3px;
+          background: @primary-color;
+          border-radius: 2px;
         }
       }
     }
@@ -83,7 +83,11 @@
   .search-btn {
     margin-top: @spacing-md;
     margin-bottom: @spacing-md;
-    background: linear-gradient(90deg, @primary-gradient-start, @primary-gradient-end); // Implicit 0% and 100%
+    background: linear-gradient(
+      90deg,
+      @primary-gradient-start,
+      @primary-gradient-end
+    ); // Implicit 0% and 100%
     border: none;
     height: 50px; // Slightly taller button
     font-size: @font-size-xl; // Use larger font for button text
@@ -118,7 +122,7 @@
     }
 
     .icon {
-        margin-right: 6px;
+      margin-right: 6px;
     }
   }
 }

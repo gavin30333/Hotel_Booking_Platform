@@ -1,24 +1,28 @@
-import React from 'react';
-import { SideBar } from 'antd-mobile';
-import { OverseasCategory } from '../../../../../types';
-import './RegionSidebar.less';
+import React from 'react'
+import { SideBar } from 'antd-mobile'
+import { OverseasCategory } from '../../../../../types'
+import './RegionSidebar.less'
 
 interface RegionSidebarProps {
-  categories: OverseasCategory[];
-  activeKey: string;
-  onChange: (key: string) => void;
+  categories: OverseasCategory[]
+  activeKey: string
+  onChange: (key: string) => void
 }
 
 export const RegionSidebar: React.FC<RegionSidebarProps> = ({
   categories,
   activeKey,
-  onChange
+  onChange,
 }) => {
   return (
-    <SideBar activeKey={activeKey} onChange={onChange} className='region-sidebar'>
-      {categories.map(item => (
+    <SideBar
+      activeKey={activeKey}
+      onChange={onChange}
+      className="region-sidebar"
+    >
+      {categories.map((item) => (
         <SideBar.Item key={item.key} title={item.title} />
       ))}
     </SideBar>
-  );
-};
+  )
+}

@@ -3,11 +3,11 @@
   "plugins": ["prettier"],
   "env": {
     "browser": true,
-    "es2021": true,
+    "es2021": true
   },
   "globals": {
     "defineAppConfig": "readonly",
-    "definePageConfig": "readonly",
+    "definePageConfig": "readonly"
   },
   "rules": {
     "react/jsx-uses-react": "off",
@@ -19,8 +19,8 @@
         "singleQuote": true,
         "trailingComma": "es5",
         "tabWidth": 2,
-        "useTabs": false,
-      },
+        "useTabs": false
+      }
     ],
     "arrow-spacing": "off",
     "semi": "off",
@@ -47,6 +47,6 @@
     "no-extra-semi": "off",
     "@typescript-eslint/no-empty-function": "off",
     "import/no-commonjs": "off",
-    "no-restricted-globals": "off",
-  },
+    "no-restricted-globals": "off"
+  }
 }

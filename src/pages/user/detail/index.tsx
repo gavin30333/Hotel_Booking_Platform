@@ -6,7 +6,7 @@ export default function Detail() {
   const { id } = router.params
 
   return (
-    <View className='detail'>
+    <View className="detail">
       <Text>detail page</Text>
       <View>Current ID: {id}</View>
     </View>

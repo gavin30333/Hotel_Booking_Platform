@@ -1,11 +1,11 @@
-import React from 'react';
-import { View, Text } from '@tarojs/components';
-import { TabType } from '@/types/query.types';
-import classNames from 'classnames';
+import React from 'react'
+import { View, Text } from '@tarojs/components'
+import { TabType } from '@/types/query.types'
+import classNames from 'classnames'
 
 interface TabBarProps {
-  activeTab: TabType;
-  onTabChange: (tab: TabType) => void;
+  activeTab: TabType
+  onTabChange: (tab: TabType) => void
 }
 
 const TABS = [
@@ -13,11 +13,11 @@ const TABS = [
   { key: TabType.INTERNATIONAL, label: '海外' },
   { key: TabType.HOMESTAY, label: '民宿' },
   { key: TabType.HOURLY, label: '钟点房' },
-];
+]
 
 export const TabBar: React.FC<TabBarProps> = ({ activeTab, onTabChange }) => {
   return (
-    <View className='tab-bar'>
+    <View className="tab-bar">
       {TABS.map((tab) => (
         <View
           key={tab.key}
@@ -28,5 +28,5 @@ export const TabBar: React.FC<TabBarProps> = ({ activeTab, onTabChange }) => {
         </View>
       ))}
     </View>
-  );
-};
+  )
+}

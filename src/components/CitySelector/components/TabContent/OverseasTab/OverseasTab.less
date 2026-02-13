@@ -2,42 +2,44 @@
   display: flex;
   align-items: flex-start;
   background-color: #fff;
-  
+
   .sidebar-container {
     width: 90px;
     flex-shrink: 0;
     position: sticky;
     top: 42px;
-    height: calc(100vh - 92px); // 100vh - SearchHeader(~50px) - TabsHeader(~42px)
+    height: calc(
+      100vh - 92px
+    ); // 100vh - SearchHeader(~50px) - TabsHeader(~42px)
     overflow-y: auto;
   }
-  
+
   .content-container {
     flex: 1;
     background-color: #fff;
     height: calc(100vh - 92px);
     overflow-y: auto;
-    
+
     .category-content {
       padding: 16px;
-      
+
       .category-title {
         font-size: 15px;
         font-weight: bold;
         margin-bottom: 12px;
         display: block;
       }
-      
+
       .hot-destinations-grid {
         margin-bottom: 16px;
       }
-      
+
       .divider {
         height: 1px;
         background-color: #eee;
         margin: 16px 0;
       }
-      
+
       .cities-tags {
         display: flex;
         flex-wrap: wrap;

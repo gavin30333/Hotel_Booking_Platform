@@ -1,19 +1,22 @@
-import React from 'react';
-import { View } from '@tarojs/components';
-import { CityTag } from '../../../../common/CityTag';
-import './HotSearchItems.less';
+import React from 'react'
+import { View } from '@tarojs/components'
+import { CityTag } from '../../../../common/CityTag'
+import './HotSearchItems.less'
 
 interface HotSearchItemsProps {
-  items: string[];
-  onSelect: (item: string) => void;
+  items: string[]
+  onSelect: (item: string) => void
 }
 
-export const HotSearchItems: React.FC<HotSearchItemsProps> = ({ items, onSelect }) => {
+export const HotSearchItems: React.FC<HotSearchItemsProps> = ({
+  items,
+  onSelect,
+}) => {
   return (
-    <View className='hot-search-items'>
-      {items.map(item => (
+    <View className="hot-search-items">
+      {items.map((item) => (
         <CityTag key={item} text={item} onClick={() => onSelect(item)} />
       ))}
     </View>
-  );
-};
+  )
+}

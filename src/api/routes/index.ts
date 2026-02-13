@@ -1,9 +1,9 @@
-import * as express from 'express';
-import hotelRoutes from './hotel.routes';
+import * as express from 'express'
+import hotelRoutes from './hotel.routes'
 
-const router = express.Router();
+const router = express.Router()
 
 // 酒店相关路由
-router.use('/hotel', hotelRoutes);
+router.use('/hotel', hotelRoutes)
 
-export default router;
+export default router
