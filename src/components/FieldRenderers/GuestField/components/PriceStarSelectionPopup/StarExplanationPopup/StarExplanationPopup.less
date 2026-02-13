@@ -1,0 +1,159 @@
+@import '../../../../../../styles/variables.less';
+
+.star-explanation-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  background-color: #fff;
+  overflow-x: hidden;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .header {
+    display: flex;
+    justify-content: center; // Center title
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #fff;
+    position: relative; // For absolute positioning of back button
+
+    .back-btn {
+      padding: 4px;
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .title {
+      font-size: 17px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .placeholder {
+      display: none; // No longer needed with absolute positioning
+    }
+  }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px; // Increased padding
+
+    .section {
+      margin-bottom: 36px;
+
+      .section-title-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+
+        .icon {
+          font-size: 14px; // Adjusted size
+          margin-right: 8px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+
+          &.star {
+            color: #ffb400;
+          }
+          &.diamond {
+            color: #d4af37;
+          } // Metallic gold-ish for diamond icon
+          &.premium-diamond {
+            color: #d4af37;
+          }
+          &.homestay {
+            color: #ffa500;
+          }
+        }
+
+        .section-title {
+          font-size: 17px;
+          font-weight: 500;
+          color: #333;
+        }
+      }
+
+      .description {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 24px;
+        display: block;
+        text-align: justify;
+      }
+
+      .item {
+        margin-bottom: 24px; // Increased spacing
+
+        .item-header {
+          display: flex;
+          align-items: center;
+          margin-bottom: 6px;
+
+          .item-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            margin-right: 8px;
+          }
+
+          .stars {
+            color: #ffb400;
+            font-size: 12px;
+            letter-spacing: 2px;
+          }
+
+          .diamonds {
+            color: #d4af37;
+            font-size: 12px;
+            letter-spacing: 2px;
+          }
+
+          .circles {
+            color: #ffa500;
+            font-size: 10px; // Circles appear slightly smaller in design
+            letter-spacing: 3px;
+          }
+
+          .tag {
+            font-size: 10px;
+            padding: 0 4px;
+            border-radius: 2px;
+            margin-left: 4px;
+            line-height: 16px;
+            height: 16px;
+            display: inline-flex;
+            align-items: center;
+
+            &.platinum {
+              color: #7b7b9e; // Bluish grey
+              border: 1px solid #c8c8db;
+              background-color: transparent;
+            }
+
+            &.gold {
+              color: #bfa15f; // Gold text
+              border: 1px solid #e6d5a9;
+              background-color: transparent;
+            }
+          }
+        }
+
+        .item-desc {
+          font-size: 12px;
+          color: #999;
+          line-height: 1.5;
+          display: block;
+        }
+      }
+    }
+  }
+}

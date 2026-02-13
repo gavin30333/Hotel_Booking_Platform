@@ -1,7 +1,7 @@
 {
-  "miniprogramRoot": "./dist",
-  "projectname": "Hotel_Booking_Platform_User",
-  "description": "Hotel_Booking_Platform_User",
+  "miniprogramRoot": "./dist/weapp",
+  "projectname": "Hotel_Booking_Platform",
+  "description": "task for ctrip hotel booking system",
   "appid": "touristappid",
   "setting": {
     "urlCheck": true,
