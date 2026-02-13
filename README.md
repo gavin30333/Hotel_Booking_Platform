@@ -23,13 +23,14 @@
 
 ### 2. 高度定制的字段组件 (FieldRenderers)
 针对不同业务需求实现了定制化的表单组件：
-- **GuestField (客人在住)**: 复杂的客源选择器，支持：
-  - 成人/儿童人数及房间数联动。
-  - 儿童年龄选择 (ChildAgeSelectionPopup)。
-  - 价格范围与星级筛选 (PriceStarSelectionPopup)。
+- **CitySelector (城市选择)**: 
+  - **原生级交互**: 实现了一级（搜索框）、二级（Tab）、三级（分组标题）多层吸顶效果。
+  - **平滑索引**: 支持手指滑动检索 (Touch-to-Scroll) 的侧边索引栏。
+  - **多视图**: 集成国内、海外（Sticky 侧边栏布局）、热搜等多种视图。
+  - 详见: [CitySelector 技术文档](.trae/documents/CitySelector_Module_Doc.md)
+- **GuestField (客人在住)**: 复杂的客源选择器，支持成人/儿童/年龄/星级联动。
 - **DateField (日期选择)**: 入住/离店日期及晚数计算。
-- **LocationField (位置选择)**: 目的地/城市选择。
-- **TagField (标签选择)**: 快捷搜索标签。
+- **LocationField (位置选择)**: 目的地/城市选择入口。
 
 ### 3. 配置化驱动
 通过 `SCENE_CONFIGS` (`src/constants/QueryConfig.ts`) 统一管理各场景的表单字段、提示文案和保障标签，易于扩展和维护。
@@ -63,6 +64,7 @@ npm run dev:weapp
 ```
 src/
 ├── components/
+│   ├── CitySelector/    # [核心] 城市选择器模块
 │   ├── FieldRenderers/  # 具体的表单字段组件 (Guest, Date, Location 等)
 │   ├── QueryCard/       # 搜索卡片主容器
 │   └── ...

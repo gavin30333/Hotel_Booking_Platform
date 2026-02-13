@@ -3,6 +3,7 @@ import { View, Text } from '@tarojs/components';
 import { DownOutline, CompassOutline, SearchOutline } from 'antd-mobile-icons';
 import { FieldConfig, LocationData } from '@/types/query.types';
 import { useLocation } from '@/hooks/useLocation';
+import { CitySelector } from '@/components/CitySelector';
 import './LocationField.less';
 
 interface LocationFieldProps {
@@ -19,8 +20,18 @@ export const LocationField: React.FC<LocationFieldProps> = ({ config, value, key
   const [isLocating, setIsLocating] = useState(false);
   const [locationInfo, setLocationInfo] = useState<string | null>(null);
   const [showLocationInfo, setShowLocationInfo] = useState(false);
+  const [citySelectorVisible, setCitySelectorVisible] = useState(false);
   const { location, locateByGPS, loading } = useLocation();
   const locationRef = useRef<LocationData | null>(null);
+
+  const handleCitySelect = (cityName: string) => {
+    onChange({
+      ...value,
+      city: cityName,
+      district: '', // Reset district when city changes
+      // In a real app, we would also fetch the adcode, province, etc. for the new city
+    });
+  };
 
   // 提取具体地址（去掉省份、城市、区、街道等前缀）
   const extractDetailedAddress = (formattedAddress: string, city: string, district?: string, province?: string): string => {
@@ -121,7 +132,7 @@ export const LocationField: React.FC<LocationFieldProps> = ({ config, value, key
                 {value.country || '国家'}
               </Text>
             )}
-            <View className='city-wrapper'>
+            <View className='city-wrapper' onClick={() => setCitySelectorVisible(true)}>
               <Text className='city-text'>
                 {value.city}
               </Text>
@@ -147,6 +158,13 @@ export const LocationField: React.FC<LocationFieldProps> = ({ config, value, key
           )}
         </View>
       </View>
+      
+      <CitySelector
+        visible={citySelectorVisible}
+        onClose={() => setCitySelectorVisible(false)}
+        onSelect={handleCitySelect}
+        currentCity={value.city}
+      />
     </View>
   );
 };

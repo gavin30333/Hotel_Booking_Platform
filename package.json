@@ -53,6 +53,7 @@
     "@tarojs/runtime": "4.1.11",
     "@tarojs/shared": "4.1.11",
     "@tarojs/taro": "4.1.11",
+    "ahooks": "^3.9.6",
     "antd-mobile": "^5.42.3",
     "antd-mobile-icons": "^0.3.0",
     "cors": "^2.8.5",
