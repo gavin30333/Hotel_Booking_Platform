@@ -1,4 +1,5 @@
 import { View, Text, Image } from "@tarojs/components";
+import Taro from "@tarojs/taro";
 import "./HotelCard.less";
 import { Hotel } from "../../services/hotel";
 
@@ -7,8 +8,14 @@ interface HotelCardProps {
 }
 
 export default function HotelCard({ hotel }: HotelCardProps) {
+  const handleCardClick = () => {
+    Taro.navigateTo({
+      url: `/pages/detail/index?id=${hotel.id}`,
+    });
+  };
+
   return (
-    <View className="hotel-card">
+    <View className="hotel-card" onClick={handleCardClick}>
       {/* 酒店图片 */}
       <View className="hotel-image">
         <Image
