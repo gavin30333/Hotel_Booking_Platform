@@ -1,4 +1,8 @@
 import request from "./request";
+import {
+  getHotelDetail as getHotelDetailMock,
+  getHotelList as getHotelListMock,
+} from "@/mock";
 
 // 酒店列表请求参数接口
 export interface HotelListParams {
@@ -30,6 +34,28 @@ export interface Hotel {
   tags: string[];
   facilities: string[];
   description: string;
+  images?: string[];
+  rooms?: Room[];
+  reviews?: Review[];
+}
+
+// 房型接口
+export interface Room {
+  id: string;
+  name: string;
+  size: number;
+  bedType: string;
+  price: number;
+  description: string;
+}
+
+// 评价接口
+export interface Review {
+  id: string;
+  userName: string;
+  date: string;
+  rating: number;
+  content: string;
 }
 
 // 酒店列表响应接口
@@ -42,17 +68,10 @@ export interface HotelListResponse {
 
 // 获取酒店列表
 export const getHotelList = (params: HotelListParams) => {
-  return request<HotelListResponse>({
-    url: "/api/hotel/list",
-    method: "get",
-    params,
-  });
+  return getHotelListMock(params);
 };
 
 // 获取酒店详情
 export const getHotelDetail = (id: string) => {
-  return request<Hotel>({
-    url: `/api/hotel/${id}`,
-    method: "get",
-  });
+  return getHotelDetailMock(id);
 };
