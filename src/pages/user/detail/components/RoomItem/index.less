@@ -1,0 +1,107 @@
+.room-item {
+  display: flex;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f5f5f5;
+  background-color: #fff;
+  
+  &-left {
+    margin-right: 12px;
+    
+    .room-image {
+      width: 100px;
+      height: 100px;
+      border-radius: 8px;
+      background-color: #eee;
+    }
+  }
+
+  &-middle {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 4px 0;
+    margin-right: 8px;
+    overflow: hidden;
+
+    .room-name {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .room-features {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .room-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+
+      .tag {
+        font-size: 10px;
+        color: #0086F6;
+        background-color: #F0F8FF;
+        padding: 2px 4px;
+        border-radius: 2px;
+      }
+    }
+  }
+
+  &-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 4px 0;
+    min-width: 80px;
+
+    .price-container {
+      text-align: right;
+      
+      .original-price {
+        font-size: 12px;
+        color: #999;
+        text-decoration: line-through;
+        margin-bottom: 2px;
+        display: block;
+      }
+
+      .current-price {
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-end;
+        color: #FF6600;
+        
+        .currency {
+          font-size: 12px;
+          margin-right: 2px;
+        }
+        
+        .amount {
+          font-size: 20px;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .book-btn {
+      font-size: 12px;
+      color: #fff;
+      background-color: #0086F6;
+      padding: 6px 12px;
+      border-radius: 14px;
+      text-align: center;
+    }
+  }
+}

@@ -1,0 +1,53 @@
+.detail-header {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  background-color: #f5f5f5;
+
+  :global {
+    .adm-swiper {
+      height: 100%;
+    }
+  }
+
+  .swiper-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .header-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 44px; // Standard nav bar height usually around 44px + status bar
+    padding-top: env(safe-area-inset-top); // Handle safe area
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 16px;
+    padding-right: 16px;
+    z-index: 100;
+    
+    // Linear gradient overlay for visibility
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%);
+    
+    .left-action, .right-actions {
+      display: flex;
+      align-items: center;
+      color: #ffffff;
+      height: 44px; // Ensure touch target
+    }
+
+    .right-actions {
+      gap: 16px;
+    }
+    
+    // Icons
+    svg {
+      display: block;
+    }
+  }
+}

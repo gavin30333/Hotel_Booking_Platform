@@ -1,0 +1,69 @@
+.bottom-bar-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border-top: 1px solid #eee;
+  padding: 8px 16px;
+  padding-bottom: calc(8px + constant(safe-area-inset-bottom));
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+
+  .left-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #333;
+    font-size: 10px;
+    margin-right: 16px;
+
+    .ask-text {
+      margin-top: 2px;
+    }
+  }
+
+  .center-section {
+    flex: 1;
+    display: flex;
+    align-items: baseline;
+
+    .price-symbol {
+      color: #0086F6;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .price-value {
+      color: #0086F6;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 0 2px;
+    }
+
+    .price-suffix {
+      color: #999;
+      font-size: 12px;
+    }
+  }
+
+  .right-section {
+    .booking-button {
+      background-color: #0086F6;
+      border-radius: 4px;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .button-text {
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+      }
+    }
+  }
+}

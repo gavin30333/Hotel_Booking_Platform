@@ -1,0 +1,64 @@
+.review-preview {
+  padding: 12px 16px;
+  background-color: #fff;
+
+  .review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .score-badge {
+      background-color: #0086F6;
+      padding: 2px 6px;
+      border-radius: 4px; // top-right rounded mentioned as rounded generally
+      // Usually score badge is rounded rectangle or specific shape.
+      // User said "rounded", let's assume border-radius 4px for now as user also specified radius 4px later.
+      margin-right: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 20px; // Ensure consistent height
+
+      .score-text {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+      }
+    }
+
+    .rating-text {
+      color: #0086F6;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .review-count {
+      color: #999;
+      font-size: 12px;
+    }
+  }
+
+  .review-snippet {
+    background-color: #F5F7FA;
+    padding: 8px;
+    border-radius: 4px;
+
+    .snippet-text {
+      color: #333;
+      font-size: 12px;
+      line-height: 1.5;
+      // Truncate text if too long? Not specified but good practice.
+      // display: -webkit-box;
+      // -webkit-line-clamp: 2;
+      // -webkit-box-orient: vertical;
+      // overflow: hidden;
+    }
+  }
+}
