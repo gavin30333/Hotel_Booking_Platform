@@ -37,6 +37,7 @@
   ],
   "author": "",
   "dependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
     "@babel/runtime": "^7.24.4",
     "@tarojs/components": "4.1.11",
     "@tarojs/helper": "4.1.11",
@@ -53,14 +54,19 @@
     "@tarojs/runtime": "4.1.11",
     "@tarojs/shared": "4.1.11",
     "@tarojs/taro": "4.1.11",
+    "@types/lodash.debounce": "^4.0.9",
     "ahooks": "^3.9.6",
     "antd-mobile": "^5.42.3",
     "antd-mobile-icons": "^0.3.0",
+    "axios": "^1.13.4",
     "cors": "^2.8.5",
+    "dayjs": "^1.11.19",
     "express": "^4.18.2",
+    "lodash.debounce": "^4.0.8",
     "mockjs": "^1.1.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-window": "^2.2.6",
     "zustand": "^5.0.11"
   },
   "devDependencies": {

@@ -1,0 +1,319 @@
+.core-filter-header {
+  width: 100%;
+  background-color: #fff;
+  position: relative;
+  z-index: 100;
+  overflow: visible;
+
+  // 顶部筛选栏
+  .top-filter-bar {
+    display: flex;
+    align-items: center;
+    padding: 6px 16px;
+    white-space: nowrap;
+
+    .back-button {
+      margin-right: 16px;
+      padding: 4px;
+      cursor: pointer;
+    }
+
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      margin-right: 20px;
+      cursor: pointer;
+      flex: 1;
+      min-width: 100px;
+
+      .filter-label {
+        font-size: 14px;
+        color: #999;
+        margin-bottom: 4px;
+      }
+
+      .filter-value {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 2px;
+      }
+
+      .filter-arrow {
+        font-size: 14px;
+        color: #999;
+      }
+
+      &.compact {
+        flex-direction: row;
+        align-items: center;
+        margin-right: 0;
+        min-width: auto;
+
+        .filter-value {
+          margin-bottom: 0;
+          margin-right: 0;
+          font-size: 18px;
+        }
+
+        .filter-arrow {
+          font-size: 14px;
+        }
+      }
+
+      &:active {
+        opacity: 0.8;
+      }
+    }
+
+    .search-item {
+      flex: 1;
+      min-width: 150px;
+      margin-right: 16px;
+    }
+
+    .map-icon {
+      margin-right: 16px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .more-options {
+      cursor: pointer;
+      padding: 4px;
+    }
+  }
+
+  // 排序栏
+  .sort-bar {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    overflow-x: visible;
+    overflow-y: visible;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    min-height: 40px;
+    position: relative;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .sort-option {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #333;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 10px 14px;
+      border-radius: 3px;
+      background-color: transparent;
+      margin-right: 10px;
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &:active {
+        background-color: #f0f0f0;
+      }
+
+      .arrow {
+        margin-left: 6px;
+        font-size: 16px;
+        color: #666;
+        min-width: 16px;
+        text-align: center;
+      }
+    }
+  }
+
+  // 错误提示
+  .error-messages {
+    margin: 0 16px 12px;
+    padding: 12px;
+    background-color: #fff2f0;
+    border: 1px solid #ffccc7;
+    border-radius: 4px;
+
+    .error-message {
+      color: #ff4d4f;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 4px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+// 响应式设计
+@media screen and (max-width: 480px) {
+  .core-filter-header {
+    .top-filter-bar {
+      padding: 12px 14px;
+
+      .filter-item {
+        min-width: 100px;
+
+        .filter-label {
+          font-size: 16px;
+        }
+
+        .filter-value {
+          font-size: 22px;
+        }
+
+        &.compact {
+          .filter-value {
+            font-size: 20px;
+          }
+
+          .filter-arrow {
+            font-size: 16px;
+          }
+        }
+      }
+
+      .search-item {
+        min-width: 180px;
+      }
+    }
+
+    .sort-bar {
+      .sort-option {
+        font-size: 22px;
+        padding: 10px 12px;
+
+        .arrow {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .core-filter-header {
+    .top-filter-bar {
+      padding: 10px 16px;
+
+      .filter-item {
+        margin-right: 20px;
+        min-width: 90px;
+      }
+
+      .search-item {
+        min-width: 200px;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .core-filter-header {
+    max-width: 1200px;
+    margin: 0 auto;
+
+    .top-filter-bar {
+      padding: 12px 24px;
+
+      .filter-item {
+        margin-right: 30px;
+        min-width: 100px;
+
+        .filter-value {
+          font-size: 14px;
+        }
+
+        &.compact {
+          .filter-value {
+            font-size: 12px;
+          }
+
+          .filter-arrow {
+            font-size: 10px;
+          }
+        }
+      }
+
+      .search-item {
+        min-width: 250px;
+      }
+    }
+
+    .sort-bar {
+      .sort-options {
+        .sort-option {
+          font-size: 13px;
+          padding: 8px 16px;
+        }
+      }
+    }
+  }
+}
+
+// 动画效果
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+    max-height: 500px;
+    overflow: visible;
+  }
+}
+
+.core-filter-header {
+  // 选择器动画
+  .am-picker {
+    animation: fadeIn 0.3s ease;
+  }
+
+  .am-action-sheet {
+    animation: slideUp 0.3s ease;
+  }
+
+  // 按钮点击动画
+  .filter-item {
+    transition: all 0.3s ease;
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}
