@@ -20,7 +20,7 @@ export default function Search() {
 
   const handleBannerClick = (id: number) => {
     Taro.navigateTo({
-      url: `/pages/user/detail/index?id=${id}`,
+      url: `/hotel?id=${id}`,
     })
   }
   const tabs = [

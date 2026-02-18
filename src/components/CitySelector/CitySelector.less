@@ -1,6 +1,8 @@
+@import '../../styles/variables.less';
+
 .city-selector-popup {
   .adm-popup-body {
-    background-color: #fff;
+    background-color: @bg-color;
     display: flex;
     flex-direction: column;
   }
@@ -15,13 +17,13 @@
 
   .city-selector-header {
     flex-shrink: 0;
-    background: #fff;
+    background: @bg-color;
     z-index: 10;
   }
 
   .header-divider {
     height: 8px;
-    background-color: #f5f5f5;
+    background-color: @page-bg;
   }
 
   .city-tabs {
@@ -34,16 +36,16 @@
       top: 0;
       z-index: 1000;
       flex-shrink: 0;
-      background: #fff;
-      border-bottom: 1px solid #eee;
+      background: @bg-color;
+      border-bottom: 1px solid @border-color;
 
       .adm-tabs-tab {
-        font-size: 15px;
-        color: #333;
+        font-size: @font-size-base;
+        color: @text-color;
 
         &-active {
           font-weight: bold;
-          font-size: 16px;
+          font-size: @font-size-md;
         }
       }
     }
@@ -54,6 +56,38 @@
 
     .adm-tabs-tab-pane {
       min-height: 100%;
+    }
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .city-selector-body {
+    .city-tabs {
+      .adm-tabs-header {
+        .adm-tabs-tab {
+          font-size: @font-size-sm;
+
+          &-active {
+            font-size: @font-size-base;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .city-selector-body {
+    .city-tabs {
+      .adm-tabs-header {
+        .adm-tabs-tab {
+          font-size: @font-size-xs;
+
+          &-active {
+            font-size: @font-size-sm;
+          }
+        }
+      }
     }
   }
 }

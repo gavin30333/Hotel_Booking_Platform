@@ -1,5 +1,5 @@
-import { useEffect, useCallback, useState } from 'react'
-import { getHotelList, HotelListParams } from '../services/hotel'
+import { useCallback, useState } from 'react'
+import { HotelListParams, Hotel } from '../services/hotel'
 import { useHotelStore } from '../store/hotelStore'
 
 export const useHotelList = () => {
@@ -17,7 +17,7 @@ export const useHotelList = () => {
     setPage,
     setLoading,
     setHasMore,
-    resetHotelList
+    resetHotelList,
   } = useHotelStore()
 
   const [error, setError] = useState<string | null>(null)
@@ -36,96 +36,110 @@ export const useHotelList = () => {
       facilities: filters.facilities,
       sortBy: filters.sortBy,
       stayDuration: filters.stayDuration,
-      brand: filters.brand
+      brand: filters.brand,
     }
   }, [filters, page, pageSize])
 
   // 加载酒店列表
-  const loadHotels = useCallback(async (isRefresh = false) => {
-    if (loading || (!hasMore && !isRefresh)) return
+  const loadHotels = useCallback(
+    async (isRefresh = false) => {
+      if (loading || (!hasMore && !isRefresh)) return
 
-    setLoading(true)
-    setError(null)
+      setLoading(true)
+      setError(null)
 
-    try {
-      const params = buildParams()
-      // 暂时注释掉API请求，避免无限循环
-      // const response = await getHotelList(params)
+      try {
+        const params = buildParams()
+        // 暂时注释掉API请求，避免无限循环
+        // const response = await getHotelList(params)
 
-      // 模拟API响应，生成一些随机酒店数据
-      const generateMockHotels = (count: number, page: number) => {
-        const hotels = []
-        for (let i = 0; i < count; i++) {
-          const id = ((page - 1) * 10 + i + 1).toString()
-          hotels.push({
-            id,
-            name: `酒店${id}`,
-            address: `地址${id}`,
-            city: "北京",
-            latitude: 39.9 + Math.random() * 0.1,
-            longitude: 116.4 + Math.random() * 0.1,
-            starRating: Math.floor(Math.random() * 5) + 1,
-            rating: (4 + Math.random() * 1).toFixed(1),
-            reviewCount: Math.floor(Math.random() * 1000) + 100,
-            minPrice: Math.floor(Math.random() * 1000) + 500,
-            imageUrl: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20hotel%20exterior&image_size=square_hd",
-            tags: ["标签1", "标签2"],
-            facilities: ["游泳池", "健身房"],
-            description: `酒店${id}的描述`
+        const generateMockHotels = (
+          count: number,
+          pageNum: number
+        ): Hotel[] => {
+          const hotels: Hotel[] = []
+          for (let i = 0; i < count; i++) {
+            const id = ((pageNum - 1) * 10 + i + 1).toString()
+            hotels.push({
+              id,
+              name: `酒店${id}`,
+              address: `地址${id}`,
+              city: '北京',
+              latitude: 39.9 + Math.random() * 0.1,
+              longitude: 116.4 + Math.random() * 0.1,
+              starRating: Math.floor(Math.random() * 5) + 1,
+              rating: parseFloat((4 + Math.random() * 1).toFixed(1)),
+              reviewCount: Math.floor(Math.random() * 1000) + 100,
+              minPrice: Math.floor(Math.random() * 1000) + 500,
+              imageUrl:
+                'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20hotel%20exterior&image_size=square_hd',
+              tags: ['标签1', '标签2'],
+              facilities: ['游泳池', '健身房'],
+              description: `酒店${id}的描述`,
+            })
+          }
+          return hotels
+        }
+
+        let hotels = generateMockHotels(10, params.page)
+
+        const sortHotels = (hotelList: Hotel[], sortBy: string): Hotel[] => {
+          return [...hotelList].sort((a, b) => {
+            switch (sortBy) {
+              case 'price_asc':
+                return a.minPrice - b.minPrice
+              case 'price_desc':
+                return b.minPrice - a.minPrice
+              case 'rating_desc':
+                return b.rating - a.rating
+              case 'distance_asc':
+                return a.latitude + a.longitude - (b.latitude + b.longitude)
+              default:
+                return 0
+            }
           })
         }
-        return hotels
+
+        hotels = sortHotels(hotels, params.sortBy || 'price_asc')
+
+        // 模拟API响应
+        const response = {
+          list: hotels,
+          total: 50,
+          page: params.page,
+          pageSize: params.pageSize,
+        }
+
+        if (isRefresh) {
+          setHotelList(response.list)
+        } else {
+          addHotelList(response.list)
+        }
+
+        setTotal(response.total)
+        setHasMore(hotelList.length + response.list.length < response.total)
+        setPage(page + 1)
+      } catch (err) {
+        setError('加载酒店列表失败，请稍后重试')
+        console.error('Failed to load hotels:', err)
+      } finally {
+        setLoading(false)
       }
-
-      // 生成模拟酒店数据
-      let hotels = generateMockHotels(10, params.page)
-
-      // 根据排序方式对酒店数据进行排序
-      const sortHotels = (hotels: any[], sortBy: string) => {
-        return [...hotels].sort((a, b) => {
-          switch (sortBy) {
-            case 'price_asc':
-              return a.minPrice - b.minPrice
-            case 'price_desc':
-              return b.minPrice - a.minPrice
-            case 'rating_desc':
-              return parseFloat(b.rating) - parseFloat(a.rating)
-            case 'distance_asc':
-              // 这里使用模拟的距离计算
-              return (a.latitude + a.longitude) - (b.latitude + b.longitude)
-            default:
-              return 0
-          }
-        })
-      }
-
-      // 应用排序
-      hotels = sortHotels(hotels, params.sortBy)
-
-      // 模拟API响应
-      const response = {
-        list: hotels,
-        total: 50,
-        page: params.page,
-        pageSize: params.pageSize
-      }
-
-      if (isRefresh) {
-        setHotelList(response.list)
-      } else {
-        addHotelList(response.list)
-      }
-
-      setTotal(response.total)
-      setHasMore(hotelList.length + response.list.length < response.total)
-      setPage(page + 1)
-    } catch (err) {
-      setError('加载酒店列表失败，请稍后重试')
-      console.error('Failed to load hotels:', err)
-    } finally {
-      setLoading(false)
-    }
-  }, [loading, hasMore, page, buildParams, hotelList.length, setHotelList, addHotelList, setTotal, setHasMore, setPage, setLoading])
+    },
+    [
+      loading,
+      hasMore,
+      page,
+      buildParams,
+      hotelList.length,
+      setHotelList,
+      addHotelList,
+      setTotal,
+      setHasMore,
+      setPage,
+      setLoading,
+    ]
+  )
 
   // 刷新酒店列表
   const refreshHotels = useCallback(() => {
@@ -147,6 +161,6 @@ export const useHotelList = () => {
     hasMore,
     error,
     refreshHotels,
-    loadMore
+    loadMore,
   }
 }

@@ -1,49 +1,55 @@
-import { create } from "zustand";
-import { Hotel, HotelListParams } from "../services/hotel";
+import { create } from 'zustand'
+import { Hotel } from '../services/hotel'
+
+type SortBy = 'price_asc' | 'price_desc' | 'rating_desc' | 'distance_asc'
 
 interface HotelState {
-  // 筛选条件
   filters: {
-    city: string;
-    checkInDate: string;
-    checkOutDate: string;
-    minPrice: number;
-    maxPrice: number;
-    starRating: number[];
-    facilities: string[];
-    sortBy: "price_asc" | "price_desc" | "rating_desc" | "distance_asc";
-  };
+    city: string
+    checkInDate: string
+    checkOutDate: string
+    minPrice: number
+    maxPrice: number
+    starRating: number[]
+    facilities: string[]
+    sortBy: SortBy
+    stayDuration?: string
+    brand?: string
+    minRating?: number
+    roomType?: string
+    smokeFree?: boolean
+  }
 
   // 酒店列表数据
-  hotelList: Hotel[];
-  total: number;
-  page: number;
-  pageSize: number;
-  loading: boolean;
-  hasMore: boolean;
+  hotelList: Hotel[]
+  total: number
+  page: number
+  pageSize: number
+  loading: boolean
+  hasMore: boolean
 
   // 操作方法
-  setFilters: (filters: Partial<HotelState["filters"]>) => void;
-  resetFilters: () => void;
-  setHotelList: (list: Hotel[]) => void;
-  addHotelList: (list: Hotel[]) => void;
-  setTotal: (total: number) => void;
-  setPage: (page: number) => void;
-  setLoading: (loading: boolean) => void;
-  setHasMore: (hasMore: boolean) => void;
-  resetHotelList: () => void;
+  setFilters: (filters: Partial<HotelState['filters']>) => void
+  resetFilters: () => void
+  setHotelList: (list: Hotel[]) => void
+  addHotelList: (list: Hotel[]) => void
+  setTotal: (total: number) => void
+  setPage: (page: number) => void
+  setLoading: (loading: boolean) => void
+  setHasMore: (hasMore: boolean) => void
+  resetHotelList: () => void
 }
 
-const defaultFilters = {
-  city: "",
-  checkInDate: "",
-  checkOutDate: "",
+const defaultFilters: HotelState['filters'] = {
+  city: '',
+  checkInDate: '',
+  checkOutDate: '',
   minPrice: 0,
   maxPrice: 10000,
   starRating: [],
   facilities: [],
-  sortBy: "price_asc",
-};
+  sortBy: 'price_asc',
+}
 
 export const useHotelStore = create<HotelState>((set) => ({
   // 初始状态
@@ -66,11 +72,11 @@ export const useHotelStore = create<HotelState>((set) => ({
           total: 0,
           page: 1,
           hasMore: true,
-        };
+        }
       }
       return {
         filters: { ...state.filters, ...filters },
-      };
+      }
     }),
 
   resetFilters: () => set({ filters: defaultFilters }),
@@ -97,4 +103,4 @@ export const useHotelStore = create<HotelState>((set) => ({
       page: 1,
       hasMore: true,
     }),
-}));
+}))

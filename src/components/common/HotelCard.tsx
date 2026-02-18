@@ -1,18 +1,18 @@
-import { View, Text, Image } from "@tarojs/components";
-import Taro from "@tarojs/taro";
-import "./HotelCard.less";
-import { Hotel } from "../../services/hotel";
+import { View, Text, Image } from '@tarojs/components'
+import Taro from '@tarojs/taro'
+import './HotelCard.less'
+import { Hotel } from '../../services/hotel'
 
 interface HotelCardProps {
-  hotel: Hotel;
+  hotel: Hotel
 }
 
 export default function HotelCard({ hotel }: HotelCardProps) {
   const handleCardClick = () => {
     Taro.navigateTo({
-      url: `/pages/detail/index?id=${hotel.id}`,
-    });
-  };
+      url: `/detail?id=${hotel.id}`,
+    })
+  }
 
   return (
     <View className="hotel-card" onClick={handleCardClick}>
@@ -21,7 +21,7 @@ export default function HotelCard({ hotel }: HotelCardProps) {
         <Image
           src={hotel.imageUrl}
           mode="aspectFill"
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: '100%', height: '100%' }}
         />
       </View>
 
@@ -42,7 +42,7 @@ export default function HotelCard({ hotel }: HotelCardProps) {
 
         {/* 位置信息 */}
         <Text className="hotel-location">
-          近{hotel.address.split("市")[1]?.split("区")[1] || hotel.address}
+          近{hotel.address.split('市')[1]?.split('区')[1] || hotel.address}
         </Text>
 
         {/* 酒店特色 */}
@@ -67,5 +67,5 @@ export default function HotelCard({ hotel }: HotelCardProps) {
         </View>
       </View>
     </View>
-  );
+  )
 }

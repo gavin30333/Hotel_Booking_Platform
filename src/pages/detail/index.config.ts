@@ -1,3 +1,3 @@
 export default {
-  navigationBarTitleText: "酒店详情",
-};
+  navigationBarTitleText: '酒店详情',
+}

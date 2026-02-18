@@ -20,7 +20,11 @@ export default defineConfig<'vite'>(async (merge) => {
     },
     sourceRoot: 'src',
     outputRoot: `dist/${process.env.TARO_ENV}`,
-    plugins: ['@tarojs/plugin-generator'],
+    plugins: [
+      '@tarojs/plugin-generator',
+      '@tarojs/plugin-platform-h5',
+      '@tarojs/plugin-framework-react',
+    ],
     defineConstants: {},
     copy: {
       patterns: [],
@@ -66,14 +70,20 @@ export default defineConfig<'vite'>(async (merge) => {
       },
       devServer: {
         open: true,
-        historyApiFallback: true,
       },
       router: {
         mode: 'browser',
+        customRoutes: {
+          '/pages/user/search/index': '/search',
+          '/pages/user/list/index': '/list',
+          '/pages/detail/index': '/detail',
+          '/pages/user/detail/index': '/hotel',
+          '/pages/user/map/index': '/map',
+        },
       },
     },
     rn: {
-      appName: "taroDemo",
+      appName: 'taroDemo',
       postcss: {
         cssModules: {
           enable: false,
@@ -83,7 +93,7 @@ export default defineConfig<'vite'>(async (merge) => {
   }
 
   if (process.env.NODE_ENV === 'development') {
-    return merge({}, baseConfig, devConfig);
+    return merge({}, baseConfig, devConfig)
   }
-  return merge({}, baseConfig, prodConfig);
-});
+  return merge({}, baseConfig, prodConfig)
+})

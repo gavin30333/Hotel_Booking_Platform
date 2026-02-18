@@ -1,14 +1,14 @@
-import { View, Text, Button } from "@tarojs/components";
-import { useState } from "react";
-import MapContainer from "../../../components/map/MapContainer";
-import "./index.less";
+import { View, Text, Button } from '@tarojs/components'
+import { useState } from 'react'
+import MapContainer from '../../../components/map/MapContainer'
+import './index.less'
 
 export default function MapPage() {
   const [selectedLocation, setSelectedLocation] = useState<{
-    lng: number;
-    lat: number;
-    address: string;
-  } | null>(null);
+    lng: number
+    lat: number
+    address: string
+  } | null>(null)
 
   // 处理地图点击事件
   const handleMapClick = (lng: number, lat: number, address: string) => {
@@ -16,13 +16,13 @@ export default function MapPage() {
       lng,
       lat,
       address,
-    });
-  };
+    })
+  }
 
   // 清除选中位置
   const clearSelectedLocation = () => {
-    setSelectedLocation(null);
-  };
+    setSelectedLocation(null)
+  }
 
   return (
     <View className="map-page">
@@ -45,7 +45,7 @@ export default function MapPage() {
           <View className="info-content">
             <Text className="address">{selectedLocation.address}</Text>
             <Text className="coordinates">
-              经纬度: {selectedLocation.lng.toFixed(6)},{" "}
+              经纬度: {selectedLocation.lng.toFixed(6)},{' '}
               {selectedLocation.lat.toFixed(6)}
             </Text>
           </View>
@@ -53,5 +53,5 @@ export default function MapPage() {
         </View>
       )}
     </View>
-  );
+  )
 }
