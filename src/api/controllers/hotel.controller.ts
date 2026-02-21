@@ -36,12 +36,10 @@ export const hotelController = {
 
   async getDetail(req: Request, res: Response) {
     try {
-      const { hotelId } = req.params
+      const { hotelId } = req.query
 
       if (!hotelId) {
-        return res
-          .status(400)
-          .json({ code: 400, msg: 'Missing hotelId parameter' })
+        return res.status(400).json({ code: 400, msg: 'hotelId 不能为空' })
       }
 
       const hotelDetail = await hotelService.getHotelDetail(
@@ -50,7 +48,7 @@ export const hotelController = {
       res.status(200).json({ code: 200, msg: '查询成功', data: hotelDetail })
     } catch (error) {
       if (error.message === 'Hotel not found') {
-        return res.status(404).json({ code: 404, msg: 'Hotel not found' })
+        return res.status(404).json({ code: 404, msg: '酒店不存在' })
       }
       res.status(500).json({ code: 500, msg: 'Internal server error' })
     }
@@ -58,7 +56,7 @@ export const hotelController = {
 
   async getRoomTypes(req: Request, res: Response) {
     try {
-      const { hotelId } = req.params
+      const { hotelId, checkInDate, checkOutDate } = req.query
 
       if (!hotelId) {
         return res
@@ -67,7 +65,9 @@ export const hotelController = {
       }
 
       const roomTypes = await hotelService.getRoomTypes(
-        Array.isArray(hotelId) ? hotelId[0] : hotelId
+        Array.isArray(hotelId) ? hotelId[0] : hotelId,
+        Array.isArray(checkInDate) ? checkInDate[0] : checkInDate,
+        Array.isArray(checkOutDate) ? checkOutDate[0] : checkOutDate
       )
       res.status(200).json({ code: 200, msg: '查询成功', data: roomTypes })
     } catch (error) {
@@ -77,9 +77,16 @@ export const hotelController = {
 
   async validatePrice(req: Request, res: Response) {
     try {
-      const { hotelId, roomTypeId, checkInDate, checkOutDate } = req.body
+      const { hotelId, roomTypeId, checkInDate, checkOutDate, expectedPrice } =
+        req.body
 
-      if (!hotelId || !roomTypeId || !checkInDate || !checkOutDate) {
+      if (
+        !hotelId ||
+        !roomTypeId ||
+        !checkInDate ||
+        !checkOutDate ||
+        expectedPrice === undefined
+      ) {
         return res
           .status(400)
           .json({ code: 400, msg: 'Missing required parameters' })
@@ -89,10 +96,15 @@ export const hotelController = {
         hotelId,
         roomTypeId,
         checkInDate,
-        checkOutDate
+        checkOutDate,
+        expectedPrice
       )
 
-      res.status(200).json({ code: 200, msg: '价格校验成功', data: priceInfo })
+      if (priceInfo.isValid) {
+        res.status(200).json({ code: 200, msg: '价格有效', data: priceInfo })
+      } else {
+        res.status(400).json({ code: 400, msg: '价格已变动', data: priceInfo })
+      }
     } catch (error) {
       if (error.message === 'Room type not found') {
         return res.status(404).json({ code: 404, msg: 'Room type not found' })

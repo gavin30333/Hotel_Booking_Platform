@@ -77,3 +77,16 @@ export const getHotelList = (params: HotelListParams) => {
 export const getHotelDetail = (id: string) => {
   return getHotelDetailMock(id)
 }
+
+// 获取酒店房型列表
+export const getRoomTypes = (hotelId: string, checkInDate: string, checkOutDate: string) => {
+  // 这里应该调用真实的API接口
+  // 暂时返回mock数据
+  return Promise.resolve({
+    code: 200,
+    data: {
+      hotelId,
+      roomTypeList: []
+    }
+  })
+}
