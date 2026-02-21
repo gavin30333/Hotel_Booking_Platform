@@ -11,7 +11,7 @@ const getMinPrice = (roomTypes: any[]): number => {
   return Math.min(...roomTypes.map((r) => r.price))
 }
 
-const formatHotelList = (hotel: any) => {
+const formatHotelList = (hotel: any, distance?: number) => {
   const city = extractCity(hotel.address)
   const minPrice = getMinPrice(hotel.roomTypes)
 
@@ -33,6 +33,7 @@ const formatHotelList = (hotel: any) => {
     viewCount: hotel.viewCount || 0,
     orderCount: hotel.orderCount || 0,
     phone: hotel.phone,
+    distance: distance !== undefined ? Math.round(distance) : undefined,
   }
 }
 
@@ -109,6 +110,9 @@ export const publicController = {
         sortOrder = 'desc',
         page = 1,
         pageSize = 20,
+        minRating,
+        brand,
+        roomType,
       } = req.query
 
       const query: any = { status: 'online' }
@@ -130,22 +134,30 @@ export const publicController = {
         query.starRating = { $in: stars }
       }
 
+      if (minRating) {
+        query.rating = { $gte: Number(minRating) }
+      }
+
+      if (brand) {
+        query.name = { $regex: new RegExp(brand as string, 'i') }
+      }
+
       if (facilities) {
         const facilityList = (facilities as string).split(',')
         query.facilities = { $all: facilityList }
       }
 
-      const sortOptions: any = {}
-      sortOptions[sortBy as string] = sortOrder === 'asc' ? 1 : -1
+      const pageNum = Number(page)
+      const pageSizeNum = Number(pageSize)
 
       const total = await HotelModel.countDocuments(query)
-      const hotels = await HotelModel.find(query)
-        .sort(sortOptions)
-        .skip((Number(page) - 1) * Number(pageSize))
-        .limit(Number(pageSize))
+      let hotels = await HotelModel.find(query)
+        .sort({ viewCount: -1 })
+        .skip((pageNum - 1) * pageSizeNum)
+        .limit(pageSizeNum)
         .lean()
 
-      let hotelsData = hotels.map(formatHotelList)
+      let hotelsData = hotels.map((hotel) => formatHotelList(hotel))
 
       if (minPrice || maxPrice) {
         const min = minPrice ? Number(minPrice) : 0
@@ -155,12 +167,54 @@ export const publicController = {
         )
       }
 
+      if (roomType) {
+        const roomTypeKeywords: Record<string, string[]> = {
+          大床房: ['大床', '特大床', 'king', 'King'],
+          双床房: ['双床', '单人床', 'twin', 'Twin'],
+          套房: ['套房', 'suite', 'Suite'],
+          亲子房: ['亲子', '家庭', 'family', 'Family'],
+          家庭房: ['家庭', '亲子', 'family', 'Family'],
+        }
+        const keywords = roomTypeKeywords[roomType as string] || [roomType]
+        hotelsData = hotelsData.filter((hotel) => {
+          const originalHotel = hotels.find(
+            (h) => h._id.toString() === hotel.id
+          )
+          const roomTypes = originalHotel?.roomTypes as any[]
+          return roomTypes?.some((room) =>
+            keywords.some(
+              (keyword) =>
+                room.name?.toLowerCase().includes(keyword.toLowerCase()) ||
+                room.bedType?.toLowerCase().includes(keyword.toLowerCase())
+            )
+          )
+        })
+      }
+
+      if (sortBy === 'minPrice') {
+        hotelsData.sort((a, b) => {
+          return sortOrder === 'asc'
+            ? a.minPrice - b.minPrice
+            : b.minPrice - a.minPrice
+        })
+      } else if (sortBy === 'rating') {
+        hotelsData.sort((a, b) => {
+          return sortOrder === 'asc' ? a.rating - b.rating : b.rating - a.rating
+        })
+      } else if (sortBy === 'viewCount') {
+        hotelsData.sort((a, b) => {
+          return sortOrder === 'asc'
+            ? (a.viewCount || 0) - (b.viewCount || 0)
+            : (b.viewCount || 0) - (a.viewCount || 0)
+        })
+      }
+
       return res.json({
         success: true,
         data: hotelsData,
         total,
-        page: Number(page),
-        pageSize: Number(pageSize),
+        page: pageNum,
+        pageSize: pageSizeNum,
       })
     } catch (error) {
       console.error('获取酒店列表错误:', error)

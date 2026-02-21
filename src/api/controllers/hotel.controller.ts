@@ -36,21 +36,20 @@ export const hotelController = {
 
   async getDetail(req: Request, res: Response) {
     try {
-      const { hotelId } = req.params
+      const { hotelId } = req.query
 
       if (!hotelId) {
-        return res
-          .status(400)
-          .json({ code: 400, msg: 'Missing hotelId parameter' })
+        return res.status(400).json({ code: 400, msg: 'hotelId 不能为空' })
       }
 
-      const hotelDetail = await hotelService.getHotelDetail(
-        Array.isArray(hotelId) ? hotelId[0] : hotelId
-      )
+      const hotelIdStr: string = Array.isArray(hotelId)
+        ? String(hotelId[0])
+        : String(hotelId)
+      const hotelDetail = await hotelService.getHotelDetail(hotelIdStr)
       res.status(200).json({ code: 200, msg: '查询成功', data: hotelDetail })
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === 'Hotel not found') {
-        return res.status(404).json({ code: 404, msg: 'Hotel not found' })
+        return res.status(404).json({ code: 404, msg: '酒店不存在' })
       }
       res.status(500).json({ code: 500, msg: 'Internal server error' })
     }
@@ -58,7 +57,7 @@ export const hotelController = {
 
   async getRoomTypes(req: Request, res: Response) {
     try {
-      const { hotelId } = req.params
+      const { hotelId } = req.query
 
       if (!hotelId) {
         return res
@@ -66,9 +65,10 @@ export const hotelController = {
           .json({ code: 400, msg: 'Missing hotelId parameter' })
       }
 
-      const roomTypes = await hotelService.getRoomTypes(
-        Array.isArray(hotelId) ? hotelId[0] : hotelId
-      )
+      const hotelIdStr: string = Array.isArray(hotelId)
+        ? String(hotelId[0])
+        : String(hotelId)
+      const roomTypes = await hotelService.getRoomTypes(hotelIdStr)
       res.status(200).json({ code: 200, msg: '查询成功', data: roomTypes })
     } catch (error) {
       res.status(500).json({ code: 500, msg: 'Internal server error' })
@@ -77,9 +77,16 @@ export const hotelController = {
 
   async validatePrice(req: Request, res: Response) {
     try {
-      const { hotelId, roomTypeId, checkInDate, checkOutDate } = req.body
+      const { hotelId, roomTypeId, checkInDate, checkOutDate, expectedPrice } =
+        req.body
 
-      if (!hotelId || !roomTypeId || !checkInDate || !checkOutDate) {
+      if (
+        !hotelId ||
+        !roomTypeId ||
+        !checkInDate ||
+        !checkOutDate ||
+        expectedPrice === undefined
+      ) {
         return res
           .status(400)
           .json({ code: 400, msg: 'Missing required parameters' })
@@ -89,11 +96,12 @@ export const hotelController = {
         hotelId,
         roomTypeId,
         checkInDate,
-        checkOutDate
+        checkOutDate,
+        expectedPrice
       )
 
-      res.status(200).json({ code: 200, msg: '价格校验成功', data: priceInfo })
-    } catch (error) {
+      res.status(200).json({ code: 200, msg: '价格验证完成', data: priceInfo })
+    } catch (error: any) {
       if (error.message === 'Room type not found') {
         return res.status(404).json({ code: 404, msg: 'Room type not found' })
       }

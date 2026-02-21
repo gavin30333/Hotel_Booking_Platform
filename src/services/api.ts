@@ -54,6 +54,7 @@ export type SortBy =
   | 'price_desc'
   | 'rating_desc'
   | 'viewCount_desc'
+  | 'distance_asc'
 
 export interface HotelListParams {
   page: number
@@ -66,6 +67,13 @@ export interface HotelListParams {
   facilities?: string[]
   sortBy?: string
   sortOrder?: 'asc' | 'desc'
+  minRating?: number
+  brand?: string
+  roomType?: string
+  locationLat?: number
+  locationLng?: number
+  locationName?: string
+  maxDistance?: number
 }
 
 export interface Hotel {
@@ -86,6 +94,7 @@ export interface Hotel {
   phone?: string
   viewCount?: number
   orderCount?: number
+  distance?: number
 }
 
 export interface RoomType {
@@ -154,14 +163,28 @@ export const hotelApi = {
     queryParams.append('pageSize', String(params.pageSize))
     if (params.city) queryParams.append('city', params.city)
     if (params.keyword) queryParams.append('keyword', params.keyword)
-    if (params.minPrice) queryParams.append('minPrice', String(params.minPrice))
-    if (params.maxPrice) queryParams.append('maxPrice', String(params.maxPrice))
+    if (params.minPrice !== undefined)
+      queryParams.append('minPrice', String(params.minPrice))
+    if (params.maxPrice !== undefined)
+      queryParams.append('maxPrice', String(params.maxPrice))
     if (params.starRating?.length)
       queryParams.append('starRating', params.starRating.join(','))
     if (params.facilities?.length)
       queryParams.append('facilities', params.facilities.join(','))
     if (params.sortBy) queryParams.append('sortBy', params.sortBy)
     if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder)
+    if (params.minRating !== undefined)
+      queryParams.append('minRating', String(params.minRating))
+    if (params.brand) queryParams.append('brand', params.brand)
+    if (params.roomType) queryParams.append('roomType', params.roomType)
+    if (params.locationLat !== undefined)
+      queryParams.append('locationLat', String(params.locationLat))
+    if (params.locationLng !== undefined)
+      queryParams.append('locationLng', String(params.locationLng))
+    if (params.locationName)
+      queryParams.append('locationName', params.locationName)
+    if (params.maxDistance !== undefined)
+      queryParams.append('maxDistance', String(params.maxDistance))
 
     return apiClient.get<any, HotelListResponse>(
       `/public/hotels?${queryParams.toString()}`

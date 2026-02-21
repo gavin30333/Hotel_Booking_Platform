@@ -1,0 +1,833 @@
+.hotel-detail-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f5f5f5;
+  /* 顶部导航栏 */
+  /* 详情内容 */
+  /* 加载和错误容器 */
+}
+.hotel-detail-page .top-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background-color: transparent;
+  color: #fff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+.hotel-detail-page .top-nav-bar .nav-left .back-btn {
+  font-size: 20px;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hotel-detail-page .top-nav-bar .nav-right {
+  display: flex;
+  align-items: center;
+}
+.hotel-detail-page .top-nav-bar .nav-right .nav-icon {
+  font-size: 20px;
+  margin-left: 12px;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hotel-detail-page .detail-content {
+  width: 100%;
+  overflow-y: auto;
+  position: relative;
+  /* 图片轮播 */
+  /* 酒店头部信息 */
+  /* 服务标签容器 */
+  /* 评价和地图容器 */
+  /* 优惠信息 */
+  /* 日期价格部分 */
+  /* 筛选下拉框 */
+  /* 筛选遮罩层 */
+  /* 房型部分 */
+}
+.hotel-detail-page .detail-content .image-carousel {
+  height: 300px;
+  width: 100%;
+  position: relative;
+  /* 胶囊状标签 */
+}
+.hotel-detail-page .detail-content .image-carousel .swiper {
+  height: 100%;
+}
+.hotel-detail-page .detail-content .image-carousel .swiper .image-container {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.hotel-detail-page .detail-content .image-carousel .swiper .carousel-image {
+  width: 100%;
+  height: 100%;
+}
+.hotel-detail-page .detail-content .image-carousel .carousel-tabs {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  gap: 6px;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 8px 16px;
+  border-radius: 24px;
+  z-index: 10;
+}
+.hotel-detail-page .detail-content .image-carousel .carousel-tabs .tab-item {
+  font-size: 20px;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.hotel-detail-page .detail-content .image-carousel .carousel-tabs .tab-item.active {
+  background-color: #fff;
+  color: #333;
+}
+.hotel-detail-page .detail-content .hotel-header-info {
+  background-color: #fff;
+  padding: 16px;
+  margin-bottom: 8px;
+}
+.hotel-detail-page .detail-content .hotel-header-info .hotel-name {
+  font-size: 30px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 14px;
+  line-height: 1.3;
+}
+.hotel-detail-page .detail-content .hotel-header-info .hotel-badge {
+  font-size: 20px;
+  color: #fff;
+  margin-right: 14px;
+  background: #ff910a;
+  padding: 2px 14px;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  white-space: nowrap;
+  display: inline-block;
+}
+.hotel-detail-page .detail-content .hotel-header-info .hotel-ranking {
+  font-size: 20px;
+  color: #fff;
+  margin-top: 4px;
+  background: #ff910a;
+  padding: 2px 14px;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  white-space: nowrap;
+  display: inline-block;
+}
+.hotel-detail-page .detail-content .hotel-header-info .hotel-rating {
+  margin-top: 14px;
+}
+.hotel-detail-page .detail-content .hotel-header-info .hotel-rating .rating {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1890ff;
+  margin-right: 14px;
+}
+.hotel-detail-page .detail-content .hotel-header-info .hotel-rating .rating-label {
+  font-size: 24px;
+  color: #1890ff;
+  margin-right: 14px;
+}
+.hotel-detail-page .detail-content .hotel-header-info .hotel-rating .review-count {
+  font-size: 24px;
+  color: #999;
+}
+.hotel-detail-page .detail-content .service-tags-container {
+  background-color: #fff;
+  margin-bottom: 8px;
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  position: relative;
+  /* 水平滚动容器 */
+  /* 设施政策 - 固定在右侧 */
+}
+.hotel-detail-page .detail-content .service-tags-container .service-tags-scroll {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  overflow-x: auto;
+  white-space: nowrap;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  z-index: 1;
+  /* 服务标签 */
+}
+.hotel-detail-page .detail-content .service-tags-container .service-tags-scroll::-webkit-scrollbar {
+  display: none;
+}
+.hotel-detail-page .detail-content .service-tags-container .service-tags-scroll :global .taro-scroll-view__scrollbar {
+  display: none;
+}
+.hotel-detail-page .detail-content .service-tags-container .service-tags-scroll :global .taro-scroll-view {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hotel-detail-page .detail-content .service-tags-container .service-tags-scroll :global .taro-scroll-view::-webkit-scrollbar {
+  display: none;
+}
+.hotel-detail-page .detail-content .service-tags-container .service-tags-scroll .service-tags {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding-right: 120px;
+}
+.hotel-detail-page .detail-content .service-tags-container .service-tags-scroll .service-tags .service-tag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 100px;
+  height: 100px;
+  justify-content: center;
+}
+.hotel-detail-page .detail-content .service-tags-container .service-tags-scroll .service-tags .service-tag .tag-icon {
+  font-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+}
+.hotel-detail-page .detail-content .service-tags-container .service-tags-scroll .service-tags .service-tag .tag-text {
+  font-size: 20px;
+  color: #666;
+  text-align: center;
+  line-height: 1.3;
+}
+.hotel-detail-page .detail-content .service-tags-container .facility-policy {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 2;
+  background-color: #fff;
+  padding: 0 16px;
+  box-shadow: -4px 0 8px rgba(255, 255, 255, 0.8);
+}
+.hotel-detail-page .detail-content .service-tags-container .facility-policy .policy-text {
+  font-size: 20px;
+  color: #666;
+}
+.hotel-detail-page .detail-content .review-map-container {
+  display: flex;
+  background-color: #fff;
+  margin-bottom: 8px;
+  height: 220px;
+  /* 评价区域 */
+  /* 地图区域 */
+}
+.hotel-detail-page .detail-content .review-map-container .review-section {
+  flex: 1;
+  padding: 20px;
+  border-right: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+}
+.hotel-detail-page .detail-content .review-map-container .review-section .review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.hotel-detail-page .detail-content .review-map-container .review-section .review-header .review-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+.hotel-detail-page .detail-content .review-map-container .review-section .review-header .review-count {
+  font-size: 20px;
+  color: #999;
+}
+.hotel-detail-page .detail-content .review-map-container .review-section .review-content .review-rating {
+  font-size: 36px;
+  font-weight: 600;
+  color: #1890ff;
+}
+.hotel-detail-page .detail-content .review-map-container .review-section .review-content .review-label {
+  font-size: 20px;
+  color: #1890ff;
+}
+.hotel-detail-page .detail-content .review-map-container .review-section .review-content .review-tags {
+  font-size: 24px;
+  color: #666;
+  line-height: 1.4;
+}
+.hotel-detail-page .detail-content .review-map-container .map-section {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.hotel-detail-page .detail-content .review-map-container .map-section .map-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.hotel-detail-page .detail-content .review-map-container .map-section .map-header .map-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+.hotel-detail-page .detail-content .review-map-container .map-section .map-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.hotel-detail-page .detail-content .review-map-container .map-section .map-content .location-text {
+  font-size: 24px;
+  color: #333;
+}
+.hotel-detail-page .detail-content .review-map-container .map-section .map-content .address-text {
+  font-size: 24px;
+  color: #999;
+}
+.hotel-detail-page .detail-content .review-map-container .map-section .map-content .map-btn {
+  display: flex;
+  align-items: center;
+}
+.hotel-detail-page .detail-content .review-map-container .map-section .map-content .map-btn .map-icon {
+  font-size: 24px;
+  margin-right: 8px;
+}
+.hotel-detail-page .detail-content .review-map-container .map-section .map-content .map-btn .map-text {
+  font-size: 24px;
+  color: #666;
+}
+.hotel-detail-page .detail-content .promotion-section {
+  background-color: #fff;
+  padding: 16px;
+  margin-bottom: 8px;
+}
+.hotel-detail-page .detail-content .promotion-section .promotion-item {
+  display: flex;
+  align-items: center;
+}
+.hotel-detail-page .detail-content .promotion-section .promotion-item .promotion-icon {
+  font-size: 24px;
+  margin-right: 14px;
+}
+.hotel-detail-page .detail-content .promotion-section .promotion-item .promotion-text {
+  font-size: 24px;
+  color: #ff4d4f;
+}
+.hotel-detail-page .detail-content .date-price-section {
+  background-color: #fff;
+  padding: 16px;
+  margin-bottom: 8px;
+  position: relative;
+  /* 日期价格主容器 */
+  /* 筛选标签容器 */
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main {
+  display: flex;
+  margin-bottom: 16px;
+  position: relative;
+  /* 左侧日期部分 */
+  /* 分隔线 */
+  /* 右侧人数部分 */
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .date-section {
+  flex: 1;
+  position: relative;
+  /* 日期标签和内容组合 */
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .date-section .date-combined {
+  display: flex;
+  justify-content: space-between;
+  /* 日期部分 */
+  /* 共1晚 */
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .date-section .date-combined .date-part {
+  display: flex;
+  /* 日期项 - 今天和起始日期 */
+  /* 分隔符 - 到 */
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .date-section .date-combined .date-part .date-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 16px;
+  position: relative;
+  /* 看低价角标 */
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .date-section .date-combined .date-part .date-item .date-label {
+  font-size: 20px;
+  color: #666;
+  margin-bottom: 4px;
+  cursor: pointer;
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .date-section .date-combined .date-part .date-item .date-label.today {
+  font-weight: 600;
+  color: #333;
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .date-section .date-combined .date-part .date-item .date-label.tomorrow {
+  margin-bottom: 4px;
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .date-section .date-combined .date-part .date-item .date-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .date-section .date-combined .date-part .date-item .low-price-badge {
+  position: absolute;
+  top: 26px;
+  right: -10px;
+  background-color: #ff7a45;
+  padding: 1px 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: auto;
+  transform: translate(50%, -50%);
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .date-section .date-combined .date-part .date-item .low-price-badge .low-price-text {
+  font-size: 20px;
+  color: #fff;
+  font-weight: 500;
+  line-height: 1.2;
+  margin: 0;
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .date-section .date-combined .date-part .date-separator {
+  display: flex;
+  align-items: flex-end;
+  margin: 0 8px;
+  padding-bottom: 4px;
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .date-section .date-combined .date-part .date-separator .separator-text {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .date-section .date-combined .night-count {
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 4px;
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .date-section .date-combined .night-count .night-count-text {
+  font-size: 24px;
+  color: #999;
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .divider {
+  width: 1px;
+  height: 80px;
+  background-color: #e0e0e0;
+  margin: 0 24px;
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .guest-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* 人数标签和内容组合 */
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .guest-section .guest-combined {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .guest-section .guest-combined .guest-label {
+  font-size: 20px;
+  color: #666;
+  margin-bottom: 4px;
+  cursor: pointer;
+}
+.hotel-detail-page .detail-content .date-price-section .date-price-main .guest-section .guest-combined .guest-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow-x: auto;
+  white-space: nowrap;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  /* 右侧筛选按钮 */
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container::-webkit-scrollbar {
+  display: none;
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container :global .taro-scroll-view__scrollbar {
+  display: none;
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container :global .taro-scroll-view {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container :global .taro-scroll-view::-webkit-scrollbar {
+  display: none;
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container .filter-tag {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 16px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  background-color: #f8f8f8;
+  transition: all 0.2s ease;
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container .filter-tag:active {
+  background-color: #f0f0f0;
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container .filter-tag.active {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container .filter-tag .filter-tag-text {
+  margin-right: 8px;
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container .filter-tag .filter-tag-arrow {
+  font-size: 20px;
+  color: #999;
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container .filter-tag .filter-tag-close {
+  margin-left: 8px;
+  font-size: 20px;
+  color: #fff;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #999;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container .filter-tag .filter-tag-close:active {
+  background-color: #666;
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container .filter-button {
+  position: sticky;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #fff;
+  box-shadow: -4px 0 8px rgba(255, 255, 255, 0.8);
+  z-index: 2;
+  white-space: nowrap;
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container .filter-button .filter-button-text {
+  font-size: 24px;
+  color: #666;
+  margin-right: 8px;
+}
+.hotel-detail-page .detail-content .date-price-section .filter-tags-container .filter-button .filter-button-arrow {
+  font-size: 20px;
+  color: #999;
+}
+.hotel-detail-page .detail-content .filter-dropdown {
+  background-color: #fff;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: -8px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 45vh;
+  overflow-y: auto;
+  z-index: 100;
+  border-radius: 0 0 8px 8px;
+  /* 底部按钮 */
+}
+.hotel-detail-page .detail-content .filter-dropdown .filter-category {
+  margin-bottom: 24px;
+  /* 筛选选项网格，一行放三个 */
+}
+.hotel-detail-page .detail-content .filter-dropdown .filter-category .filter-category-header {
+  margin-bottom: 16px;
+}
+.hotel-detail-page .detail-content .filter-dropdown .filter-category .filter-category-header .filter-category-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+.hotel-detail-page .detail-content .filter-dropdown .filter-category .filter-options-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.hotel-detail-page .detail-content .filter-dropdown .filter-category .filter-options-grid .filter-option {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background-color: #f8f8f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.hotel-detail-page .detail-content .filter-dropdown .filter-category .filter-options-grid .filter-option:active {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+}
+.hotel-detail-page .detail-content .filter-dropdown .filter-category .filter-options-grid .filter-option .filter-option-text {
+  font-size: 24px;
+  color: #666;
+}
+.hotel-detail-page .detail-content .filter-dropdown .filter-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+.hotel-detail-page .detail-content .filter-dropdown .filter-buttons .filter-button-clear {
+  flex: 1;
+  margin-right: 12px;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: #fff;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.hotel-detail-page .detail-content .filter-dropdown .filter-buttons .filter-button-clear:active {
+  background-color: #f5f5f5;
+}
+.hotel-detail-page .detail-content .filter-dropdown .filter-buttons .filter-button-clear .filter-button-text {
+  font-size: 22px;
+  color: #666;
+}
+.hotel-detail-page .detail-content .filter-dropdown .filter-buttons .filter-button-confirm {
+  flex: 1;
+  margin-left: 12px;
+  padding: 12px;
+  border: 1px solid #1890ff;
+  border-radius: 6px;
+  background-color: #1890ff;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.hotel-detail-page .detail-content .filter-dropdown .filter-buttons .filter-button-confirm:active {
+  background-color: #40a9ff;
+}
+.hotel-detail-page .detail-content .filter-dropdown .filter-buttons .filter-button-confirm .filter-button-text {
+  font-size: 22px;
+  color: #fff;
+}
+.hotel-detail-page .detail-content .filter-overlay {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}
+.hotel-detail-page .detail-content .rooms-section {
+  background-color: #fff;
+  padding: 16px;
+  margin-bottom: 8px;
+}
+.hotel-detail-page .detail-content .rooms-section .section-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item {
+  display: flex;
+  margin-bottom: 16px;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-image {
+  width: 160px;
+  height: 120px;
+  margin-right: 16px;
+  position: relative;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-image .room-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-image .sales-tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #ff7a45;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 4px 0 4px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-image .sales-tag-text {
+  color: #fff;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info .room-name {
+  font-size: 30px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 14px;
+  line-height: 1.3;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info .room-description {
+  font-size: 24px;
+  color: #666;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info .room-detail {
+  font-size: 24px;
+  color: #999;
+  margin-bottom: 14px;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info .room-notice {
+  font-size: 24px;
+  color: #999;
+  margin-bottom: 14px;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info .room-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info .room-bottom .room-price {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info .room-bottom .room-price .price-original {
+  font-size: 24px;
+  color: #999;
+  text-decoration: line-through;
+  margin-right: 14px;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info .room-bottom .room-price .price-current {
+  font-size: 36px;
+  font-weight: 600;
+  color: #1890ff;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info .room-bottom .room-booking {
+  display: flex;
+  align-items: center;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info .room-bottom .room-booking .room-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  width: 100px;
+  height: 60px;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info .room-bottom .room-booking .room-count .count-text {
+  font-size: 24px;
+  color: #666;
+  margin-right: 10px;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info .room-bottom .room-booking .room-count .count-arrow {
+  font-size: 20px;
+  color: #999;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info .room-bottom .room-booking .book-btn {
+  background-color: #1890ff;
+  color: #fff;
+  padding: 8px 24px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 50px;
+}
+.hotel-detail-page .detail-content .rooms-section .room-item .room-info .room-bottom .room-booking .book-btn .book-btn-text {
+  font-size: 24px;
+  font-weight: 600;
+}
+.hotel-detail-page .loading-container,
+.hotel-detail-page .error-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+.hotel-detail-page .loading-container text,
+.hotel-detail-page .error-container text {
+  font-size: 24px;
+  color: #999;
+}
+/* 响应式设计 */
+@media (min-width: 786px) {
+  .hotel-detail-page .image-carousel {
+    height: 400px;
+  }
+  .hotel-detail-page .detail-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .hotel-detail-page .detail-content .hotel-header-info,
+  .hotel-detail-page .detail-content .service-tags,
+  .hotel-detail-page .detail-content .facility-policy,
+  .hotel-detail-page .detail-content .hotel-location,
+  .hotel-detail-page .detail-content .promotion-section,
+  .hotel-detail-page .detail-content .date-price-section,
+  .hotel-detail-page .detail-content .rooms-section {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  .hotel-detail-page .booking-bar {
+    max-width: 1200px;
+    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 8px 8px 0 0;
+  }
+}

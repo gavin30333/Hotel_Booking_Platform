@@ -6,7 +6,7 @@ import Taro, {
   usePullDownRefresh,
   useRouter,
 } from '@tarojs/taro'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import './index.less'
 import { useHotelList } from '../../../hooks/useHotelList'
 import { useHotelStore } from '../../../store/hotelStore'
@@ -17,7 +17,7 @@ export default function HotelList() {
   const router = useRouter()
   const { hotelList, loading, hasMore, error, refreshHotels, loadMore } =
     useHotelList()
-  const { filters, setFilters } = useHotelStore()
+  const { filters, setFilters, resetFilters } = useHotelStore()
   const [showStayDurationPopover, setShowStayDurationPopover] = useState(false)
   const [showBrandPopover, setShowBrandPopover] = useState(false)
   const [showSortPopover, setShowSortPopover] = useState(false)
@@ -28,7 +28,7 @@ export default function HotelList() {
     useState(false)
   const [isAnyDropdownOpen, setIsAnyDropdownOpen] = useState(false)
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
-  const [initialized, setInitialized] = useState(false)
+  const [isInitialized, setIsInitialized] = useState(false)
 
   useEffect(() => {
     setIsLocalDropdownOpen(
@@ -55,32 +55,68 @@ export default function HotelList() {
     }
   }, [])
 
-  const displayHotels = hotelList
+  const initFromUrl = useCallback(() => {
+    const {
+      city,
+      keyword,
+      checkInDate,
+      checkOutDate,
+      rooms,
+      adults,
+      children,
+    } = router.params
+
+    const newFilters: any = {}
+    let hasParams = false
+
+    if (city) {
+      newFilters.city = decodeURIComponent(city)
+      hasParams = true
+    }
+    if (keyword) {
+      newFilters.keyword = decodeURIComponent(keyword)
+      hasParams = true
+    }
+    if (checkInDate) {
+      newFilters.checkInDate = decodeURIComponent(checkInDate)
+      hasParams = true
+    }
+    if (checkOutDate) {
+      newFilters.checkOutDate = decodeURIComponent(checkOutDate)
+      hasParams = true
+    }
+    if (rooms) {
+      newFilters.rooms = Number(rooms)
+    }
+    if (adults) {
+      newFilters.adults = Number(adults)
+    }
+    if (children) {
+      newFilters.children = Number(children)
+    }
+
+    if (hasParams) {
+      resetFilters()
+      setFilters(newFilters)
+    }
+
+    return hasParams
+  }, [router.params, resetFilters, setFilters])
 
   useLoad(() => {
-    const { city, keyword, checkInDate, checkOutDate } = router.params
+    const hasParams = initFromUrl()
+    setIsInitialized(true)
 
-    if (city || keyword) {
-      const newFilters: any = {}
-      if (city) newFilters.city = decodeURIComponent(city)
-      if (keyword) newFilters.keyword = decodeURIComponent(keyword)
-      if (checkInDate) newFilters.checkInDate = decodeURIComponent(checkInDate)
-      if (checkOutDate)
-        newFilters.checkOutDate = decodeURIComponent(checkOutDate)
-
-      setFilters(newFilters)
-      setInitialized(true)
-    } else if (hotelList.length === 0) {
+    if (!hasParams) {
       loadMore()
-      setInitialized(true)
     }
   })
 
   useEffect(() => {
-    if (initialized && (filters.city || filters.keyword)) {
-      refreshHotels()
+    if (isInitialized && hasMore && hotelList.length === 0) {
+      loadMore()
     }
-  }, [initialized])
+  }, [isInitialized])
 
   usePullDownRefresh(() => {
     refreshHotels()
@@ -94,15 +130,40 @@ export default function HotelList() {
   })
 
   const handleSearch = (params: Record<string, unknown>) => {
-    const formattedFilters = {
+    const formattedFilters: Record<string, unknown> = {
       city: params.city as string,
+      keyword: params.keyword as string,
       checkInDate: params.checkInDate as string,
       checkOutDate: params.checkOutDate as string,
-      minPrice: (params.priceRange as { min?: number })?.min || 0,
-      maxPrice: (params.priceRange as { max?: number })?.max || 10000,
+      minPrice: params.minPrice ?? 0,
+      maxPrice: params.maxPrice ?? 10000,
       starRating: (params.starRating as number[]) || [],
       facilities: (params.facilities as string[]) || [],
+      rooms: (params.rooms as number) || 1,
+      adults: (params.adults as number) || 2,
+      children: (params.children as number) || 0,
     }
+
+    if (params.sortBy) {
+      formattedFilters.sortBy = params.sortBy
+    }
+
+    if (params.location) {
+      formattedFilters.location = params.location
+    }
+
+    if (params.brand) {
+      formattedFilters.brand = params.brand
+    }
+
+    if (params.minRating !== undefined) {
+      formattedFilters.minRating = params.minRating
+    }
+
+    if (params.roomType) {
+      formattedFilters.roomType = params.roomType
+    }
+
     setFilters(formattedFilters)
     refreshHotels()
   }
@@ -127,11 +188,11 @@ export default function HotelList() {
     }, 500)
   }
 
-  const handleSortSelect = (value: string) => {
+  const handleSortSelect = (key: string, label: string) => {
     setShowSortPopover(false)
-    Toast.show({ content: `选择了${value}` })
+    Toast.show({ content: `选择了${label}` })
     setFilters({
-      sortBy: value as
+      sortBy: key as
         | 'price_asc'
         | 'price_desc'
         | 'rating_desc'
@@ -212,6 +273,7 @@ export default function HotelList() {
           onDropdownStateChange={(isOpen) =>
             setIsCoreFilterDropdownOpen(isOpen)
           }
+          initialFilters={filters}
         />
 
         <View style={{ position: 'relative' }}>
@@ -382,7 +444,7 @@ export default function HotelList() {
                     justifyContent: 'center',
                     border: '1px solid #e8e8e8',
                   }}
-                  onClick={() => handleSortSelect(option.label)}
+                  onClick={() => handleSortSelect(option.key, option.label)}
                 >
                   <Text>{option.label}</Text>
                 </View>
@@ -408,17 +470,17 @@ export default function HotelList() {
           />
         )}
 
-        {loading ? (
+        {loading && hotelList.length === 0 ? (
           <View className="loading">
             <Text>筛选中...</Text>
           </View>
-        ) : displayHotels.length > 0 ? (
+        ) : hotelList.length > 0 ? (
           <ScrollView
             style={{ flex: 1, zIndex: 0 }}
             scrollY
             scrollWithAnimation
           >
-            {displayHotels.map((hotel) => (
+            {hotelList.map((hotel) => (
               <HotelCard key={hotel.id} hotel={hotel} />
             ))}
 
@@ -428,7 +490,7 @@ export default function HotelList() {
               </View>
             )}
 
-            {!hasMore && displayHotels.length > 0 && (
+            {!hasMore && hotelList.length > 0 && (
               <View className="loading-more">
                 <Text>已加载全部酒店</Text>
               </View>

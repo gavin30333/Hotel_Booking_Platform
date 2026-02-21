@@ -54,6 +54,11 @@ export interface IPolicies {
   pets?: string
 }
 
+export interface ILocation {
+  type: 'Point'
+  coordinates: [number, number]
+}
+
 export interface IHotel extends Document {
   name: string
   nameEn?: string
@@ -77,6 +82,7 @@ export interface IHotel extends Document {
   orderCount: number
   rating: number
   reviewCount: number
+  location?: ILocation
   createdAt: Date
   updatedAt: Date
 }
@@ -188,6 +194,10 @@ const HotelSchema = new Schema<IHotel>(
     orderCount: { type: Number, default: 0, min: 0 },
     rating: { type: Number, default: 0, min: 0, max: 5 },
     reviewCount: { type: Number, default: 0, min: 0 },
+    location: {
+      type: { type: String, enum: ['Point'], default: 'Point' },
+      coordinates: { type: [Number], default: [0, 0] },
+    },
   },
   {
     timestamps: true,
@@ -198,6 +208,7 @@ const HotelSchema = new Schema<IHotel>(
 HotelSchema.index({ name: 'text', address: 'text' }, { name: 'hotel_text_idx' })
 HotelSchema.index({ status: 1 })
 HotelSchema.index({ starRating: 1 })
+HotelSchema.index({ location: '2dsphere' })
 
 export const HotelModel: Model<IHotel> = model<IHotel>('Hotel', HotelSchema)
 
