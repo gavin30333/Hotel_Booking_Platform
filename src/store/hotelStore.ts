@@ -6,6 +6,7 @@ type SortBy = 'price_asc' | 'price_desc' | 'rating_desc' | 'distance_asc'
 interface HotelState {
   filters: {
     city: string
+    keyword: string
     checkInDate: string
     checkOutDate: string
     minPrice: number
@@ -42,6 +43,7 @@ interface HotelState {
 
 const defaultFilters: HotelState['filters'] = {
   city: '',
+  keyword: '',
   checkInDate: '',
   checkOutDate: '',
   minPrice: 0,

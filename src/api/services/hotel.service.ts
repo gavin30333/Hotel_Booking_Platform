@@ -1,5 +1,14 @@
 import { HotelModel } from '../../schemas/hotel.schema'
-import { RoomTypeModel } from '../../schemas/roomType.schema'
+
+const extractCity = (address: string): string => {
+  const cityMatch = address.match(/^(.+?[省市])/)
+  return cityMatch ? cityMatch[1] : '未知城市'
+}
+
+const getMinPrice = (roomTypes: any[]): number => {
+  if (!roomTypes || roomTypes.length === 0) return 0
+  return Math.min(...roomTypes.map((r) => r.price))
+}
 
 export const hotelService = {
   async searchHotels(
@@ -10,11 +19,16 @@ export const hotelService = {
     pageNum: number,
     pageSize: number
   ) {
-    // 使用正则表达式进行模糊匹配，忽略大小写
-    const query: any = { city: { $regex: new RegExp(city, 'i') } }
+    const query: any = { status: 'online' }
+
+    if (city) {
+      query.address = { $regex: new RegExp(city, 'i') }
+    }
 
     if (filters?.star) {
-      query.star = { $in: filters.star.map((star: string) => parseInt(star)) }
+      query.starRating = {
+        $in: filters.star.map((star: string) => parseInt(star)),
+      }
     }
 
     const hotels = await HotelModel.find(query)
@@ -24,26 +38,17 @@ export const hotelService = {
 
     const total = await HotelModel.countDocuments(query).exec()
 
-    const hotelList = await Promise.all(
-      hotels.map(async (hotel) => {
-        const minPriceRoom = await RoomTypeModel.findOne({ hotelId: hotel._id })
-          .sort({ currentPrice: 1 })
-          .exec()
-
-        return {
-          hotelId: hotel._id.toString(),
-          hotelNameCn: hotel.hotelNameCn,
-          hotelNameEn: hotel.hotelNameEn,
-          hotelAddress: hotel.hotelAddress,
-          hotelScale: hotel.hotelScale,
-          openTime: hotel.openTime.toISOString().split('T')[0],
-          star: `${hotel.star}星`,
-          minPrice: minPriceRoom?.currentPrice || 0,
-          score: hotel.score,
-          tags: hotel.tags,
-        }
-      })
-    )
+    const hotelList = hotels.map((hotel) => ({
+      hotelId: hotel._id.toString(),
+      hotelNameCn: hotel.name,
+      hotelNameEn: hotel.nameEn,
+      hotelAddress: hotel.address,
+      star: `${hotel.starRating}星`,
+      minPrice: getMinPrice(hotel.roomTypes),
+      score: hotel.rating || 4.5,
+      tags: hotel.facilities?.slice(0, 5) || [],
+      city: extractCity(hotel.address),
+    }))
 
     return {
       total,
@@ -61,35 +66,52 @@ export const hotelService = {
 
     return {
       hotelId: hotel._id.toString(),
-      hotelNameCn: hotel.hotelNameCn,
-      hotelNameEn: hotel.hotelNameEn,
-      hotelAddress: hotel.hotelAddress,
-      hotelScale: hotel.hotelScale,
-      openTime: hotel.openTime.toISOString().split('T')[0],
-      star: `${hotel.star}星`,
-      score: hotel.score,
-      tags: hotel.tags,
+      hotelNameCn: hotel.name,
+      hotelNameEn: hotel.nameEn,
+      hotelAddress: hotel.address,
+      star: `${hotel.starRating}星`,
+      score: hotel.rating || 4.5,
+      tags: hotel.facilities?.slice(0, 5) || [],
       nearbyAttractions: hotel.nearbyAttractions,
-      trafficAndMalls: hotel.trafficAndMalls,
-      discountInfo: hotel.discountInfo,
+      transportations: hotel.transportations,
+      shoppingMalls: hotel.shoppingMalls,
+      discounts: hotel.discounts,
+      facilities: hotel.facilities,
+      policies: hotel.policies,
+      images: hotel.images,
+      description: hotel.description,
+      phone: hotel.phone,
+      roomTypes: hotel.roomTypes?.map((room: any) => ({
+        roomTypeId: room._id?.toString(),
+        roomTypeName: room.name,
+        area: room.area,
+        bedType: room.bedType,
+        maxPeople: room.maxOccupancy,
+        originalPrice: room.originalPrice,
+        currentPrice: room.price,
+        breakfast: room.breakfast,
+        stock: room.stock || 10,
+      })),
     }
   },
 
   async getRoomTypes(hotelId: string) {
-    const roomTypes = await RoomTypeModel.find({ hotelId }).exec()
-    return roomTypes.map((roomType) => ({
-      roomTypeId: roomType._id.toString(),
-      roomTypeName: roomType.roomTypeName,
-      area: roomType.area,
-      bedType: roomType.bedType,
-      maxPeople: roomType.maxPeople,
-      originalPrice: roomType.originalPrice,
-      currentPrice: roomType.currentPrice,
-      breakfast: roomType.breakfast,
-      cancelPolicy: roomType.cancelPolicy,
-      stock: roomType.stock,
-      roomDiscount: roomType.roomDiscount,
-    }))
+    const hotel = await HotelModel.findById(hotelId).exec()
+    if (!hotel) return []
+
+    return (
+      hotel.roomTypes?.map((room: any) => ({
+        roomTypeId: room._id?.toString(),
+        roomTypeName: room.name,
+        area: room.area,
+        bedType: room.bedType,
+        maxPeople: room.maxOccupancy,
+        originalPrice: room.originalPrice,
+        currentPrice: room.price,
+        breakfast: room.breakfast,
+        stock: room.stock || 10,
+      })) || []
+    )
   },
 
   async validatePrice(
@@ -98,20 +120,24 @@ export const hotelService = {
     _checkInDate: string,
     _checkOutDate: string
   ) {
-    const roomType = await RoomTypeModel.findOne({
-      _id: roomTypeId,
-      hotelId,
-    }).exec()
+    const hotel = await HotelModel.findById(hotelId).exec()
+    if (!hotel) {
+      throw new Error('Hotel not found')
+    }
+
+    const roomType = hotel.roomTypes?.find(
+      (r: any) => r._id?.toString() === roomTypeId
+    )
     if (!roomType) {
       throw new Error('Room type not found')
     }
 
     return {
-      roomTypeId: roomType._id.toString(),
-      roomTypeName: roomType.roomTypeName,
-      currentPrice: roomType.currentPrice,
-      stock: roomType.stock,
-      isAvailable: roomType.stock > 0,
+      roomTypeId: roomType._id?.toString(),
+      roomTypeName: roomType.name,
+      currentPrice: roomType.price,
+      stock: roomType.stock || 10,
+      isAvailable: (roomType.stock || 10) > 0,
     }
   },
 }

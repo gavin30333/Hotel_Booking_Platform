@@ -1,79 +1,45 @@
-import {
-  getHotelDetail as getHotelDetailMock,
-  getHotelList as getHotelListMock,
-} from '@/mock'
+import { HotelListParams, Hotel, hotelApi, HotelListResponse } from './api'
 
-type SortBy = 'price_asc' | 'price_desc' | 'rating_desc' | 'distance_asc'
+export type { HotelListParams, Hotel, SortBy } from './api'
 
-export interface HotelListParams {
-  page: number
-  pageSize: number
-  city?: string
-  checkInDate?: string
-  checkOutDate?: string
-  minPrice?: number
-  maxPrice?: number
-  starRating?: number[]
-  facilities?: string[]
-  sortBy?: SortBy
-  stayDuration?: string
-  brand?: string
-}
-
-// 酒店信息接口
-export interface Hotel {
-  id: string
-  name: string
-  address: string
-  city: string
-  latitude: number
-  longitude: number
-  starRating: number
-  rating: number
-  reviewCount: number
-  minPrice: number
-  imageUrl: string
-  tags: string[]
-  facilities: string[]
-  description: string
-  images?: string[]
-  rooms?: Room[]
-  reviews?: Review[]
-}
-
-// 房型接口
-export interface Room {
-  id: string
-  name: string
-  size: number
-  bedType: string
-  price: number
-  description: string
-}
-
-// 评价接口
-export interface Review {
-  id: string
-  userName: string
-  date: string
-  rating: number
-  content: string
-}
-
-// 酒店列表响应接口
-export interface HotelListResponse {
+export interface HotelListResult {
   list: Hotel[]
   total: number
   page: number
   pageSize: number
 }
 
-// 获取酒店列表
-export const getHotelList = (params: HotelListParams) => {
-  return getHotelListMock(params)
+export const getHotelList = async (
+  params: HotelListParams
+): Promise<HotelListResult> => {
+  try {
+    const response: HotelListResponse = await hotelApi.getHotelList(params)
+    if (response.success) {
+      return {
+        list: response.data,
+        total: response.total,
+        page: response.page,
+        pageSize: response.pageSize,
+      }
+    }
+    throw new Error('获取酒店列表失败')
+  } catch (error) {
+    console.error('getHotelList error:', error)
+    throw error
+  }
 }
 
-// 获取酒店详情
-export const getHotelDetail = (id: string) => {
-  return getHotelDetailMock(id)
+export const getHotelDetail = async (id: string) => {
+  try {
+    const response = await hotelApi.getHotelDetail(id)
+    if (response.success) {
+      return response.data
+    }
+    throw new Error('获取酒店详情失败')
+  } catch (error) {
+    console.error('getHotelDetail error:', error)
+    throw error
+  }
 }
+
+export { hotelApi, authApi, favoriteApi, orderApi } from './api'

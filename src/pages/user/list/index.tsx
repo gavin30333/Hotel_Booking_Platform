@@ -1,6 +1,11 @@
 import { Toast } from 'antd-mobile'
 import { View, Text, ScrollView } from '@tarojs/components'
-import Taro, { useLoad, useReachBottom, usePullDownRefresh } from '@tarojs/taro'
+import Taro, {
+  useLoad,
+  useReachBottom,
+  usePullDownRefresh,
+  useRouter,
+} from '@tarojs/taro'
 import { useState, useEffect } from 'react'
 import './index.less'
 import { useHotelList } from '../../../hooks/useHotelList'
@@ -9,6 +14,7 @@ import HotelCard from '../../../components/common/HotelCard'
 import CoreFilterHeader from '../../../components/filter/CoreFilterHeader'
 
 export default function HotelList() {
+  const router = useRouter()
   const { hotelList, loading, hasMore, error, refreshHotels, loadMore } =
     useHotelList()
   const { filters, setFilters } = useHotelStore()
@@ -22,6 +28,7 @@ export default function HotelList() {
     useState(false)
   const [isAnyDropdownOpen, setIsAnyDropdownOpen] = useState(false)
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
+  const [initialized, setInitialized] = useState(false)
 
   useEffect(() => {
     setIsLocalDropdownOpen(
@@ -51,10 +58,29 @@ export default function HotelList() {
   const displayHotels = hotelList
 
   useLoad(() => {
-    if (hotelList.length === 0) {
+    const { city, keyword, checkInDate, checkOutDate } = router.params
+
+    if (city || keyword) {
+      const newFilters: any = {}
+      if (city) newFilters.city = decodeURIComponent(city)
+      if (keyword) newFilters.keyword = decodeURIComponent(keyword)
+      if (checkInDate) newFilters.checkInDate = decodeURIComponent(checkInDate)
+      if (checkOutDate)
+        newFilters.checkOutDate = decodeURIComponent(checkOutDate)
+
+      setFilters(newFilters)
+      setInitialized(true)
+    } else if (hotelList.length === 0) {
       loadMore()
+      setInitialized(true)
     }
   })
+
+  useEffect(() => {
+    if (initialized && (filters.city || filters.keyword)) {
+      refreshHotels()
+    }
+  }, [initialized])
 
   usePullDownRefresh(() => {
     refreshHotels()

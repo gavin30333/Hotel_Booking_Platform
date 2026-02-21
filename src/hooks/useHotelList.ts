@@ -1,5 +1,9 @@
 import { useCallback, useState } from 'react'
-import { HotelListParams, Hotel } from '../services/hotel'
+import {
+  HotelListParams,
+  getHotelList,
+  HotelListResult,
+} from '../services/hotel'
 import { useHotelStore } from '../store/hotelStore'
 
 export const useHotelList = () => {
@@ -22,25 +26,37 @@ export const useHotelList = () => {
 
   const [error, setError] = useState<string | null>(null)
 
-  // 构建请求参数
   const buildParams = useCallback((): HotelListParams => {
+    const sortByMap: Record<string, string> = {
+      price_asc: 'minPrice',
+      price_desc: 'minPrice',
+      rating_desc: 'rating',
+      distance_asc: 'viewCount',
+    }
+
+    const sortOrderMap: Record<string, 'asc' | 'desc'> = {
+      price_asc: 'asc',
+      price_desc: 'desc',
+      rating_desc: 'desc',
+      distance_asc: 'desc',
+    }
+
+    const sortBy = filters.sortBy || 'price_asc'
+
     return {
       page,
       pageSize,
       city: filters.city,
-      checkInDate: filters.checkInDate,
-      checkOutDate: filters.checkOutDate,
+      keyword: filters.keyword,
       minPrice: filters.minPrice,
       maxPrice: filters.maxPrice,
       starRating: filters.starRating,
       facilities: filters.facilities,
-      sortBy: filters.sortBy,
-      stayDuration: filters.stayDuration,
-      brand: filters.brand,
+      sortBy: sortByMap[sortBy] || 'viewCount',
+      sortOrder: sortOrderMap[sortBy] || 'desc',
     }
   }, [filters, page, pageSize])
 
-  // 加载酒店列表
   const loadHotels = useCallback(
     async (isRefresh = false) => {
       if (loading || (!hasMore && !isRefresh)) return
@@ -50,65 +66,7 @@ export const useHotelList = () => {
 
       try {
         const params = buildParams()
-        // 暂时注释掉API请求，避免无限循环
-        // const response = await getHotelList(params)
-
-        const generateMockHotels = (
-          count: number,
-          pageNum: number
-        ): Hotel[] => {
-          const hotels: Hotel[] = []
-          for (let i = 0; i < count; i++) {
-            const id = ((pageNum - 1) * 10 + i + 1).toString()
-            hotels.push({
-              id,
-              name: `酒店${id}`,
-              address: `地址${id}`,
-              city: '北京',
-              latitude: 39.9 + Math.random() * 0.1,
-              longitude: 116.4 + Math.random() * 0.1,
-              starRating: Math.floor(Math.random() * 5) + 1,
-              rating: parseFloat((4 + Math.random() * 1).toFixed(1)),
-              reviewCount: Math.floor(Math.random() * 1000) + 100,
-              minPrice: Math.floor(Math.random() * 1000) + 500,
-              imageUrl:
-                'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20hotel%20exterior&image_size=square_hd',
-              tags: ['标签1', '标签2'],
-              facilities: ['游泳池', '健身房'],
-              description: `酒店${id}的描述`,
-            })
-          }
-          return hotels
-        }
-
-        let hotels = generateMockHotels(10, params.page)
-
-        const sortHotels = (hotelList: Hotel[], sortBy: string): Hotel[] => {
-          return [...hotelList].sort((a, b) => {
-            switch (sortBy) {
-              case 'price_asc':
-                return a.minPrice - b.minPrice
-              case 'price_desc':
-                return b.minPrice - a.minPrice
-              case 'rating_desc':
-                return b.rating - a.rating
-              case 'distance_asc':
-                return a.latitude + a.longitude - (b.latitude + b.longitude)
-              default:
-                return 0
-            }
-          })
-        }
-
-        hotels = sortHotels(hotels, params.sortBy || 'price_asc')
-
-        // 模拟API响应
-        const response = {
-          list: hotels,
-          total: 50,
-          page: params.page,
-          pageSize: params.pageSize,
-        }
+        const response: HotelListResult = await getHotelList(params)
 
         if (isRefresh) {
           setHotelList(response.list)
@@ -141,13 +99,11 @@ export const useHotelList = () => {
     ]
   )
 
-  // 刷新酒店列表
   const refreshHotels = useCallback(() => {
     resetHotelList()
     loadHotels(true)
   }, [resetHotelList, loadHotels])
 
-  // 加载更多
   const loadMore = useCallback(() => {
     if (!loading && hasMore) {
       loadHotels(false)
