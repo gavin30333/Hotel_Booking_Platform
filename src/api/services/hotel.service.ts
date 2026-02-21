@@ -69,34 +69,39 @@ export const hotelService = {
       star: `${hotel.star}星`,
       score: hotel.score,
       tags: hotel.tags,
-      nearbyAttractions: hotel.nearbyAttractions,
-      trafficAndMalls: hotel.trafficAndMalls,
-      discountInfo: hotel.discountInfo,
     }
   },
 
-  async getRoomTypes(hotelId: string) {
+  async getRoomTypes(
+    hotelId: string,
+    _checkInDate?: string,
+    _checkOutDate?: string
+  ) {
     const roomTypes = await RoomTypeModel.find({ hotelId }).exec()
-    return roomTypes.map((roomType) => ({
-      roomTypeId: roomType._id.toString(),
-      roomTypeName: roomType.roomTypeName,
-      area: roomType.area,
-      bedType: roomType.bedType,
-      maxPeople: roomType.maxPeople,
-      originalPrice: roomType.originalPrice,
-      currentPrice: roomType.currentPrice,
-      breakfast: roomType.breakfast,
-      cancelPolicy: roomType.cancelPolicy,
-      stock: roomType.stock,
-      roomDiscount: roomType.roomDiscount,
-    }))
+    return {
+      hotelId,
+      roomTypeList: roomTypes.map((roomType) => ({
+        roomTypeId: roomType._id.toString(),
+        roomTypeName: roomType.roomTypeName,
+        area: `${roomType.area}㎡`,
+        bedType: roomType.bedType,
+        maxPeople: roomType.maxPeople,
+        originalPrice: roomType.originalPrice,
+        currentPrice: roomType.currentPrice,
+        breakfast: roomType.breakfast,
+        cancelPolicy: roomType.cancelPolicy,
+        stock: roomType.stock,
+        roomDiscount: roomType.roomDiscount?.description || '',
+      })),
+    }
   },
 
   async validatePrice(
     hotelId: string,
     roomTypeId: string,
     _checkInDate: string,
-    _checkOutDate: string
+    _checkOutDate: string,
+    expectedPrice: number
   ) {
     const roomType = await RoomTypeModel.findOne({
       _id: roomTypeId,
@@ -106,12 +111,19 @@ export const hotelService = {
       throw new Error('Room type not found')
     }
 
+    const isValid = roomType.currentPrice === expectedPrice
+    let tips = ''
+
+    if (isValid) {
+      tips = '价格有效期剩余2小时，请尽快预订'
+    } else {
+      tips = `该房型价格已调整为${roomType.currentPrice}元，是否继续预订？`
+    }
+
     return {
-      roomTypeId: roomType._id.toString(),
-      roomTypeName: roomType.roomTypeName,
+      isValid,
       currentPrice: roomType.currentPrice,
-      stock: roomType.stock,
-      isAvailable: roomType.stock > 0,
+      tips,
     }
   },
 }
