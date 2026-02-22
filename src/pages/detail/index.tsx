@@ -100,10 +100,27 @@ export default function HotelDetailPage() {
       return
     }
 
-    showToast({
-      title: `预订成功！\n房型：${selectedRoom.name}\n价格：¥${selectedRoom.price}/晚\n入住：${checkInDate}\n退房：${checkOutDate}`,
-      icon: 'success',
-      duration: 3000,
+    // 检查用户是否已登录
+    const isLoggedIn = Taro.getStorageSync('isLoggedIn')
+    if (!isLoggedIn) {
+      // 未登录，跳转到登录页
+      showToast({
+        title: '请先登录后操作',
+        icon: 'none',
+        duration: 1500,
+      })
+
+      // 跳转到登录页，并传递来源页面信息
+      const fromPage = `/pages/booking/index?hotelId=${hotelId}&roomTypeId=${roomIndex}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`
+      Taro.navigateTo({
+        url: `/pages/login/index?fromPage=${encodeURIComponent(fromPage)}`,
+      })
+      return
+    }
+
+    // 已登录，直接跳转到预订页面
+    Taro.navigateTo({
+      url: `/pages/booking/index?hotelId=${hotelId}&roomTypeId=${roomIndex}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`,
     })
   }
 
