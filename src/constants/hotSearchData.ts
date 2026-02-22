@@ -1,4 +1,4 @@
-import { HotSearchCategory } from '../types'
+import { HotSearchCategory } from '@/types/citySelector'
 
 export const hotSearchTags: string[] = [
   '春熙路/太古里商业区',

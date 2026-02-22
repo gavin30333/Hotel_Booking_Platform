@@ -1,6 +1,6 @@
 import React from 'react'
 import { View } from '@tarojs/components'
-import { CityTag } from '../../../../common/CityTag'
+import { CityTag } from '@/components/common/CityTag'
 import './HotSearchItems.less'
 
 interface HotSearchItemsProps {

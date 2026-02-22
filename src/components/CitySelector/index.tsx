@@ -2,17 +2,17 @@ import React, { useState, useRef } from 'react'
 import { View } from '@tarojs/components'
 import { Popup, Tabs } from 'antd-mobile'
 import { useThrottleFn } from 'ahooks'
-import { SearchHeader } from './components/SearchHeader'
-import { HistorySection } from './components/HistorySection'
-import { LocationStatus } from './components/LocationStatus'
+import { SearchHeader } from '@/components/common/SearchHeader'
+import { HistorySection } from '@/components/common/HistorySection'
+import { LocationStatus } from '@/components/common/LocationStatus'
 import { DomesticTab } from './components/TabContent/DomesticTab'
 import { OverseasTab } from './components/TabContent/OverseasTab'
 import { HotSearchTab } from './components/TabContent/HotSearchTab'
-import { historyCities, hotCities, domesticCities } from './utils/cityData'
-import { CityTab } from './types'
+import { historyCities, hotCities, domesticCities } from '@/constants/cityData'
+import { CityTab } from '@/types/citySelector'
 import './CitySelector.less'
 
-export * from './types'
+export * from '@/types/citySelector'
 
 interface CitySelectorProps {
   visible: boolean

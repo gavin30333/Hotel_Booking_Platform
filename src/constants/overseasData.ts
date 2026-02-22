@@ -1,4 +1,4 @@
-import { OverseasCategory } from '../types'
+import { OverseasCategory } from '@/types/citySelector'
 
 export const overseasCategories: OverseasCategory[] = [
   {

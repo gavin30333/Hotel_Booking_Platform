@@ -3,9 +3,9 @@ import { View, Text } from '@tarojs/components'
 import { Grid } from 'antd-mobile'
 import { useThrottleFn } from 'ahooks'
 import { RegionSidebar } from './components/RegionSidebar'
-import { ImageCard } from '../../common/ImageCard'
-import { CityTag } from '../../common/CityTag'
-import { overseasCategories } from '../../../utils/overseasData'
+import { ImageCard } from '@/components/common/ImageCard'
+import { CityTag } from '@/components/common/CityTag'
+import { overseasCategories } from '@/constants/overseasData'
 import './OverseasTab.less'
 
 interface OverseasTabProps {

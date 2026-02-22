@@ -1,4 +1,4 @@
-import { CityGroup } from '../types'
+import { CityGroup } from '@/types/citySelector'
 
 export const historyCities: string[] = ['成都', '北京', '香港', '上海', '中国']
 
@@ -27,6 +27,7 @@ export const hotCities: string[] = [
   '大理市',
   '泉州',
   '西双版纳',
+  '30',
 ]
 
 export const domesticCities: CityGroup[] = [

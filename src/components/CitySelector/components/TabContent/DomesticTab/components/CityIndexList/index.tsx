@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text, ITouchEvent } from '@tarojs/components'
 import { List } from 'antd-mobile'
-import { CityGroup } from '../../../../../types'
+import { CityGroup } from '@/types/citySelector'
 import './CityIndexList.less'
 
 interface CityIndexListProps {
