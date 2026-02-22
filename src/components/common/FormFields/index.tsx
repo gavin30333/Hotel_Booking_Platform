@@ -8,9 +8,9 @@ import {
   GuestInfo,
 } from '@/types/query.types'
 import {
-  LocationField,
   DateField,
   GuestField,
+  LocationField,
   TagField,
 } from '@/components/FieldRenderers'
 import './FormFields.less'

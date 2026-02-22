@@ -31,7 +31,7 @@ import {
 } from 'antd-mobile-icons'
 import { CalendarPicker } from '@/components/common/CalendarPicker'
 import { PolicyPopup } from '@/components/common/PolicyPopup'
-import { GuestSelectionPopup } from '@/components/FieldRenderers/GuestField/components/GuestSelectionPopup'
+import { GuestSelectionPopup } from '@/components/common/GuestSelectionPopup'
 import { GuestInfo } from '@/types/query.types'
 import './index.less'
 

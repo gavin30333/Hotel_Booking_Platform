@@ -5,9 +5,9 @@ import { TabType, SpecialFeature } from '@/types/query.types'
 import { SoundOutline, SmileOutline } from 'antd-mobile-icons'
 import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { TabBar } from '../common/TabBar'
-import { FormFields } from '../common/FormFields'
-import { SearchButton } from '../common/SearchButton'
+import { TabBar } from '@/components/common/TabBar'
+import { FormFields } from '@/components/common/FormFields'
+import { SearchButton } from '@/components/common/SearchButton'
 
 import './QueryCard.less'
 
