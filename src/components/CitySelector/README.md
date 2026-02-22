@@ -32,9 +32,9 @@ This component relies on several shared resources moved to the root directory:
 - `@/components/common/ImageCard`: Displays a card with an image (used in rankings).
 
 ### Data & Constants
-- `@/constants/cityData.ts`: Domestic city data.
-- `@/constants/overseasData.ts`: Overseas city data.
-- `@/constants/hotSearchData.ts`: Hot search and ranking data.
+- `@/constants/CitySelectorConfig/cityData.ts`: Domestic city data.
+- `@/constants/CitySelectorConfig/overseasData.ts`: Overseas city data.
+- `@/constants/CitySelectorConfig/hotSearchData.ts`: Hot search and ranking data.
 
 ### Types
 - `@/types/citySelector.ts`: Type definitions for city data and component props.

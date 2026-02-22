@@ -5,7 +5,7 @@ import { useThrottleFn } from 'ahooks'
 import { RegionSidebar } from './components/RegionSidebar'
 import { ImageCard } from '@/components/common/ImageCard'
 import { CityTag } from '@/components/common/CityTag'
-import { overseasCategories } from '@/constants/overseasData'
+import { overseasCategories } from '@/constants/CitySelectorConfig/overseasData'
 import './OverseasTab.less'
 
 interface OverseasTabProps {

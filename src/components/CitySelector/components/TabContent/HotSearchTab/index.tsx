@@ -2,7 +2,7 @@ import React from 'react'
 import { View, ScrollView } from '@tarojs/components'
 import { HotSearchItems } from './components/HotSearchItems'
 import { RankingList } from './components/RankingList'
-import { hotSearchTags, rankingLists } from '@/constants/hotSearchData'
+import { hotSearchTags, rankingLists } from '@/constants/CitySelectorConfig/hotSearchData'
 import './HotSearchTab.less'
 
 interface HotSearchTabProps {

@@ -8,7 +8,7 @@ import { LocationStatus } from '@/components/common/LocationStatus'
 import { DomesticTab } from './components/TabContent/DomesticTab'
 import { OverseasTab } from './components/TabContent/OverseasTab'
 import { HotSearchTab } from './components/TabContent/HotSearchTab'
-import { historyCities, hotCities, domesticCities } from '@/constants/cityData'
+import { historyCities, hotCities, domesticCities } from '@/constants/CitySelectorConfig/cityData'
 import { CityTab } from '@/types/citySelector'
 import './CitySelector.less'
 
