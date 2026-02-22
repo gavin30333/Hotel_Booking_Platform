@@ -1,5 +1,9 @@
 @import '../../styles/variables.less';
 
+.adm-input-element {
+  font-size: @font-size-sm;
+}
+
 .core-filter-header {
   width: 100%;
   background-color: @bg-color;
@@ -61,6 +65,11 @@
         font-size: @font-size-base;
         color: @text-color;
         margin-bottom: 2px;
+
+        &.filter-value-xs {
+          font-size: @font-size-xs;
+          margin-left: 5px;
+        }
       }
 
       .filter-arrow {
@@ -1946,6 +1955,16 @@
     border: 1px solid @border-color;
     background-color: #f8f8f8;
     cursor: pointer;
+    transition: all 0.2s ease;
+
+    &.selected {
+      border-color: @primary-color;
+      background-color: #e6f7ff;
+
+      .star-text {
+        color: @primary-color;
+      }
+    }
   }
 
   .star-text {

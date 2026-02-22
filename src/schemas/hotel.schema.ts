@@ -1,125 +1,214 @@
 import { Schema, Document, Model, model } from 'mongoose'
 
-export interface IDiscountInfo {
-  type: string //优惠类型
-  value: number //优惠值
-  startTime: Date
-  endTime: Date
-  description: string
+export interface IRoomType {
+  _id?: string
+  name: string
+  nameEn?: string
+  price: number
+  originalPrice?: number
+  area?: number
+  bedType?: string
+  maxOccupancy?: number
+  breakfast?: boolean
+  description?: string
+  facilities?: string[]
+  stock?: number
+  images?: string[]
+}
+
+export interface INearbyAttraction {
+  name: string
+  distance?: string
+  description?: string
+}
+
+export interface ITransportation {
+  type: 'subway' | 'bus' | 'airport' | 'highspeed' | 'train' | 'other'
+  name: string
+  distance?: string
+  description?: string
+}
+
+export interface IShoppingMall {
+  name: string
+  distance?: string
+  description?: string
+}
+
+export interface IDiscount {
+  _id?: string
+  name: string
+  type: 'percentage' | 'fixed' | 'special'
+  value: number
+  startDate?: string
+  endDate?: string
+  description?: string
+  conditions?: string
+}
+
+export interface IPolicies {
+  checkIn?: string
+  checkOut?: string
+  cancellation?: string
+  extraBed?: string
+  pets?: string
+}
+
+export interface ILocation {
+  type: 'Point'
+  coordinates: [number, number]
 }
 
 export interface IHotel extends Document {
-  hotelNameCn: string
-  hotelNameEn: string
-  hotelAddress: string
-  hotelScale: number
-  openTime: Date
-  star: number
-  score: number
-  tags: string[]
-  nearbyAttractions?: string[]
-  trafficAndMalls?: string[]
-  discountInfo?: IDiscountInfo[]
-  city: string
-  cityLevel: string
-  status: string
-  createTime: Date
-  updateTime: Date
+  name: string
+  nameEn?: string
+  address: string
+  starRating: 1 | 2 | 3 | 4 | 5
+  phone: string
+  description: string
+  images: string[]
+  status: 'draft' | 'pending' | 'online' | 'offline'
+  auditStatus?: 'passed' | 'rejected'
+  roomTypes: IRoomType[]
+  openingDate?: string
+  nearbyAttractions: INearbyAttraction[]
+  transportations: ITransportation[]
+  shoppingMalls: IShoppingMall[]
+  discounts: IDiscount[]
+  facilities: string[]
+  policies: IPolicies
+  creator?: string
+  viewCount: number
+  orderCount: number
+  rating: number
+  reviewCount: number
+  location?: ILocation
+  createdAt: Date
+  updatedAt: Date
 }
+
+const RoomTypeSchema = new Schema<IRoomType>(
+  {
+    name: { type: String, required: true },
+    nameEn: { type: String },
+    price: { type: Number, required: true },
+    originalPrice: { type: Number },
+    area: { type: Number },
+    bedType: { type: String },
+    maxOccupancy: { type: Number },
+    breakfast: { type: Boolean, default: false },
+    description: { type: String },
+    facilities: [{ type: String }],
+    stock: { type: Number, default: 10 },
+    images: [{ type: String }],
+  },
+  { _id: true }
+)
+
+const NearbyAttractionSchema = new Schema<INearbyAttraction>(
+  {
+    name: { type: String, required: true },
+    distance: { type: String },
+    description: { type: String },
+  },
+  { _id: false }
+)
+
+const TransportationSchema = new Schema<ITransportation>(
+  {
+    type: {
+      type: String,
+      enum: ['subway', 'bus', 'airport', 'highspeed', 'train', 'other'],
+      required: true,
+    },
+    name: { type: String, required: true },
+    distance: { type: String },
+    description: { type: String },
+  },
+  { _id: false }
+)
+
+const ShoppingMallSchema = new Schema<IShoppingMall>(
+  {
+    name: { type: String, required: true },
+    distance: { type: String },
+    description: { type: String },
+  },
+  { _id: false }
+)
+
+const DiscountSchema = new Schema<IDiscount>(
+  {
+    name: { type: String, required: true },
+    type: {
+      type: String,
+      enum: ['percentage', 'fixed', 'special'],
+      required: true,
+    },
+    value: { type: Number, required: true },
+    startDate: { type: String },
+    endDate: { type: String },
+    description: { type: String },
+    conditions: { type: String },
+  },
+  { _id: true }
+)
+
+const PoliciesSchema = new Schema<IPolicies>(
+  {
+    checkIn: { type: String },
+    checkOut: { type: String },
+    cancellation: { type: String },
+    extraBed: { type: String },
+    pets: { type: String },
+  },
+  { _id: false }
+)
 
 const HotelSchema = new Schema<IHotel>(
   {
-    hotelNameCn: { type: String, required: true },
-    hotelNameEn: { type: String, required: true },
-    hotelAddress: { type: String, required: true },
-    hotelScale: { type: Number, required: true },
-    openTime: { type: Date, required: true },
-    star: { type: Number, required: true, min: 1, max: 5 },
-    score: { type: Number, required: true, min: 4.0, max: 5.0, default: 4.5 },
-    tags: { type: [String], required: true, default: [] },
-    nearbyAttractions: { type: [String], default: [] },
-    trafficAndMalls: { type: [String], default: [] },
-    discountInfo: [
-      {
-        type: {
-          type: String,
-          enum: [
-            'direct_reduce',
-            'member_discount',
-            'stay_discount',
-            'advance_book',
-          ],
-          required: true,
-        },
-        value: { type: Number, required: true },
-        startTime: { type: Date, required: true },
-        endTime: { type: Date, required: true },
-        description: { type: String, required: true },
-      },
-    ],
-    city: { type: String, required: true },
-    cityLevel: {
-      type: String,
-      enum: ['一线', '新一线', '二线', '三线'],
-      required: true,
-    },
+    name: { type: String, required: true },
+    nameEn: { type: String },
+    address: { type: String, required: true },
+    starRating: { type: Number, required: true, min: 1, max: 5 },
+    phone: { type: String, required: true },
+    description: { type: String, required: true },
+    images: [{ type: String }],
     status: {
       type: String,
-      enum: ['online', 'offline', 'review'],
+      enum: ['draft', 'pending', 'online', 'offline'],
       default: 'online',
       required: true,
     },
-    createTime: { type: Date, default: Date.now, required: true },
-    updateTime: { type: Date, default: Date.now, required: true },
+    auditStatus: { type: String, enum: ['passed', 'rejected'] },
+    roomTypes: [RoomTypeSchema],
+    openingDate: { type: String },
+    nearbyAttractions: [NearbyAttractionSchema],
+    transportations: [TransportationSchema],
+    shoppingMalls: [ShoppingMallSchema],
+    discounts: [DiscountSchema],
+    facilities: [{ type: String }],
+    policies: PoliciesSchema,
+    creator: { type: String },
+    viewCount: { type: Number, default: 0, min: 0 },
+    orderCount: { type: Number, default: 0, min: 0 },
+    rating: { type: Number, default: 0, min: 0, max: 5 },
+    reviewCount: { type: Number, default: 0, min: 0 },
+    location: {
+      type: { type: String, enum: ['Point'], default: 'Point' },
+      coordinates: { type: [Number], default: [0, 0] },
+    },
   },
   {
-    timestamps: { updatedAt: 'updateTime', createdAt: 'createTime' },
+    timestamps: true,
     collection: 'hotels',
   }
 )
 
-HotelSchema.index(
-  { hotelNameCn: 'text', hotelAddress: 'text' },
-  {
-    name: 'hotel_text_search_idx',
-    weights: { hotelNameCn: 10, hotelAddress: 5 },
-  }
-)
-
-HotelSchema.index(
-  { cityLevel: 1, star: 1 },
-  {
-    name: 'city_level_star_idx',
-  }
-)
-
-HotelSchema.index(
-  { openTime: 1 },
-  {
-    name: 'open_time_idx',
-  }
-)
-
-HotelSchema.index(
-  { status: 1, updateTime: -1 },
-  {
-    name: 'status_update_time_idx',
-  }
-)
-
-HotelSchema.index(
-  { city: 1, star: 1 },
-  {
-    name: 'city_star_idx',
-  }
-)
-
-HotelSchema.index(
-  { score: -1 },
-  {
-    name: 'score_idx',
-  }
-)
+HotelSchema.index({ name: 'text', address: 'text' }, { name: 'hotel_text_idx' })
+HotelSchema.index({ status: 1 })
+HotelSchema.index({ starRating: 1 })
+HotelSchema.index({ location: '2dsphere' })
 
 export const HotelModel: Model<IHotel> = model<IHotel>('Hotel', HotelSchema)
 

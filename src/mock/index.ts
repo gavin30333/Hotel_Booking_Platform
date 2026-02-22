@@ -35,14 +35,13 @@ const hotelDetailMock1 = {
   rating: 4.8,
   reviewCount: 1256,
   minPrice: 1280,
-  imageUrl:
-    'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=luxury%20hotel%20exterior%20with%20modern%20architecture%20in%20city%20center&image_size=landscape_16_9',
+  imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
   images: [
-    'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=luxury%20hotel%20exterior%20with%20modern%20architecture%20in%20city%20center&image_size=landscape_16_9',
-    'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=luxury%20hotel%20lobby%20with%20high%20ceiling%20and%20elegant%20decor&image_size=landscape_16_9',
-    'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=luxury%20hotel%20room%20with%20king%20bed%20and%20city%20view&image_size=landscape_16_9',
-    'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=luxury%20hotel%20bathroom%20with%20bathtub%20and%20modern%20fixtures&image_size=landscape_16_9',
-    'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=luxury%20hotel%20restaurant%20with%20elegant%20dining%20area&image_size=landscape_16_9',
+    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
+    'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800',
+    'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800',
+    'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800',
+    'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800',
   ],
   tags: ['奢华酒店', '商务出行', '亲子友好', '近地铁'],
   facilities: [
@@ -135,14 +134,13 @@ const hotelDetailMock2 = {
   rating: 4.7,
   reviewCount: 987,
   minPrice: 1080,
-  imageUrl:
-    'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=luxury%20hotel%20in%20pudong%20shanghai%20with%20modern%20design&image_size=landscape_16_9',
+  imageUrl: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',
   images: [
-    'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=luxury%20hotel%20in%20pudong%20shanghai%20with%20modern%20design&image_size=landscape_16_9',
-    'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=luxury%20hotel%20lobby%20with%20crystal%20chandelier&image_size=landscape_16_9',
-    'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=luxury%20hotel%20room%20with%20pudong%20skyline%20view&image_size=landscape_16_9',
-    'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=luxury%20hotel%20bathroom%20with%20rain%20shower&image_size=landscape_16_9',
-    'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=luxury%20hotel%20restaurant%20with%20international%20cuisine&image_size=landscape_16_9',
+    'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',
+    'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800',
+    'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800',
+    'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800',
+    'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800',
   ],
   tags: ['豪华商务', '交通便利', '近地铁', '会议设施'],
   facilities: [

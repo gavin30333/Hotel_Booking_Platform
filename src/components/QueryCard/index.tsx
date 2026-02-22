@@ -4,6 +4,7 @@ import { SCENE_CONFIGS } from '@/constants/QueryConfig'
 import { TabType, SpecialFeature } from '@/types/query.types'
 import { SoundOutline, SmileOutline } from 'antd-mobile-icons'
 import { View, Text } from '@tarojs/components'
+import Taro from '@tarojs/taro'
 import { TabBar, FormFields, SearchButton } from './components'
 
 import './QueryCard.less'
@@ -23,40 +24,19 @@ export const QueryCard: React.FC<QueryCardProps> = ({
   const currentConfig = SCENE_CONFIGS[activeTab]
 
   const handleSearch = async (overrides?: any) => {
-    // Merge overrides (e.g. from immediate tag selection) with current formData
-    // Note: formData might be stale in this closure if state update hasn't propagated,
-    // so overrides are crucial for immediate actions.
     const searchData = { ...formData, ...(overrides || {}), scene: activeTab }
 
-    // 调用后端API查询酒店
-    try {
-      const response = await fetch('http://localhost:3000/api/hotel/search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          city: searchData.location.city,
-          checkInDate: searchData.dates.startDate,
-          checkOutDate: searchData.dates.endDate,
-          filters: {
-            star: [],
-          },
-          pageNum: 1,
-          pageSize: 20,
-        }),
-      })
+    const city = searchData.location?.city || ''
+    const keyword = searchData.location?.keyword || ''
+    const checkInDate = searchData.dates?.startDate || ''
+    const checkOutDate = searchData.dates?.endDate || ''
 
-      const data = await response.json()
-      console.log('API Response:', data)
-    } catch (error) {
-      console.error('API Error:', error)
-    }
+    Taro.navigateTo({
+      url: `/pages/user/list/index?city=${encodeURIComponent(city)}&keyword=${encodeURIComponent(keyword)}&checkInDate=${encodeURIComponent(checkInDate)}&checkOutDate=${encodeURIComponent(checkOutDate)}`,
+    })
 
     if (onSearch) {
       onSearch(searchData)
-    } else {
-      console.log('Search:', searchData)
     }
   }
 
