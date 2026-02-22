@@ -32,10 +32,36 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
   const scrollRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
 
-  const handleSelect = (city: string) => {
-    onSelect(city)
-    onClose()
-  }
+  const handleSelect = React.useCallback(
+    (city: string) => {
+      onSelect(city)
+      onClose()
+    },
+    [onSelect, onClose]
+  )
+
+  const memoizedDomesticTab = React.useMemo(
+    () => (
+      <DomesticTab
+        groups={domesticCities}
+        hotCities={hotCities}
+        currentCity={currentCity}
+        onSelect={handleSelect}
+        scrollEnabled={isSticky}
+      />
+    ),
+    [domesticCities, hotCities, currentCity, handleSelect, isSticky]
+  )
+
+  const memoizedOverseasTab = React.useMemo(
+    () => <OverseasTab onSelect={handleSelect} scrollEnabled={isSticky} />,
+    [handleSelect, isSticky]
+  )
+
+  const memoizedHotSearchTab = React.useMemo(
+    () => <HotSearchTab onSelect={handleSelect} />,
+    [handleSelect]
+  )
 
   const { run: handleScroll } = useThrottleFn(
     (e: React.UIEvent<HTMLDivElement>) => {
@@ -43,12 +69,14 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
       const scrollTop = container.scrollTop
       const headerHeight = headerRef.current?.clientHeight || 0
 
-      // When scrollTop reaches header height, tabs header becomes sticky
-      // We add a small buffer (e.g., 2px) to ensure smooth transition
-      const stickyState = scrollTop >= headerHeight - 2
-
-      if (stickyState !== isSticky) {
-        setIsSticky(stickyState)
+      // Hysteresis logic to prevent jitter at the sticky threshold
+      // Enter sticky state when scrolled past header
+      if (!isSticky && scrollTop >= headerHeight) {
+        setIsSticky(true)
+      }
+      // Exit sticky state when scrolled back up with a buffer
+      else if (isSticky && scrollTop < headerHeight - 5) {
+        setIsSticky(false)
       }
     },
     { wait: 16 } // ~60fps
@@ -86,20 +114,13 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
           className="city-tabs"
         >
           <Tabs.Tab title="国内(含港澳台)" key="domestic">
-            <DomesticTab
-              groups={domesticCities}
-              hotCities={hotCities}
-              currentCity={currentCity}
-              onSelect={handleSelect}
-              scrollRef={scrollRef} // This ref might need adjustment if DomesticTab needs its own scroll control
-              scrollEnabled={isSticky}
-            />
+            {memoizedDomesticTab}
           </Tabs.Tab>
           <Tabs.Tab title="海外" key="overseas">
-            <OverseasTab onSelect={handleSelect} scrollEnabled={isSticky} />
+            {memoizedOverseasTab}
           </Tabs.Tab>
           <Tabs.Tab title="成都热搜" key="hot_search">
-            <HotSearchTab onSelect={handleSelect} />
+            {memoizedHotSearchTab}
           </Tabs.Tab>
         </Tabs>
       </div>

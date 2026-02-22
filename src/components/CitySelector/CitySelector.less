@@ -38,6 +38,9 @@
       flex-shrink: 0;
       background: @bg-color;
       border-bottom: 1px solid @border-color;
+      transform: translateZ(0);
+      will-change: transform;
+      box-shadow: 0 -1px 0 @bg-color; // Hack to cover any sub-pixel gap above
 
       .adm-tabs-tab {
         font-size: @font-size-base;
