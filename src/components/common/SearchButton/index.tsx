@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button } from 'antd-mobile'
 import { View } from '@tarojs/components'
+import './SearchButton.less'
 
 interface SearchButtonProps {
   onClick: () => void

@@ -13,6 +13,7 @@ import {
   GuestField,
   TagField,
 } from '@/components/FieldRenderers'
+import './FormFields.less'
 
 interface FormFieldsProps {
   fields: FieldConfig[]

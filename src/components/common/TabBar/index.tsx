@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text } from '@tarojs/components'
 import { TabType } from '@/types/query.types'
 import classNames from 'classnames'
+import './TabBar.less'
 
 interface TabBarProps {
   activeTab: TabType
