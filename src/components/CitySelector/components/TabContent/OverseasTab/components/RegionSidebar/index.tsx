@@ -1,6 +1,6 @@
 import React from 'react'
 import { SideBar } from 'antd-mobile'
-import { OverseasCategory } from '../../../../../types'
+import { OverseasCategory } from '@/types/citySelector'
 import './RegionSidebar.less'
 
 interface RegionSidebarProps {

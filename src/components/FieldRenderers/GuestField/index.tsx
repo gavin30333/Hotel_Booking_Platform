@@ -2,9 +2,9 @@ import React, { useState, useMemo } from 'react'
 import { View, Text } from '@tarojs/components'
 import { DownOutline } from 'antd-mobile-icons'
 import { FieldConfig, GuestInfo } from '@/types/query.types'
-import { GuestSelectionPopup } from './components/GuestSelectionPopup'
-import { HomestayGuestSelectionPopup } from './components/HomestayGuestSelectionPopup'
-import { PriceStarSelectionPopup } from './components/PriceStarSelectionPopup'
+import { GuestSelectionPopup } from '@/components/common/popup/GuestSelectionPopup'
+import { PriceStarSelectionPopup } from '@/components/common/popup/PriceStarSelectionPopup'
+import { getHomestayText } from '@/utils/guestFieldUtils'
 import './GuestField.less'
 
 interface GuestFieldProps {
@@ -23,60 +23,9 @@ export const GuestField: React.FC<GuestFieldProps> = ({
   const [showGuestPopup, setShowGuestPopup] = useState(false)
   const [showPricePopup, setShowPricePopup] = useState(false)
 
-  // Helper to format homestay selection text
-  const getHomestayText = () => {
-    // Helper function to format a list of numbers (with sorting and grouping)
-    const formatNumberList = (val: number | number[], suffix: string) => {
-      const arr = Array.isArray(val) ? val : [val]
-      if (arr.length === 0) return '' // Empty return for empty selection
-
-      const sorted = [...arr].sort((a, b) => a - b)
-      const parts: string[] = []
-      let start = sorted[0]
-      let prev = sorted[0]
-
-      const pushRange = (s: number, e: number) => {
-        if (s === e) {
-          if (s === 100) parts.push('自定义')
-          else parts.push(`${s}${suffix}`)
-        } else {
-          if (s === 100) parts.push('自定义')
-          else if (e === 100) {
-            parts.push(`${s}${suffix}`)
-            parts.push('自定义')
-          } else {
-            parts.push(`${s}-${e}${suffix}`)
-          }
-        }
-      }
-
-      for (let i = 1; i < sorted.length; i++) {
-        const current = sorted[i]
-        if (current === prev + 1 && current !== 100 && prev !== 100) {
-          prev = current
-        } else {
-          pushRange(start, prev)
-          start = current
-          prev = current
-        }
-      }
-      pushRange(start, prev)
-
-      return parts.join(',')
-    }
-
-    const adultsText = formatNumberList(value.adults, '人')
-    const childrenText = formatNumberList(value.children, '床')
-    const roomsText = formatNumberList(value.rooms, '居')
-
-    const parts = [adultsText, childrenText, roomsText].filter((p) => p !== '')
-    if (parts.length === 0) return '' // Return empty string if no selections
-    return parts.join(' ')
-  }
-
   const displayText = useMemo(() => {
     if (isHomestay) {
-      const text = getHomestayText()
+      const text = getHomestayText(value)
       // If text is empty, show default placeholder "人/床/居数不限"
       if (!text) return customText || '人/床/居数不限'
       return text
@@ -84,7 +33,7 @@ export const GuestField: React.FC<GuestFieldProps> = ({
     return customText
   }, [value, isHomestay, customText])
 
-  const isPlaceholder = isHomestay && !getHomestayText()
+  const isPlaceholder = isHomestay && !getHomestayText(value)
 
   return (
     <View className="field-row guest-field">
@@ -96,7 +45,8 @@ export const GuestField: React.FC<GuestFieldProps> = ({
           >
             {displayText}
           </Text>
-          <HomestayGuestSelectionPopup
+          <GuestSelectionPopup
+            type="homestay"
             visible={showGuestPopup}
             onClose={() => setShowGuestPopup(false)}
             value={value}

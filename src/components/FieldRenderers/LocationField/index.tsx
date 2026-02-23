@@ -126,7 +126,7 @@ export const LocationField: React.FC<LocationFieldProps> = ({
   }
 
   return (
-    <View className="location-field">
+    <View className="field-row location-field">
       {showLocationInfo && locationInfo && (
         <View className="location-info">
           <Text className="location-info-text">📍 {locationInfo}</Text>

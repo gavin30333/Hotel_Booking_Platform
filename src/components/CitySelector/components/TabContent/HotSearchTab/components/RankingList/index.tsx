@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, Image } from '@tarojs/components'
-import { HotSearchCategory } from '../../../../../types'
+import { HotSearchCategory } from '@/types/citySelector'
 import './RankingList.less'
 
 interface RankingListProps {

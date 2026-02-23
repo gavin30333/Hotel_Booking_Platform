@@ -1,15 +1,6 @@
 import { View, Text, ScrollView } from '@tarojs/components'
-import HotelCard from '../../../../components/common/HotelCard'
-
-interface Hotel {
-  id: string
-  name: string
-  price: number
-  rating: number
-  reviewCount: number
-  address: string
-  images: string[]
-}
+import HotelCard from '@/components/common/display/HotelCard'
+import { Hotel } from '@/services/api'
 
 interface HotelListContentProps {
   hotelList: Hotel[]
