@@ -1,5 +1,6 @@
 import { View } from '@tarojs/components'
 import CoreFilterHeader from '@/components/filter/CoreFilterHeader'
+import './HotelListHeader.less'
 
 interface HotelListHeaderProps {
   onSearch: (params: Record<string, unknown>) => void
@@ -13,7 +14,7 @@ export default function HotelListHeader({
   initialFilters,
 }: HotelListHeaderProps) {
   return (
-    <View style={{ position: 'relative', zIndex: 100 }}>
+    <View className="hotel-list-header">
       <CoreFilterHeader
         onSearch={onSearch}
         onDropdownStateChange={onDropdownStateChange}

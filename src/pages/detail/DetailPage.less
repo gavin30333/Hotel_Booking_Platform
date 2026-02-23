@@ -1,0 +1,367 @@
+@import '@/styles/variables.less';
+
+.hotel-detail-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: @page-bg;
+
+  /* 详情内容 */
+  .detail-content {
+    width: 100%;
+    overflow-y: auto;
+    position: relative;
+
+    /* 评价和地图容器 */
+    .review-map-container {
+      display: flex;
+      background-color: #fff;
+      margin-bottom: @spacing-xs;
+      height: 180px;
+
+      /* 评价区域 */
+      .review-section {
+        flex: 1;
+        padding: @spacing-lg;
+        border-right: 1px solid #f0f0f0;
+        display: flex;
+        flex-direction: column;
+
+        .review-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .review-title {
+            font-size: @font-size-md;
+            font-weight: 600;
+            color: @text-color;
+          }
+
+          .review-count {
+            font-size: @font-size-sm;
+            color: #999;
+          }
+        }
+
+        .review-content {
+          .review-rating {
+            font-size: @font-size-lg;
+            font-weight: 600;
+            color: @primary-color;
+          }
+
+          .review-label {
+            font-size: @font-size-base;
+            color: @primary-color;
+          }
+
+          .review-tags {
+            font-size: @font-size-base;
+            color: @text-secondary;
+            line-height: 1.4;
+          }
+        }
+      }
+
+      /* 地图区域 */
+      .map-section {
+        flex: 1;
+        padding: @spacing-lg;
+        display: flex;
+        flex-direction: column;
+
+        .map-header {
+          display: flex;
+          align-items: center;
+          margin-bottom: @spacing-lg;
+
+          .map-title {
+            font-size: @font-size-md;
+            font-weight: 600;
+            color: @text-color;
+          }
+        }
+
+        .map-content {
+          display: flex;
+          flex-direction: column;
+          gap: @spacing-xs;
+
+          .location-text {
+            font-size: @font-size-base;
+            color: @text-color;
+          }
+
+          .address-text {
+            font-size: @font-size-base;
+            color: #999;
+          }
+
+          .map-btn {
+            display: flex;
+            align-items: center;
+
+            .map-icon {
+              font-size: @font-size-base;
+              margin-right: @spacing-xs;
+            }
+
+            .map-text {
+              font-size: @font-size-base;
+              color: @text-secondary;
+            }
+          }
+        }
+      }
+    }
+
+    /* 优惠信息 */
+    .promotion-section {
+      background-color: #fff;
+      padding: @spacing-md;
+      margin-bottom: @spacing-xs;
+
+      .promotion-item {
+        display: flex;
+        align-items: center;
+
+        .promotion-icon {
+          font-size: @font-size-sm;
+          margin-right: @spacing-sm;
+        }
+
+        .promotion-text {
+          font-size: @font-size-sm;
+          color: #ff4d4f;
+        }
+      }
+    }
+
+    /* 周边信息 */
+    .nearby-section {
+      background-color: #fff;
+      padding: @spacing-lg;
+      margin-bottom: @spacing-xs;
+
+      .section-title {
+        font-size: @font-size-md;
+        font-weight: 600;
+        color: @text-color;
+        margin-bottom: @spacing-md;
+        display: block;
+      }
+
+      .nearby-group {
+        margin-bottom: @spacing-md;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .nearby-header {
+          display: flex;
+          align-items: center;
+          gap: @spacing-xs;
+          margin-bottom: @spacing-sm;
+
+          .nearby-title {
+            font-size: @font-size-base;
+            font-weight: 500;
+            color: @text-color;
+          }
+        }
+
+        .nearby-list {
+          .nearby-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: @spacing-xs 0;
+            border-bottom: 1px solid #f5f5f5;
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            .transport-item {
+              display: flex;
+              align-items: center;
+              gap: @spacing-xs;
+            }
+
+            .nearby-name {
+              font-size: @font-size-base;
+              color: @text-color;
+            }
+
+            .nearby-distance {
+              font-size: @font-size-sm;
+              color: @text-secondary;
+            }
+          }
+        }
+      }
+    }
+
+    /* 筛选下拉框 */
+    .filter-dropdown {
+      background-color: #fff;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: -@spacing-xs;
+      padding: @spacing-lg;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      max-height: 45vh;
+      overflow-y: auto;
+      z-index: 100;
+      border-radius: 0 0 @border-radius-md @border-radius-md;
+
+      .filter-category {
+        margin-bottom: @spacing-xl;
+
+        .filter-category-header {
+          margin-bottom: @spacing-lg;
+
+          .filter-category-title {
+            font-size: @font-size-md;
+            font-weight: 600;
+            color: @text-color;
+          }
+        }
+
+        /* 筛选选项网格，一行放三个 */
+        .filter-options-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: @spacing-xs;
+
+          .filter-option {
+            padding: @spacing-xs @spacing-sm;
+            border-radius: @border-radius-sm;
+            border: 1px solid #e0e0e0;
+            background-color: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+
+            &:active {
+              background-color: #e6f7ff;
+              border-color: @primary-color;
+            }
+
+            .filter-option-text {
+              font-size: @font-size-base;
+              color: @text-secondary;
+            }
+          }
+        }
+      }
+
+      /* 底部按钮 */
+      .filter-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: @spacing-xl;
+        padding-top: @spacing-lg;
+        border-top: 1px solid #f0f0f0;
+
+        .filter-button-clear {
+          flex: 1;
+          margin-right: @spacing-sm;
+          padding: @spacing-sm;
+          border: 1px solid #e0e0e0;
+          border-radius: @border-radius-sm;
+          background-color: @bg-color;
+          text-align: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:active {
+            background-color: #f5f5f5;
+          }
+
+          .filter-button-text {
+            font-size: @font-size-base;
+            color: @text-secondary;
+          }
+        }
+
+        .filter-button-confirm {
+          flex: 1;
+          margin-left: @spacing-sm;
+          padding: @spacing-sm;
+          border: 1px solid @primary-color;
+          border-radius: @border-radius-sm;
+          background-color: @primary-color;
+          text-align: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:active {
+            background-color: #40a9ff;
+          }
+
+          .filter-button-text {
+            font-size: @font-size-base;
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    /* 筛选遮罩层 */
+    .filter-overlay {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 99;
+    }
+  }
+
+  /* 加载和错误容器 */
+  .loading-container,
+  .error-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+
+    text {
+      font-size: @font-size-lg;
+      color: #999;
+    }
+  }
+}
+
+/* 响应式设计 */
+@media (min-width: 786px) {
+  .hotel-detail-page {
+    .detail-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+
+      .hotel-location,
+      .promotion-section {
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+    }
+
+    .booking-bar {
+      max-width: 1200px;
+      margin: 0 auto;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 8px 8px 0 0;
+    }
+  }
+}

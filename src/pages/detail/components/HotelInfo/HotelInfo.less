@@ -1,0 +1,70 @@
+@import '@/styles/variables.less';
+
+.hotel-header-info {
+  background-color: #fff;
+  padding: @spacing-lg;
+  margin-bottom: @spacing-xs;
+
+  .hotel-name {
+    font-size: @font-size-xl;
+    font-weight: 600;
+    color: @text-color;
+    margin-bottom: @spacing-md;
+    line-height: 1.3;
+  }
+
+  .hotel-badge {
+    font-size: @font-size-sm;
+    color: #fff;
+    margin-right: @spacing-md;
+    background: rgb(255, 145, 10);
+    padding: 2px @spacing-md;
+    border-radius: @border-radius-xl;
+    box-shadow: @shadow-card;
+    font-weight: 600;
+    white-space: nowrap;
+    display: inline-block;
+  }
+
+  .hotel-ranking {
+    font-size: @font-size-sm;
+    color: #fff;
+    margin-top: @spacing-xs;
+    background: rgb(255, 145, 10);
+    padding: 2px @spacing-md;
+    border-radius: @border-radius-xl;
+    box-shadow: @shadow-card;
+    font-weight: 600;
+    white-space: nowrap;
+    display: inline-block;
+  }
+
+  .hotel-rating {
+    margin-top: @spacing-md;
+
+    .rating {
+      font-size: @font-size-md;
+      font-weight: 600;
+      color: @primary-color;
+      margin-right: @spacing-md;
+    }
+
+    .rating-label {
+      font-size: @font-size-md;
+      color: @primary-color;
+      margin-right: @spacing-md;
+    }
+
+    .review-count {
+      font-size: @font-size-md;
+      color: #999;
+    }
+  }
+}
+
+@media (min-width: 786px) {
+  .hotel-header-info {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+}

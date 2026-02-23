@@ -1,5 +1,6 @@
 import { View } from '@tarojs/components'
 import { LeftOutline, HeartOutline, PhonebookOutline, ShopbagOutline, MoreOutline } from 'antd-mobile-icons'
+import './HotelDetailHeader.less'
 
 interface HotelDetailHeaderProps {
   onBack: () => void

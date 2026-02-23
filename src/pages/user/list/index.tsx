@@ -7,13 +7,20 @@ import Taro, {
   useRouter,
 } from '@tarojs/taro'
 import { useState, useEffect, useCallback } from 'react'
-import './index.less'
+import './ListPage.less'
 import { useHotelList } from '@/hooks/useHotelList'
 import { useHotelStore } from '@/store/hotelStore'
 import HotelListHeader from './components/HotelListHeader'
 import FilterTags from './components/FilterTags'
 import FilterDropdown from './components/FilterDropdown'
 import HotelListContent from './components/HotelListContent'
+import {
+  sortOptions,
+  stayDurationOptions,
+  brandOptions,
+  filterTags,
+} from './constants'
+import { formatSearchFilters } from './utils'
 
 export default function HotelList() {
   const router = useRouter()
@@ -132,40 +139,7 @@ export default function HotelList() {
   })
 
   const handleSearch = (params: Record<string, unknown>) => {
-    const formattedFilters: Record<string, unknown> = {
-      city: params.city as string,
-      keyword: params.keyword as string,
-      checkInDate: params.checkInDate as string,
-      checkOutDate: params.checkOutDate as string,
-      minPrice: params.minPrice ?? 0,
-      maxPrice: params.maxPrice ?? 10000,
-      starRating: (params.starRating as number[]) || [],
-      facilities: (params.facilities as string[]) || [],
-      rooms: (params.rooms as number) || 1,
-      adults: (params.adults as number) || 2,
-      children: (params.children as number) || 0,
-    }
-
-    if (params.sortBy) {
-      formattedFilters.sortBy = params.sortBy
-    }
-
-    if (params.location) {
-      formattedFilters.location = params.location
-    }
-
-    if (params.brand) {
-      formattedFilters.brand = params.brand
-    }
-
-    if (params.minRating !== undefined) {
-      formattedFilters.minRating = params.minRating
-    }
-
-    if (params.roomType) {
-      formattedFilters.roomType = params.roomType
-    }
-
+    const formattedFilters = formatSearchFilters(params)
     setFilters(formattedFilters)
     refreshHotels()
   }
@@ -232,29 +206,6 @@ export default function HotelList() {
     setBrandArrowUp(false)
   }
 
-  const sortOptions = [
-    { key: 'price_asc', label: '价格从低到高', value: 'price_asc' },
-    { key: 'price_desc', label: '价格从高到低', value: 'price_desc' },
-    { key: 'rating_desc', label: '评分从高到低', value: 'rating_desc' },
-    { key: 'distance_asc', label: '距离从近到远', value: 'distance_asc' },
-  ]
-
-  const stayDurationOptions = [
-    { label: '2小时以下', value: '2h-' },
-    { label: '3小时', value: '3h' },
-    { label: '4小时', value: '4h' },
-    { label: '5小时以上', value: '5h+' },
-  ]
-
-  const brandOptions = [
-    { label: '希尔顿', value: 'hilton' },
-    { label: '万豪', value: 'marriott' },
-    { label: '洲际', value: 'intercontinental' },
-    { label: '凯悦', value: 'hyatt' },
-    { label: '雅高', value: 'accor' },
-    { label: '精选酒店', value: 'selected' },
-  ]
-
   const handleFilterTagClick = (
     filterName: string,
     filterValue: Record<string, unknown>
@@ -274,16 +225,6 @@ export default function HotelList() {
     setSelectedFilters(selectedFilters.filter((tag) => tag !== filterName))
     refreshHotels()
   }
-
-  const filterTags = [
-    { name: '4.5分以上', key: 'minRating', value: 4.5 },
-    { name: '大床房', key: 'roomType', value: '大床房' },
-    { name: '双床房', key: 'roomType', value: '双床房' },
-    { name: '套房', key: 'roomType', value: '套房' },
-    { name: '亲子房', key: 'roomType', value: '亲子房' },
-    { name: '家庭房', key: 'roomType', value: '家庭房' },
-    { name: '无烟房', key: 'smokeFree', value: true },
-  ]
 
   return (
     <View

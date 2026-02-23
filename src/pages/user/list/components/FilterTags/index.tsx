@@ -1,4 +1,5 @@
 import { View, Text, ScrollView } from '@tarojs/components'
+import './FilterTags.less'
 
 interface FilterTag {
   name: string

@@ -1,5 +1,7 @@
 import { View, Text, ScrollView } from '@tarojs/components'
 import { AppstoreOutline, UserOutline, SmileOutline } from 'antd-mobile-icons'
+import { getNightsCount } from '../../utils'
+import './DatePriceSelector.less'
 
 interface DatePriceSelectorProps {
   checkInDate: string
@@ -26,14 +28,6 @@ export default function DatePriceSelector({
   onFilterTagClick,
   onRemoveFilter,
 }: DatePriceSelectorProps) {
-  const getNightsCount = () => {
-    const checkIn = new Date(checkInDate)
-    const checkOut = new Date(checkOutDate)
-    const diffTime = Math.abs(checkOut.getTime() - checkIn.getTime())
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return diffDays
-  }
-
   return (
     <View className="date-price-section">
       <View className="date-price-main">
@@ -78,7 +72,7 @@ export default function DatePriceSelector({
             </View>
             <View className="night-count">
               <Text className="night-count-text">
-                共{getNightsCount()}晚
+                共{getNightsCount(checkInDate, checkOutDate)}晚
               </Text>
             </View>
           </View>

@@ -1,4 +1,6 @@
 import { View, Text, Swiper, SwiperItem, Image } from '@tarojs/components'
+import { DEFAULT_HOTEL_IMAGE } from '../../constants'
+import './ImageCarousel.less'
 
 interface ImageCarouselProps {
   images: string[]
@@ -36,7 +38,7 @@ export default function ImageCarousel({ images, onImageClick }: ImageCarouselPro
           <SwiperItem>
             <View className="image-container">
               <Image
-                src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800"
+                src={DEFAULT_HOTEL_IMAGE}
                 mode="aspectFill"
                 className="carousel-image"
               />

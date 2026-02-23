@@ -1,21 +1,7 @@
 import { View } from '@tarojs/components'
-import RoomItem from './RoomItem'
-
-interface Room {
-  id?: string
-  _id?: string
-  name?: string
-  roomTypeName?: string
-  description?: string
-  bedType?: string
-  area?: number
-  maxOccupancy?: number
-  breakfast?: boolean
-  price?: number
-  currentPrice?: number
-  originalPrice?: number
-  images?: string[]
-}
+import RoomItem from '../RoomItem'
+import { Room } from '../../types'
+import './RoomList.less'
 
 interface RoomListProps {
   rooms: Room[]

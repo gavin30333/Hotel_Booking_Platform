@@ -1,20 +1,7 @@
 import { View, Text, Image } from '@tarojs/components'
-
-interface Room {
-  id?: string
-  _id?: string
-  name?: string
-  roomTypeName?: string
-  description?: string
-  bedType?: string
-  area?: number
-  maxOccupancy?: number
-  breakfast?: boolean
-  price?: number
-  currentPrice?: number
-  originalPrice?: number
-  images?: string[]
-}
+import { Room } from '../../types'
+import { DEFAULT_HOTEL_IMAGE } from '../../constants'
+import './RoomItem.less'
 
 interface RoomItemProps {
   room: Room
@@ -38,7 +25,7 @@ export default function RoomItem({
           src={
             room.images?.[0] ||
             hotelImages[0] ||
-            'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800'
+            DEFAULT_HOTEL_IMAGE
           }
           mode="aspectFill"
           className="room-img"

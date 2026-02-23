@@ -1,4 +1,5 @@
 import { View, Text } from '@tarojs/components'
+import './NoData.less'
 
 interface NoDataProps {
   message?: string

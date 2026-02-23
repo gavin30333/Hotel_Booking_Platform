@@ -1,6 +1,9 @@
 import { View, Text, ScrollView } from '@tarojs/components'
 import HotelCard from '@/components/common/display/HotelCard'
 import { Hotel } from '@/services/api'
+import LoadingMore from '../LoadingMore'
+import NoData from '../NoData'
+import './HotelListContent.less'
 
 interface HotelListContentProps {
   hotelList: Hotel[]
@@ -48,17 +51,11 @@ export default function HotelListContent({
             <HotelCard key={hotel.id} hotel={hotel} />
           ))}
 
-          {hasMore && (
-            <View className="loading-more">
-              <Text>{loading ? '加载中...' : '上拉加载更多'}</Text>
-            </View>
-          )}
-
-          {!hasMore && hotelList.length > 0 && (
-            <View className="loading-more">
-              <Text>已加载全部酒店</Text>
-            </View>
-          )}
+          <LoadingMore
+            loading={loading}
+            hasMore={hasMore}
+            allLoaded={!hasMore && hotelList.length > 0}
+          />
 
           {error && (
             <View className="error">
@@ -67,12 +64,7 @@ export default function HotelListContent({
           )}
         </ScrollView>
       ) : (
-        <View className="no-data" style={{ zIndex: 0 }}>
-          <Text>暂无符合条件的酒店</Text>
-          <Text style={{ fontSize: '12px', color: '#999', marginTop: '8px' }}>
-            请尝试调整筛选条件
-          </Text>
-        </View>
+        <NoData />
       )}
     </View>
   )

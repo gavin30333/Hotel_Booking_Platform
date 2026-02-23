@@ -1,4 +1,5 @@
 import { View, Text } from '@tarojs/components'
+import './HotelInfo.less'
 
 interface HotelInfoProps {
   name: string

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image } from '@tarojs/components'
+import { View, Text, ScrollView } from '@tarojs/components'
 import { useState, useEffect } from 'react'
 import Taro, { useRouter, showToast } from '@tarojs/taro'
 import { getHotelDetail } from '@/services/hotel'
@@ -8,21 +8,14 @@ import {
   ShopbagOutline,
   TravelOutline,
   LocationOutline,
-  GlobalOutline,
-  TruckOutline,
-  GiftOutline,
-  ScanningFaceOutline,
-  SmileOutline,
-  SetOutline,
-  ClockCircleOutline,
-  AppstoreOutline,
-  UserOutline,
 } from 'antd-mobile-icons'
 import { CalendarPicker } from '@/components/common/form/CalendarPicker'
 import { PolicyPopup } from '@/components/common/popup/PolicyPopup'
 import { GuestSelectionPopup } from '@/components/common/popup/GuestSelectionPopup'
 import { GuestInfo } from '@/types/query.types'
-import './index.less'
+import { getTransportIcon } from './utils'
+import './DetailPage.less'
+
 import HotelDetailHeader from './components/HotelDetailHeader'
 import ImageCarousel from './components/ImageCarousel'
 import HotelInfo from './components/HotelInfo'
@@ -65,9 +58,6 @@ export default function HotelDetailPage() {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
   const [showFilterDropdown, setShowFilterDropdown] = useState(false)
   const [filterArrowUp, setFilterArrowUp] = useState(false)
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 100 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [draggedHandle, setDraggedHandle] = useState<'min' | 'max' | null>(null)
 
   useEffect(() => {
     fetchHotelDetail()
@@ -163,75 +153,6 @@ export default function HotelDetailPage() {
     childAges: [],
   }
 
-  const getNightsCount = () => {
-    const checkIn = new Date(checkInDate)
-    const checkOut = new Date(checkOutDate)
-    const diffTime = Math.abs(checkOut.getTime() - checkIn.getTime())
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return diffDays
-  }
-
-  const getFacilityIcon = (facility: string) => {
-    const facilityLower = facility.toLowerCase()
-    if (
-      facilityLower.includes('wifi') ||
-      facilityLower.includes('网络') ||
-      facilityLower.includes('无线')
-    ) {
-      return GlobalOutline
-    }
-    if (
-      facilityLower.includes('停车') ||
-      facilityLower.includes('车位') ||
-      facilityLower.includes('车库')
-    ) {
-      return TruckOutline
-    }
-    if (
-      facilityLower.includes('早餐') ||
-      facilityLower.includes('餐厅') ||
-      facilityLower.includes('餐饮')
-    ) {
-      return GiftOutline
-    }
-    if (
-      facilityLower.includes('健身') ||
-      facilityLower.includes('泳池') ||
-      facilityLower.includes('运动')
-    ) {
-      return ScanningFaceOutline
-    }
-    if (
-      facilityLower.includes('前台') ||
-      facilityLower.includes('服务') ||
-      facilityLower.includes('接待')
-    ) {
-      return SmileOutline
-    }
-    if (facilityLower.includes('空调') || facilityLower.includes('暖气')) {
-      return SetOutline
-    }
-    if (facilityLower.includes('洗浴') || facilityLower.includes('淋浴')) {
-      return ClockCircleOutline
-    }
-    return FireFill
-  }
-
-  const getTransportIcon = (type: string) => {
-    switch (type) {
-      case 'subway':
-      case 'highspeed':
-      case 'train':
-        return TravelOutline
-      case 'bus':
-        return TruckOutline
-      case 'airport':
-        return GlobalOutline
-      default:
-        return LocationOutline
-    }
-  }
-
   const handleFilterTagClick = (filterType: string) => {
     switch (filterType) {
       case '价格':
@@ -277,49 +198,7 @@ export default function HotelDetailPage() {
     })
   }
 
-  const handlePriceSliderStart = (handle: 'min' | 'max') => (e: any) => {
-    e.stopPropagation()
-    setIsDragging(true)
-    setDraggedHandle(handle)
-    document.addEventListener('mousemove', handlePriceSliderMove)
-    document.addEventListener('mouseup', handlePriceSliderEnd)
-    document.addEventListener('touchmove', handlePriceSliderMove)
-    document.addEventListener('touchend', handlePriceSliderEnd)
-  }
 
-  const handlePriceSliderMove = (e: any) => {
-    if (!isDragging || !draggedHandle) return
-    const slider = document.querySelector('.price-slider')
-    if (!slider) return
-    const rect = slider.getBoundingClientRect()
-    let x: number
-    if (e.touches) {
-      x = Math.max(0, Math.min(e.touches[0].clientX - rect.left, rect.width))
-    } else if (e.clientX) {
-      x = Math.max(0, Math.min(e.clientX - rect.left, rect.width))
-    } else {
-      return
-    }
-    const percentage = x / rect.width
-    const price = Math.round(percentage * 100)
-    const roundedPrice = Math.round(price / 10) * 10
-    setPriceRange((prev) => {
-      if (draggedHandle === 'min') {
-        return { min: Math.min(roundedPrice, prev.max - 10), max: prev.max }
-      } else {
-        return { min: prev.min, max: Math.max(roundedPrice, prev.min + 10) }
-      }
-    })
-  }
-
-  const handlePriceSliderEnd = () => {
-    setIsDragging(false)
-    setDraggedHandle(null)
-    document.removeEventListener('mousemove', handlePriceSliderMove)
-    document.removeEventListener('mouseup', handlePriceSliderEnd)
-    document.removeEventListener('touchmove', handlePriceSliderMove)
-    document.removeEventListener('touchend', handlePriceSliderEnd)
-  }
 
   if (loading) {
     return (
@@ -492,222 +371,25 @@ export default function HotelDetailPage() {
           </View>
         )}
 
-        <View className="date-price-section">
-          <View className="date-price-main">
-            <View
-              className="date-section"
-              onClick={() => setShowCalendar(true)}
-            >
-              <View className="date-combined">
-                <View className="date-part">
-                  <View className="date-item">
-                    <Text className="date-label today">
-                      {checkInDate === today.toISOString().split('T')[0]
-                        ? '今天'
-                        : '入住'}
-                    </Text>
-                    <Text className="date-value">
-                      {(() => {
-                        const checkIn = new Date(checkInDate)
-                        return `${checkIn.getMonth() + 1}月${checkIn.getDate()}日`
-                      })()}
-                    </Text>
-                  </View>
-                  <View className="date-separator">
-                    <Text className="separator-text">-</Text>
-                  </View>
-                  <View className="date-item">
-                    <Text className="date-label tomorrow">
-                      {checkOutDate === tomorrow.toISOString().split('T')[0]
-                        ? '明天'
-                        : '退房'}
-                    </Text>
-                    <Text className="date-value">
-                      {(() => {
-                        const checkOut = new Date(checkOutDate)
-                        return `${checkOut.getMonth() + 1}月${checkOut.getDate()}日`
-                      })()}
-                    </Text>
-                    <View className="low-price-badge">
-                      <Text className="low-price-text">看低价</Text>
-                    </View>
-                  </View>
-                </View>
-                <View className="night-count">
-                  <Text className="night-count-text">
-                    共{getNightsCount()}晚
-                  </Text>
-                </View>
-              </View>
-            </View>
-            <View className="divider"></View>
-            <View
-              className="guest-section"
-              onClick={() => setShowGuestPicker(true)}
-            >
-              <View className="guest-combined">
-                <Text className="guest-label">间数人数</Text>
-                <View className="guest-value">
-                  <Text>{roomCount}</Text>
-                  <AppstoreOutline
-                    style={{
-                      marginLeft: '4px',
-                      marginRight: '4px',
-                      fontSize: '14px',
-                    }}
-                  />
-                  <Text>{adultCount}</Text>
-                  <UserOutline
-                    style={{
-                      marginLeft: '4px',
-                      marginRight: '4px',
-                      fontSize: '14px',
-                    }}
-                  />
-                  <Text>{childCount}</Text>
-                  <SmileOutline
-                    style={{
-                      marginLeft: '4px',
-                      marginRight: '4px',
-                      fontSize: '14px',
-                    }}
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
+        <DatePriceSelector
+          checkInDate={checkInDate}
+          checkOutDate={checkOutDate}
+          roomCount={roomCount}
+          adultCount={adultCount}
+          childCount={childCount}
+          selectedFilters={selectedFilters}
+          onDateClick={() => setShowCalendar(true)}
+          onGuestClick={() => setShowGuestPicker(true)}
+          onFilterTagClick={handleFilterTagClick}
+          onRemoveFilter={handleRemoveFilter}
+        />
 
-          <View className="filter-tags-container">
-            <ScrollView scrollX>
-              <View
-                className="filter-tag"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleFilterTagClick('价格')
-                }}
-              >
-                <Text className="filter-tag-text">¥100以上</Text>
-                <Text className="filter-tag-arrow">▼</Text>
-              </View>
-              <View
-                className={`filter-tag ${selectedFilters.includes('双床房') ? 'active' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleFilterTagClick('双床房')
-                }}
-              >
-                <Text className="filter-tag-text">双床房</Text>
-                {selectedFilters.includes('双床房') && (
-                  <Text
-                    className="filter-tag-close"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleRemoveFilter('双床房')
-                    }}
-                  >
-                    ×
-                  </Text>
-                )}
-              </View>
-              <View
-                className={`filter-tag ${selectedFilters.includes('大床房') ? 'active' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleFilterTagClick('大床房')
-                }}
-              >
-                <Text className="filter-tag-text">大床房</Text>
-                {selectedFilters.includes('大床房') && (
-                  <Text
-                    className="filter-tag-close"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleRemoveFilter('大床房')
-                    }}
-                  >
-                    ×
-                  </Text>
-                )}
-              </View>
-            </ScrollView>
-            <View
-              className="filter-button"
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowFilterDropdown(!showFilterDropdown)
-                setFilterArrowUp(!filterArrowUp)
-              }}
-            >
-              <Text className="filter-button-text">筛选</Text>
-              <Text className="filter-button-arrow">
-                {filterArrowUp ? '▲' : '▼'}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        <View className="rooms-section">
-          {roomTypes.map((room: any, index: number) => (
-            <View key={room.id || room._id || index} className="room-item">
-              <View className="room-image">
-                <Image
-                  src={
-                    room.images?.[0] ||
-                    hotelImages[0] ||
-                    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800'
-                  }
-                  mode="aspectFill"
-                  className="room-img"
-                />
-                {index === 0 && (
-                  <View className="sales-tag">
-                    <Text className="sales-tag-text">本店销量No.1</Text>
-                  </View>
-                )}
-              </View>
-              <View className="room-info">
-                <Text className="room-name">
-                  {room.name || room.roomTypeName}
-                </Text>
-                <Text className="room-description">
-                  {room.description || '舒适温馨的客房'}
-                </Text>
-                <Text className="room-detail">
-                  {room.bedType || '大床'} {room.area || 30}㎡{' '}
-                  {room.maxOccupancy || 2}人入住
-                </Text>
-                <Text className="room-notice">
-                  {room.breakfast ? '含早餐' : '无早餐'}{' '}
-                  入住当天18:00前可免费取消
-                </Text>
-                <View className="room-bottom">
-                  <View className="room-price">
-                    {room.originalPrice && (
-                      <Text className="price-original">
-                        ¥{room.originalPrice}
-                      </Text>
-                    )}
-                    <Text className="price-current">
-                      ¥{room.price || room.currentPrice}
-                    </Text>
-                  </View>
-                  <View className="room-booking">
-                    <View className="room-count">
-                      <Text className="count-text">{roomCount}间</Text>
-                      <Text className="count-arrow">▼</Text>
-                    </View>
-                    <View
-                      className="book-btn"
-                      onClick={() => handleBookNow(index)}
-                    >
-                      <Text className="book-btn-text">订</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </View>
-          ))}
-        </View>
+        <RoomList
+          rooms={roomTypes}
+          roomCount={roomCount}
+          onBookNow={handleBookNow}
+          hotelImages={hotelImages}
+        />
       </ScrollView>
 
       <CalendarPicker
