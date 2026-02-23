@@ -7,6 +7,16 @@ import {
   EnvironmentOutline,
   ShopbagOutline,
   TravelOutline,
+  LocationOutline,
+  GlobalOutline,
+  TruckOutline,
+  GiftOutline,
+  ScanningFaceOutline,
+  SmileOutline,
+  SetOutline,
+  ClockCircleOutline,
+  AppstoreOutline,
+  UserOutline,
 } from 'antd-mobile-icons'
 import { CalendarPicker } from '@/components/common/form/CalendarPicker'
 import { PolicyPopup } from '@/components/common/popup/PolicyPopup'

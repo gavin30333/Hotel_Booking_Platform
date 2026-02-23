@@ -1,5 +1,5 @@
 import { View } from '@tarojs/components'
-import CoreFilterHeader from '../../../../components/filter/CoreFilterHeader'
+import CoreFilterHeader from '@/components/filter/CoreFilterHeader'
 
 interface HotelListHeaderProps {
   onSearch: (params: Record<string, unknown>) => void
