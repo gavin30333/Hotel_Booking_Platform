@@ -12,7 +12,11 @@ interface DateFieldProps {
   onChange: (value: DateRange) => void
 }
 
-export const DateField: React.FC<DateFieldProps> = ({ config, value, onChange }) => {
+export const DateField: React.FC<DateFieldProps> = ({
+  config,
+  value,
+  onChange,
+}) => {
   const { singleDay } = config.props || {}
   const [isCalendarVisible, setIsCalendarVisible] = useState(false)
 
@@ -27,7 +31,10 @@ export const DateField: React.FC<DateFieldProps> = ({ config, value, onChange })
     setIsCalendarVisible(false)
   }
 
-  const handleDateConfirm = (range: { start: string | null; end: string | null }) => {
+  const handleDateConfirm = (range: {
+    start: string | null
+    end: string | null
+  }) => {
     if (range.start && range.end) {
       const nights = dayjs(range.end).diff(dayjs(range.start), 'day')
       onChange({
@@ -71,6 +78,22 @@ export const DateField: React.FC<DateFieldProps> = ({ config, value, onChange })
         onConfirm={handleDateConfirm}
         defaultStartDate={value.startDate}
         defaultEndDate={value.endDate}
+        priceData={{
+          '2026-02-23': 399,
+          '2026-02-24': 499,
+          '2026-02-25': 399,
+          '2026-02-26': 599,
+          '2026-02-27': 599,
+          '2026-02-28': 499,
+          '2026-02-29': 399,
+          '2026-03-01': 499,
+          '2026-03-02': 599,
+        }}
+        holidayData={{
+          '2026-02-23': { type: 'holiday', name: '春节' },
+          '2026-02-24': { type: 'rest' },
+          '2026-03-01': { type: 'work' },
+        }}
       />
     </>
   )

@@ -2,6 +2,7 @@ import { View, Text, ScrollView } from '@tarojs/components'
 import { useState, useEffect } from 'react'
 import Taro, { useRouter, showToast } from '@tarojs/taro'
 import { getHotelDetail } from '@/services/hotel'
+import dayjs from 'dayjs'
 import {
   FireFill,
   EnvironmentOutline,
@@ -228,6 +229,33 @@ export default function HotelDetailPage() {
   const transportations = hotel.transportations || []
   const shoppingMalls = hotel.shoppingMalls || []
 
+  // 直接计算价格数据，不使用useMemo
+  const getPriceData = () => {
+    // 使用第一个房间的价格作为所有日期的价格
+    const basePrice = roomTypes[0]?.price || roomTypes[0]?.currentPrice || 400
+    const priceData: Record<string, number> = {}
+    // 生成当前月份和下一个月的价格数据
+    const currentMonth = dayjs()
+    const nextMonth = dayjs().add(1, 'month')
+
+    // 生成当前月份的价格数据
+    const daysInCurrentMonth = currentMonth.daysInMonth()
+    for (let i = 1; i <= daysInCurrentMonth; i++) {
+      const dateStr = currentMonth.date(i).format('YYYY-MM-DD')
+      priceData[dateStr] = basePrice
+    }
+
+    // 生成下一个月的价格数据
+    const daysInNextMonth = nextMonth.daysInMonth()
+    for (let i = 1; i <= daysInNextMonth; i++) {
+      const dateStr = nextMonth.date(i).format('YYYY-MM-DD')
+      priceData[dateStr] = basePrice
+    }
+
+    return priceData
+  }
+  const calendarPriceData = getPriceData()
+
   return (
     <View className="hotel-detail-page">
       <HotelDetailHeader onBack={handleBack} />
@@ -399,6 +427,14 @@ export default function HotelDetailPage() {
         defaultStartDate={checkInDate}
         defaultEndDate={checkOutDate}
         title="选择入住日期"
+        priceData={calendarPriceData}
+        holidayData={{
+          '2026-02-23': { type: 'holiday', name: '春节' },
+          '2026-02-24': { type: 'rest' },
+          '2026-03-01': { type: 'work' },
+        }}
+        lowestPriceData={['2026-02-25', '2026-02-29', '2026-03-02']}
+        showPrice
       />
 
       <GuestSelectionPopup
