@@ -34,7 +34,7 @@ export const QueryCard: React.FC<QueryCardProps> = ({
     const checkOutDate = searchData.dates?.endDate || ''
 
     Taro.navigateTo({
-      url: `/pages/user/list/index?city=${encodeURIComponent(city)}&keyword=${encodeURIComponent(keyword)}&checkInDate=${encodeURIComponent(checkInDate)}&checkOutDate=${encodeURIComponent(checkOutDate)}`,
+      url: `/pages/list/index?city=${encodeURIComponent(city)}&keyword=${encodeURIComponent(keyword)}&checkInDate=${encodeURIComponent(checkInDate)}&checkOutDate=${encodeURIComponent(checkOutDate)}`,
     })
 
     if (onSearch) {

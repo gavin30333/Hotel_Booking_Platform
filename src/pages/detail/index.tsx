@@ -18,7 +18,7 @@ import { getTransportIcon } from './utils'
 import './DetailPage.less'
 
 import HotelDetailHeader from './components/HotelDetailHeader'
-import ImageCarousel from './components/ImageCarousel'
+import ImageCarousel from '@/components/common/display/ImageCarousel'
 import HotelInfo from './components/HotelInfo'
 import ServiceTags from './components/ServiceTags'
 import DatePriceSelector from './components/DatePriceSelector'
@@ -262,6 +262,14 @@ export default function HotelDetailPage() {
 
       <ScrollView className="detail-content" scrollY>
         <ImageCarousel images={hotelImages} onImageClick={handleImageClick} />
+        
+        <View className="carousel-tabs">
+          <Text className="tab-item active">封面</Text>
+          <Text className="tab-item">精选</Text>
+          <Text className="tab-item">位置</Text>
+          <Text className="tab-item">点评</Text>
+          <Text className="tab-item">相册</Text>
+        </View>
 
         <HotelInfo
           name={hotelName}

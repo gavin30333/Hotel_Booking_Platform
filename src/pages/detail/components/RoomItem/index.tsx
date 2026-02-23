@@ -1,6 +1,6 @@
 import { View, Text, Image } from '@tarojs/components'
 import { Room } from '../../types'
-import { DEFAULT_HOTEL_IMAGE } from '../../constants'
+import { DEFAULT_HOTEL_IMAGE } from '@/constants'
 import './RoomItem.less'
 
 interface RoomItemProps {

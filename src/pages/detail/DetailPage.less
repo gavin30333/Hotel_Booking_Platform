@@ -12,6 +12,34 @@
     overflow-y: auto;
     position: relative;
 
+    /* 轮播图 Tabs */
+    .carousel-tabs {
+      position: absolute;
+      top: 240px; // 根据实际轮播图高度调整，ImageCarousel 默认高度300px，tab在底部
+      left: @spacing-lg;
+      display: flex;
+      gap: @spacing-xs;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: @spacing-xs;
+      border-radius: @border-radius-xl;
+      z-index: 10;
+      margin-top: -50px; // 向上偏移覆盖在轮播图上
+
+      .tab-item {
+        font-size: @font-size-sm;
+        color: #fff;
+        padding: 0 @spacing-xs;
+        border-radius: @border-radius-lg;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &.active {
+          background-color: #fff;
+          color: #333;
+        }
+      }
+    }
+
     /* 评价和地图容器 */
     .review-map-container {
       display: flex;
