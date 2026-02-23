@@ -64,11 +64,12 @@ export const QueryCard: React.FC<QueryCardProps> = ({
 
       <View className="card-content">
         <FormField
-        fields={currentConfig.fields}
-        formData={formData}
-        onUpdate={updateField}
-        onSearch={handleSearch}
-      />
+          fields={currentConfig.fields}
+          formData={formData}
+          onUpdate={updateField}
+          onSearch={handleSearch}
+          onSceneChange={handleTabChange}
+        />
         {currentConfig.specialFeatures
           ?.filter((f) => f.type === 'notice')
           .map((f, i) => renderSpecialFeature(f, i))}

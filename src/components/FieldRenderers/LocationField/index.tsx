@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { View, Text } from '@tarojs/components'
 import { DownOutline, CompassOutline, SearchOutline } from 'antd-mobile-icons'
-import { FieldConfig, LocationData } from '@/types/query.types'
+import { FieldConfig, LocationData, TabType } from '@/types/query.types'
 import { useLocation } from '@/hooks/useLocation'
-import { CitySelector } from '@/components/CitySelector'
+import { CitySelector, CityTab } from '@/components/CitySelector'
 import './LocationField.less'
 
 interface LocationFieldProps {
@@ -11,6 +11,7 @@ interface LocationFieldProps {
   value: LocationData
   keyword?: string
   onChange: (value: LocationData) => void
+  onSceneChange?: (scene: TabType) => void
 }
 
 export const LocationField: React.FC<LocationFieldProps> = ({
@@ -18,6 +19,7 @@ export const LocationField: React.FC<LocationFieldProps> = ({
   value,
   keyword,
   onChange,
+  onSceneChange,
 }) => {
   const { props } = config
   const isInternational = props?.isInternational
@@ -26,8 +28,24 @@ export const LocationField: React.FC<LocationFieldProps> = ({
   const [locationInfo, setLocationInfo] = useState<string | null>(null)
   const [showLocationInfo, setShowLocationInfo] = useState(false)
   const [citySelectorVisible, setCitySelectorVisible] = useState(false)
+  const [citySelectorTab, setCitySelectorTab] = useState<CityTab>(
+    isInternational ? 'overseas' : 'domestic'
+  )
   const { location, locateByGPS, loading } = useLocation()
   const locationRef = useRef<LocationData | null>(null)
+
+  useEffect(() => {
+    setCitySelectorTab(isInternational ? 'overseas' : 'domestic')
+  }, [isInternational])
+
+  const handleCitySelectorTabChange = (tab: CityTab) => {
+    setCitySelectorTab(tab)
+    if (tab === 'domestic') {
+      onSceneChange?.(TabType.DOMESTIC)
+    } else if (tab === 'overseas') {
+      onSceneChange?.(TabType.INTERNATIONAL)
+    }
+  }
 
   const handleCitySelect = (cityName: string) => {
     onChange({
@@ -141,7 +159,10 @@ export const LocationField: React.FC<LocationFieldProps> = ({
             )}
             <View
               className="city-wrapper"
-              onClick={() => setCitySelectorVisible(true)}
+              onClick={() => {
+                setCitySelectorTab(isInternational ? 'overseas' : 'domestic')
+                setCitySelectorVisible(true)
+              }}
             >
               <Text className="city-text">{value.city}</Text>
               <DownOutline fontSize={12} color="#333" />
@@ -150,7 +171,13 @@ export const LocationField: React.FC<LocationFieldProps> = ({
 
           <View className="divider" />
 
-          <Text className={`placeholder-text ${keyword ? 'active' : ''}`}>
+          <Text
+            className={`placeholder-text ${keyword ? 'active' : ''}`}
+            onClick={() => {
+              setCitySelectorTab('hot_search')
+              setCitySelectorVisible(true)
+            }}
+          >
             {keyword || config.placeholder}
           </Text>
         </View>
@@ -172,6 +199,8 @@ export const LocationField: React.FC<LocationFieldProps> = ({
         onClose={() => setCitySelectorVisible(false)}
         onSelect={handleCitySelect}
         currentCity={value.city}
+        defaultTab={citySelectorTab}
+        onTabChange={handleCitySelectorTabChange}
       />
     </View>
   )

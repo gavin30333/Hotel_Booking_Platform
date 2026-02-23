@@ -6,6 +6,7 @@ import {
   LocationData,
   DateRange,
   GuestInfo,
+  TabType,
 } from '@/types/query.types'
 import {
   DateField,
@@ -20,6 +21,7 @@ interface FormFieldProps {
   formData: Partial<SearchParams>
   onUpdate: (key: keyof SearchParams, value: any) => void
   onSearch?: (data: any) => void
+  onSceneChange?: (scene: TabType) => void
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -27,6 +29,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   formData,
   onUpdate,
   onSearch,
+  onSceneChange,
 }) => {
   const renderField = (config: FieldConfig) => {
     const value = formData[config.key as keyof SearchParams]
@@ -40,6 +43,7 @@ export const FormField: React.FC<FormFieldProps> = ({
             value={value as LocationData}
             keyword={formData.keyword}
             onChange={(val) => onUpdate(config.key as keyof SearchParams, val)}
+            onSceneChange={onSceneChange}
           />
         )
       case 'date':
