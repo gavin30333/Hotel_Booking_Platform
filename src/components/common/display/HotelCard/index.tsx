@@ -1,8 +1,8 @@
 import { View, Text, Image } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import './HotelCard.less'
-import { Hotel } from '../../../services/hotel'
-import { useHotelStore } from '../../../store/hotelStore'
+import { Hotel } from '@/services/hotel'
+import { useHotelStore } from '@/store/hotelStore'
 
 interface HotelCardProps {
   hotel: Hotel

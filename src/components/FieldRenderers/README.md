@@ -52,7 +52,7 @@ src/components/FieldRenderers/
 
 这些组件通常不直接使用，而是通过 `src/components/common/FormFields` 组件根据配置动态加载。
 
-此外，`GuestField` 依赖的弹窗组件（如 `GuestSelectionPopup`, `PriceStarSelectionPopup` 等）已迁移至 `src/components/common/` 目录下，以便于复用。
+此外，`GuestField` 依赖的弹窗组件（如 `GuestSelectionPopup` (支持酒店/民宿模式), `PriceStarSelectionPopup` 等）已迁移至 `src/components/common/` 目录下，以便于复用。
 
 ```typescript
 // 示例：在 FormFields 中使用

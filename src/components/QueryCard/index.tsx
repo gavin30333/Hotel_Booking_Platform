@@ -5,9 +5,9 @@ import { TabType, SpecialFeature } from '@/types/query.types'
 import { SoundOutline, SmileOutline } from 'antd-mobile-icons'
 import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { TabBar } from '@/components/common/TabBar'
-import { FormFields } from '@/components/common/FormFields'
-import { SearchButton } from '@/components/common/SearchButton'
+import { TabBar } from './TabBar'
+import { FormField } from '@/components/common/form/FormField'
+import { SearchButton } from '@/components/common/form/SearchButton'
 
 import './QueryCard.less'
 
@@ -63,12 +63,12 @@ export const QueryCard: React.FC<QueryCardProps> = ({
       <TabBar activeTab={activeTab} onTabChange={handleTabChange} />
 
       <View className="card-content">
-        <FormFields
-          fields={currentConfig.fields}
-          formData={formData}
-          onUpdate={updateField}
-          onSearch={handleSearch}
-        />
+        <FormField
+        fields={currentConfig.fields}
+        formData={formData}
+        onUpdate={updateField}
+        onSearch={handleSearch}
+      />
         {currentConfig.specialFeatures
           ?.filter((f) => f.type === 'notice')
           .map((f, i) => renderSpecialFeature(f, i))}

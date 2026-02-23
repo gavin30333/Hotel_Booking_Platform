@@ -29,9 +29,9 @@ import {
   ClockCircleOutline,
   SetOutline,
 } from 'antd-mobile-icons'
-import { CalendarPicker } from '@/components/common/CalendarPicker'
-import { PolicyPopup } from '@/components/common/PolicyPopup'
-import { GuestSelectionPopup } from '@/components/common/GuestSelectionPopup'
+import { CalendarPicker } from '@/components/common/form/CalendarPicker'
+import { PolicyPopup } from '@/components/common/popup/PolicyPopup'
+import { GuestSelectionPopup } from '@/components/common/popup/GuestSelectionPopup'
 import { GuestInfo } from '@/types/query.types'
 import './index.less'
 

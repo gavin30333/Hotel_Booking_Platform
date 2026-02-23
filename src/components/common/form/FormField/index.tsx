@@ -13,16 +13,16 @@ import {
   LocationField,
   TagField,
 } from '@/components/FieldRenderers'
-import './FormFields.less'
+import './FormField.less'
 
-interface FormFieldsProps {
+interface FormFieldProps {
   fields: FieldConfig[]
   formData: Partial<SearchParams>
   onUpdate: (key: keyof SearchParams, value: any) => void
   onSearch?: (data: any) => void
 }
 
-export const FormFields: React.FC<FormFieldsProps> = ({
+export const FormField: React.FC<FormFieldProps> = ({
   fields,
   formData,
   onUpdate,

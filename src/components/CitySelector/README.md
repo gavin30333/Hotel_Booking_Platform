@@ -25,11 +25,11 @@ src/components/CitySelector/
 This component relies on several shared resources moved to the root directory:
 
 ### Common Components
-- `@/components/common/SearchHeader`: The search bar at the top.
-- `@/components/common/LocationStatus`: Displays current location status.
-- `@/components/common/HistorySection`: Displays search history.
-- `@/components/common/CityTag`: Displays a city as a tag.
-- `@/components/common/ImageCard`: Displays a card with an image (used in rankings).
+- `@/components/CitySelector/SearchHeader`: The search bar at the top.
+- `@/components/common/display/LocationStatus`: Displays current location status.
+- `@/components/CitySelector/HistorySection`: Displays search history.
+- `@/components/common/display/CityTag`: Displays a city as a tag.
+- `@/components/common/display/ImageCard`: Displays a card with an image (used in rankings).
 
 ### Data & Constants
 - `@/constants/CitySelectorConfig/cityData.ts`: Domestic city data.

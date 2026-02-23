@@ -10,7 +10,7 @@ import { useState, useEffect, useCallback } from 'react'
 import './index.less'
 import { useHotelList } from '../../../hooks/useHotelList'
 import { useHotelStore } from '../../../store/hotelStore'
-import HotelCard from '../../../components/common/HotelCard'
+import HotelCard from '@/components/common/display/HotelCard'
 import CoreFilterHeader from '../../../components/filter/CoreFilterHeader'
 
 export default function HotelList() {

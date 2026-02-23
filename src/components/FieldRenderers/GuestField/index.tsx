@@ -2,9 +2,8 @@ import React, { useState, useMemo } from 'react'
 import { View, Text } from '@tarojs/components'
 import { DownOutline } from 'antd-mobile-icons'
 import { FieldConfig, GuestInfo } from '@/types/query.types'
-import { GuestSelectionPopup } from '@/components/common/GuestSelectionPopup'
-import { HomestayGuestSelectionPopup } from '@/components/common/HomestayGuestSelectionPopup'
-import { PriceStarSelectionPopup } from '@/components/common/PriceStarSelectionPopup'
+import { GuestSelectionPopup } from '@/components/common/popup/GuestSelectionPopup'
+import { PriceStarSelectionPopup } from '@/components/common/popup/PriceStarSelectionPopup'
 import { getHomestayText } from '@/utils/guestFieldUtils'
 import './GuestField.less'
 
@@ -46,7 +45,8 @@ export const GuestField: React.FC<GuestFieldProps> = ({
           >
             {displayText}
           </Text>
-          <HomestayGuestSelectionPopup
+          <GuestSelectionPopup
+            type="homestay"
             visible={showGuestPopup}
             onClose={() => setShowGuestPopup(false)}
             value={value}

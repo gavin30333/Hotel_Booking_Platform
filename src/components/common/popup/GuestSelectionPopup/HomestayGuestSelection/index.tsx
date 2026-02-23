@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Text } from '@tarojs/components'
 import { Popup, Button, Toast } from 'antd-mobile'
 import { GuestInfo } from '@/types/query.types'
-import './HomestayGuestSelectionPopup.less'
+import './HomestayGuestSelection.less'
 
 interface Props {
   visible: boolean
@@ -15,7 +15,7 @@ const PEOPLE_OPTIONS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+']
 const BED_OPTIONS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+']
 const ROOM_OPTIONS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10+']
 
-export const HomestayGuestSelectionPopup: React.FC<Props> = ({
+export const HomestayGuestSelection: React.FC<Props> = ({
   visible,
   onClose,
   value,

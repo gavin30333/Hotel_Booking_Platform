@@ -3,7 +3,7 @@ import { View, Text } from '@tarojs/components'
 import dayjs from 'dayjs'
 import { FieldConfig, DateRange } from '@/types/query.types'
 import { formatDate } from '@/utils/dateFieldUtils'
-import { CalendarPicker } from '@/components/common/CalendarPicker'
+import { CalendarPicker } from '@/components/common/form/CalendarPicker'
 import './DateField.less'
 
 interface DateFieldProps {

@@ -3,7 +3,7 @@ import { View, Text } from '@tarojs/components'
 import { Popup, Stepper, Button } from 'antd-mobile'
 import { GuestInfo } from '@/types/query.types'
 import { ChildAgeSelectionPopup } from '../ChildAgeSelectionPopup'
-import './GuestSelectionPopup.less'
+import './HotelGuestSelection.less'
 
 interface Props {
   visible: boolean
@@ -12,7 +12,7 @@ interface Props {
   onChange: (val: GuestInfo) => void
 }
 
-export const GuestSelectionPopup: React.FC<Props> = ({
+export const HotelGuestSelection: React.FC<Props> = ({
   visible,
   onClose,
   value,
