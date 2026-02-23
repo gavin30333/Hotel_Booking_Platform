@@ -233,10 +233,10 @@ export default function HotelList() {
   }
 
   const sortOptions = [
-    { key: 'price_asc', label: '价格从低到高' },
-    { key: 'price_desc', label: '价格从高到低' },
-    { key: 'rating_desc', label: '评分从高到低' },
-    { key: 'distance_asc', label: '距离从近到远' },
+    { key: 'price_asc', label: '价格从低到高', value: 'price_asc' },
+    { key: 'price_desc', label: '价格从高到低', value: 'price_desc' },
+    { key: 'rating_desc', label: '评分从高到低', value: 'rating_desc' },
+    { key: 'distance_asc', label: '距离从近到远', value: 'distance_asc' },
   ]
 
   const stayDurationOptions = [

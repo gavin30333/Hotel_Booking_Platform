@@ -86,6 +86,7 @@ export interface Hotel {
   rating: number
   reviewCount: number
   minPrice: number
+  price: number // Added for compatibility
   imageUrl: string
   images: string[]
   tags: string[]
