@@ -1,39 +1,24 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  Swiper,
-  SwiperItem,
-} from '@tarojs/components'
+import { View, Text, ScrollView, Image } from '@tarojs/components'
 import { useState, useEffect } from 'react'
 import Taro, { useRouter, showToast } from '@tarojs/taro'
 import { getHotelDetail } from '@/services/hotel'
 import {
-  LeftOutline,
-  HeartOutline,
-  PhonebookOutline,
-  ShopbagOutline,
-  MoreOutline,
   FireFill,
   EnvironmentOutline,
-  AppstoreOutline,
-  UserOutline,
-  SmileOutline,
-  GlobalOutline,
-  TruckOutline,
-  ScanningFaceOutline,
-  GiftOutline,
-  LocationOutline,
+  ShopbagOutline,
   TravelOutline,
-  ClockCircleOutline,
-  SetOutline,
 } from 'antd-mobile-icons'
 import { CalendarPicker } from '@/components/common/form/CalendarPicker'
 import { PolicyPopup } from '@/components/common/popup/PolicyPopup'
 import { GuestSelectionPopup } from '@/components/common/popup/GuestSelectionPopup'
 import { GuestInfo } from '@/types/query.types'
 import './index.less'
+import HotelDetailHeader from './components/HotelDetailHeader'
+import ImageCarousel from './components/ImageCarousel'
+import HotelInfo from './components/HotelInfo'
+import ServiceTags from './components/ServiceTags'
+import DatePriceSelector from './components/DatePriceSelector'
+import RoomList from './components/RoomList'
 
 export default function HotelDetailPage() {
   const router = useRouter()
@@ -100,10 +85,27 @@ export default function HotelDetailPage() {
       return
     }
 
-    showToast({
-      title: `预订成功！\n房型：${selectedRoom.name}\n价格：¥${selectedRoom.price}/晚\n入住：${checkInDate}\n退房：${checkOutDate}`,
-      icon: 'success',
-      duration: 3000,
+    // 检查用户是否已登录
+    const isLoggedIn = Taro.getStorageSync('isLoggedIn')
+    if (!isLoggedIn) {
+      // 未登录，跳转到登录页
+      showToast({
+        title: '请先登录后操作',
+        icon: 'none',
+        duration: 1500,
+      })
+
+      // 跳转到登录页，并传递来源页面信息
+      const fromPage = `/pages/booking/index?hotelId=${hotelId}&roomTypeId=${roomIndex}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`
+      Taro.navigateTo({
+        url: `/pages/login/index?fromPage=${encodeURIComponent(fromPage)}`,
+      })
+      return
+    }
+
+    // 已登录，直接跳转到预订页面
+    Taro.navigateTo({
+      url: `/pages/booking/index?hotelId=${hotelId}&roomTypeId=${roomIndex}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`,
     })
   }
 
@@ -237,6 +239,10 @@ export default function HotelDetailPage() {
         setShowPriceFilter(false)
         setShowRoomTypeFilter(false)
         break
+      case '筛选':
+        setShowFilterDropdown(!showFilterDropdown)
+        setFilterArrowUp(!filterArrowUp)
+        break
       default:
         if (!selectedFilters.includes(filterType)) {
           setSelectedFilters([...selectedFilters, filterType])
@@ -335,111 +341,23 @@ export default function HotelDetailPage() {
 
   return (
     <View className="hotel-detail-page">
-      <View className="top-nav-bar">
-        <View className="nav-left">
-          <View className="back-btn" onClick={handleBack}>
-            <LeftOutline color="#fff" />
-          </View>
-        </View>
-        <View className="nav-right">
-          <View className="nav-icon">
-            <HeartOutline color="#fff" />
-          </View>
-          <View className="nav-icon">
-            <PhonebookOutline color="#fff" />
-          </View>
-          <View className="nav-icon">
-            <ShopbagOutline color="#fff" />
-          </View>
-          <View className="nav-icon">
-            <MoreOutline color="#fff" />
-          </View>
-        </View>
-      </View>
+      <HotelDetailHeader onBack={handleBack} />
 
       <ScrollView className="detail-content" scrollY>
-        <View className="image-carousel">
-          <Swiper
-            className="swiper"
-            indicatorDots
-            indicatorColor="rgba(255, 255, 255, 0.5)"
-            indicatorActiveColor="#fff"
-            autoplay
-            interval={3000}
-            duration={500}
-          >
-            {hotelImages.length > 0 ? (
-              hotelImages.map((image: string, index: number) => (
-                <SwiperItem key={index}>
-                  <View
-                    className="image-container"
-                    onClick={() => handleImageClick(index)}
-                  >
-                    <Image
-                      src={image}
-                      mode="aspectFill"
-                      className="carousel-image"
-                    />
-                  </View>
-                </SwiperItem>
-              ))
-            ) : (
-              <SwiperItem>
-                <View className="image-container">
-                  <Image
-                    src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800"
-                    mode="aspectFill"
-                    className="carousel-image"
-                  />
-                </View>
-              </SwiperItem>
-            )}
-          </Swiper>
-          <View className="carousel-tabs">
-            <Text className="tab-item active">封面</Text>
-            <Text className="tab-item">精选</Text>
-            <Text className="tab-item">位置</Text>
-            <Text className="tab-item">点评</Text>
-            <Text className="tab-item">相册</Text>
-          </View>
-        </View>
+        <ImageCarousel images={hotelImages} onImageClick={handleImageClick} />
 
-        <View className="hotel-header-info">
-          <View>
-            <Text className="hotel-name">{hotelName}</Text>
-            <Text className="hotel-badge">{hotel.starRating || 5}星级酒店</Text>
-            <Text className="hotel-ranking">{hotelAddress}</Text>
-          </View>
-          <View className="hotel-rating">
-            <Text className="rating">{hotelRating}</Text>
-            <Text className="rating-label">很好</Text>
-            <Text className="review-count">{hotelReviewCount}条点评</Text>
-          </View>
-        </View>
+        <HotelInfo
+          name={hotelName}
+          starRating={hotel.starRating || 5}
+          address={hotelAddress}
+          rating={hotelRating}
+          reviewCount={hotelReviewCount}
+        />
 
-        <View className="service-tags-container">
-          <ScrollView className="service-tags-scroll" scrollX>
-            <View className="service-tags">
-              {facilities.slice(0, 8).map((facility: string, index: number) => {
-                const IconComponent = getFacilityIcon(facility)
-                return (
-                  <View key={index} className="service-tag">
-                    <View className="tag-icon">
-                      <IconComponent color="#1890ff" fontSize={20} />
-                    </View>
-                    <Text className="tag-text">{facility}</Text>
-                  </View>
-                )
-              })}
-            </View>
-          </ScrollView>
-          <View
-            className="facility-policy"
-            onClick={() => setShowPolicyPopup(true)}
-          >
-            <Text className="policy-text">设施政策</Text>
-          </View>
-        </View>
+        <ServiceTags
+          facilities={facilities}
+          onPolicyClick={() => setShowPolicyPopup(true)}
+        />
 
         <View className="review-map-container">
           <View className="review-section">
