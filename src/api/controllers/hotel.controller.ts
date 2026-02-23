@@ -42,11 +42,12 @@ export const hotelController = {
         return res.status(400).json({ code: 400, msg: 'hotelId 不能为空' })
       }
 
-      const hotelDetail = await hotelService.getHotelDetail(
-        Array.isArray(hotelId) ? hotelId[0] : hotelId
-      )
+      const hotelIdStr: string = Array.isArray(hotelId)
+        ? String(hotelId[0])
+        : String(hotelId)
+      const hotelDetail = await hotelService.getHotelDetail(hotelIdStr)
       res.status(200).json({ code: 200, msg: '查询成功', data: hotelDetail })
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === 'Hotel not found') {
         return res.status(404).json({ code: 404, msg: '酒店不存在' })
       }
@@ -56,7 +57,7 @@ export const hotelController = {
 
   async getRoomTypes(req: Request, res: Response) {
     try {
-      const { hotelId, checkInDate, checkOutDate } = req.query
+      const { hotelId } = req.query
 
       if (!hotelId) {
         return res
@@ -64,11 +65,10 @@ export const hotelController = {
           .json({ code: 400, msg: 'Missing hotelId parameter' })
       }
 
-      const roomTypes = await hotelService.getRoomTypes(
-        Array.isArray(hotelId) ? hotelId[0] : hotelId,
-        Array.isArray(checkInDate) ? checkInDate[0] : checkInDate,
-        Array.isArray(checkOutDate) ? checkOutDate[0] : checkOutDate
-      )
+      const hotelIdStr: string = Array.isArray(hotelId)
+        ? String(hotelId[0])
+        : String(hotelId)
+      const roomTypes = await hotelService.getRoomTypes(hotelIdStr)
       res.status(200).json({ code: 200, msg: '查询成功', data: roomTypes })
     } catch (error) {
       res.status(500).json({ code: 500, msg: 'Internal server error' })
@@ -100,12 +100,8 @@ export const hotelController = {
         expectedPrice
       )
 
-      if (priceInfo.isValid) {
-        res.status(200).json({ code: 200, msg: '价格有效', data: priceInfo })
-      } else {
-        res.status(400).json({ code: 400, msg: '价格已变动', data: priceInfo })
-      }
-    } catch (error) {
+      res.status(200).json({ code: 200, msg: '价格验证完成', data: priceInfo })
+    } catch (error: any) {
       if (error.message === 'Room type not found') {
         return res.status(404).json({ code: 404, msg: 'Room type not found' })
       }

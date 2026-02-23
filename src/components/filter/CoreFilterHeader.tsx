@@ -1,6 +1,7 @@
-import { View, Text, ScrollView, Image } from '@tarojs/components'
+import { View, Text, ScrollView } from '@tarojs/components'
 import { useState, useCallback, useEffect } from 'react'
 import { SearchBar, Toast } from 'antd-mobile'
+import { EnvironmentOutline, MoreOutline } from 'antd-mobile-icons'
 import AMapLoader from '@amap/amap-jsapi-loader'
 import { CitySelector } from '@/components/CitySelector'
 import { GuestSelectionPopup } from '@/components/FieldRenderers/GuestField/components/GuestSelectionPopup'
@@ -19,13 +20,43 @@ interface CoreFilterHeaderProps {
     rooms: number
     adults: number
     children: number
+    minPrice?: number
+    maxPrice?: number
+    starRating?: number[]
+    facilities?: string[]
+    sortBy?: string
+    location?: {
+      name: string
+      lat: number
+      lng: number
+    }
     [key: string]: any
   }) => void
   onDropdownStateChange?: (isOpen: boolean) => void
+  initialFilters?: {
+    city?: string
+    checkInDate?: string
+    checkOutDate?: string
+    rooms?: number
+    adults?: number
+    children?: number
+    minPrice?: number
+    maxPrice?: number
+    keyword?: string
+    starRating?: number[]
+    facilities?: string[]
+    sortBy?: string
+    location?: {
+      name: string
+      lat: number
+      lng: number
+    }
+  }
 }
 
 interface SearchParams {
   city: string
+  keyword: string
   checkInDate: string
   checkOutDate: string
   rooms: number
@@ -44,14 +75,16 @@ const sortOptions = [
 export default function CoreFilterHeader({
   onSearch,
   onDropdownStateChange,
+  initialFilters,
 }: CoreFilterHeaderProps) {
   const [params, setParams] = useState<SearchParams>({
-    city: '北京',
-    checkInDate: '',
-    checkOutDate: '',
-    rooms: 1,
-    adults: 2,
-    children: 0,
+    city: initialFilters?.city || '北京',
+    keyword: initialFilters?.keyword || '',
+    checkInDate: initialFilters?.checkInDate || '',
+    checkOutDate: initialFilters?.checkOutDate || '',
+    rooms: initialFilters?.rooms || 1,
+    adults: initialFilters?.adults || 2,
+    children: initialFilters?.children || 0,
     advancedOptions: false,
   })
 
@@ -71,7 +104,8 @@ export default function CoreFilterHeader({
   const [searchValue, setSearchValue] = useState('')
   const [selectedSortOption, setSelectedSortOption] = useState('')
   const [selectedDistanceOption, setSelectedDistanceOption] = useState('')
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 100 })
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 })
+  const [selectedStarRating, setSelectedStarRating] = useState<number[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [draggedHandle, setDraggedHandle] = useState<'min' | 'max' | null>(null)
   const [activeLocationCategory, setActiveLocationCategory] =
@@ -89,22 +123,30 @@ export default function CoreFilterHeader({
     适用人群: false,
   })
   const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [locationPOIs, setLocationPOIs] = useState<{ [key: string]: string[] }>(
-    {
-      热门地标: [],
-      地铁站: [],
-      景点: [],
-    }
-  )
+  const [locationPOIs, setLocationPOIs] = useState<{
+    [key: string]: Array<{ name: string; lat: number; lng: number }>
+  }>({
+    热门地标: [],
+    地铁站: [],
+    景点: [],
+  })
   const [isSearchingPOIs, setIsSearchingPOIs] = useState(false)
+  const [selectedLocation, setSelectedLocation] = useState<{
+    name: string
+    lat: number
+    lng: number
+  } | null>(null)
 
   const [advancedOptions, setAdvancedOptions] = useState({
     starRating: [] as number[],
     facilities: [] as string[],
     priceRange: {
-      min: 0,
-      max: 10000,
+      min: initialFilters?.minPrice || 0,
+      max: initialFilters?.maxPrice || 10000,
     },
+    brand: undefined as string | undefined,
+    minRating: undefined as number | undefined,
+    roomType: undefined as string | undefined,
   })
 
   const [historyCities, setHistoryCities] = useState<string[]>([])
@@ -114,7 +156,42 @@ export default function CoreFilterHeader({
   }>({ start: null, end: null })
 
   const { location, locateByGPS, loading: locationLoading } = useLocation()
-  const [locationStatus, setLocationStatus] = useState<'loading' | 'success' | 'failed' | 'disabled'>('disabled')
+  const [locationStatus, setLocationStatus] = useState<
+    'loading' | 'success' | 'failed' | 'disabled'
+  >('disabled')
+
+  useEffect(() => {
+    if (initialFilters) {
+      setParams((prev) => ({
+        ...prev,
+        city: initialFilters.city || prev.city,
+        keyword: initialFilters.keyword || prev.keyword,
+        checkInDate: initialFilters.checkInDate || prev.checkInDate,
+        checkOutDate: initialFilters.checkOutDate || prev.checkOutDate,
+        rooms: initialFilters.rooms || prev.rooms,
+        adults: initialFilters.adults || prev.adults,
+        children: initialFilters.children || prev.children,
+      }))
+      if (
+        initialFilters.minPrice !== undefined ||
+        initialFilters.maxPrice !== undefined
+      ) {
+        setAdvancedOptions((prev) => ({
+          ...prev,
+          priceRange: {
+            min: initialFilters.minPrice || 0,
+            max: initialFilters.maxPrice || 10000,
+          },
+        }))
+      }
+      if (initialFilters.checkInDate && initialFilters.checkOutDate) {
+        setSelectedDate({
+          start: initialFilters.checkInDate,
+          end: initialFilters.checkOutDate,
+        })
+      }
+    }
+  }, [initialFilters])
 
   useEffect(() => {
     const savedHistory = localStorage.getItem('hotel_search_history_cities')
@@ -172,13 +249,13 @@ export default function CoreFilterHeader({
 
   useEffect(() => {
     if (location) {
-      setParams(prev => ({ ...prev, city: location.city }))
+      setParams((prev) => ({ ...prev, city: location.city }))
       setLocationStatus('success')
     }
   }, [location])
 
   const searchPOIs = useCallback(
-    async (category: string) => {
+    async (category: string, cityOverride?: string) => {
       const apiKey = process.env.AMAP_API_KEY || 'your_amap_api_key_here'
 
       if (!apiKey || apiKey === 'your_amap_api_key_here') {
@@ -193,11 +270,11 @@ export default function CoreFilterHeader({
           AMap = await AMapLoader.load({
             key: apiKey,
             version: '2.0',
-            plugins: ['AMap.PlaceSearch'],
+            plugins: ['AMap.PlaceSearch', 'AMap.Geocoder'],
           })
         }
 
-        const city = params.city || '北京'
+        const city = cityOverride || params.city || '北京'
         let cityCenter: [number, number] = [116.397428, 39.90923]
 
         const geocoder = new AMap.Geocoder({
@@ -223,7 +300,7 @@ export default function CoreFilterHeader({
           pageSize: 20,
           pageIndex: 1,
           city: city,
-          extensions: 'base',
+          extensions: 'all',
         })
 
         let keywords = ''
@@ -254,7 +331,11 @@ export default function CoreFilterHeader({
             5000,
             (status: string, result: any) => {
               if (status === 'complete' && result.info === 'OK') {
-                const pois = result.pois.map((poi: any) => poi.name)
+                const pois = result.pois.map((poi: any) => ({
+                  name: poi.name,
+                  lat: poi.location.getLat(),
+                  lng: poi.location.getLng(),
+                }))
                 setLocationPOIs((prev) => ({
                   ...prev,
                   [category]: pois,
@@ -363,16 +444,25 @@ export default function CoreFilterHeader({
   ])
 
   const handleSearch = useCallback(() => {
-    if (validateForm()) {
-      onSearch({
-        ...params,
-        ...advancedOptions,
-      })
-      Toast.success('搜索成功')
-    } else {
-      Toast.fail('请检查输入信息')
-    }
-  }, [params, advancedOptions, onSearch, validateForm])
+    onSearch({
+      ...params,
+      keyword: searchValue || params.keyword,
+      ...advancedOptions,
+      minPrice: priceRange.min,
+      maxPrice: priceRange.max,
+      starRating: selectedStarRating,
+      facilities: selectedTags,
+    })
+    Toast.success('搜索成功')
+  }, [
+    params,
+    searchValue,
+    advancedOptions,
+    priceRange,
+    selectedStarRating,
+    selectedTags,
+    onSearch,
+  ])
 
   const handleCitySelect = useCallback(
     (cityValue: string) => {
@@ -393,8 +483,32 @@ export default function CoreFilterHeader({
       }
 
       setShowCityPicker(false)
+
+      setLocationPOIs({
+        热门地标: [],
+        地铁站: [],
+        景点: [],
+      })
+
+      searchPOIs(activeLocationCategory, cityValue)
+
+      onSearch({
+        ...params,
+        keyword: searchValue || params.keyword,
+        city: cityValue,
+        ...advancedOptions,
+      })
     },
-    [historyCities, handleParamChange]
+    [
+      historyCities,
+      handleParamChange,
+      params,
+      searchValue,
+      advancedOptions,
+      onSearch,
+      searchPOIs,
+      activeLocationCategory,
+    ]
   )
 
   const handleDateConfirm = useCallback(
@@ -408,28 +522,28 @@ export default function CoreFilterHeader({
     [handleParamChange]
   )
 
-  const handleGuestChange = useCallback(
-    (guestInfo: GuestInfo) => {
-      const getNumber = (val: number | number[] | undefined, defaultVal: number = 0): number => {
-        if (val === undefined) return defaultVal
-        if (Array.isArray(val)) return val.length > 0 ? val[0] : defaultVal
-        return val
-      }
-      
-      setParams(prev => ({
-        ...prev,
-        rooms: getNumber(guestInfo.rooms, 1),
-        adults: getNumber(guestInfo.adults, 2),
-        children: getNumber(guestInfo.children, 0),
-      }))
-    },
-    []
-  )
+  const handleGuestChange = useCallback((guestInfo: GuestInfo) => {
+    const getNumber = (
+      val: number | number[] | undefined,
+      defaultVal: number = 0
+    ): number => {
+      if (val === undefined) return defaultVal
+      if (Array.isArray(val)) return val.length > 0 ? val[0] : defaultVal
+      return val
+    }
+
+    setParams((prev) => ({
+      ...prev,
+      rooms: getNumber(guestInfo.rooms, 1),
+      adults: getNumber(guestInfo.adults, 2),
+      children: getNumber(guestInfo.children, 0),
+    }))
+  }, [])
 
   const handleLocationClick = async () => {
     if (locationLoading) return
     setLocationStatus('loading')
-    
+
     try {
       const result = await locateByGPS()
       if (result) {
@@ -466,14 +580,14 @@ export default function CoreFilterHeader({
     }
 
     const percentage = x / rect.width
-    const price = Math.round(percentage * 100)
-    const roundedPrice = Math.round(price / 10) * 10
+    const price = Math.round(percentage * 10000)
+    const roundedPrice = Math.round(price / 100) * 100
 
     setPriceRange((prev) => {
       if (draggedHandle === 'min') {
-        return { min: Math.min(roundedPrice, prev.max - 10), max: prev.max }
+        return { min: Math.min(roundedPrice, prev.max - 100), max: prev.max }
       } else {
-        return { min: prev.min, max: Math.max(roundedPrice, prev.min + 10) }
+        return { min: prev.min, max: Math.max(roundedPrice, prev.min + 100) }
       }
     })
   }
@@ -509,7 +623,7 @@ export default function CoreFilterHeader({
   return (
     <View className="core-filter-header">
       <View className="top-filter-bar">
-        <View className="back-button">
+        <View className="back-button" onClick={() => window.history.back()}>
           <Text className="back-icon">‹</Text>
         </View>
 
@@ -521,18 +635,26 @@ export default function CoreFilterHeader({
               setShowMainSelector(true)
             }}
           >
-            <View className="filter-item compact" onClick={(e) => {
-              e.stopPropagation()
-              setShowCityPicker(true)
-            }}>
-              <Text className="filter-value">{params.city}</Text>
+            <View
+              className="filter-item compact"
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowCityPicker(true)
+              }}
+            >
+              <Text className="filter-value filter-value-xs">
+                {params.city}
+              </Text>
             </View>
 
-            <View className="filter-item compact" onClick={(e) => {
-              e.stopPropagation()
-              setShowDatePicker(true)
-            }}>
-              <Text className="filter-value">
+            <View
+              className="filter-item compact"
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowDatePicker(true)
+              }}
+            >
+              <Text className="filter-value filter-value-xs">
                 {params.checkInDate && params.checkOutDate
                   ? `${params.checkInDate.split('-')[1]}-${params.checkInDate.split('-')[2]} 至 ${params.checkOutDate.split('-')[1]}-${params.checkOutDate.split('-')[2]}`
                   : '选择日期'}
@@ -546,41 +668,44 @@ export default function CoreFilterHeader({
                 setShowRoomPicker(true)
               }}
             >
-              <Text className="filter-value">{params.rooms}间</Text>
-              <Text className="filter-value">{params.adults}人</Text>
+              <Text className="filter-value filter-value-xs">
+                {params.rooms}间
+              </Text>
+              <Text className="filter-value filter-value-xs">
+                {params.adults}人
+              </Text>
             </View>
           </View>
 
           <View className="search-item">
             <SearchBar
               placeholder="位置/品牌/酒店"
-              value={searchValue}
-              onChange={setSearchValue}
-              onSubmit={handleSearch}
+              value={searchValue || params.keyword}
+              onChange={(val) => {
+                setSearchValue(val)
+                setParams((prev) => ({ ...prev, keyword: val }))
+              }}
+              onSubmit={() => {
+                handleSearch()
+              }}
               className="search-bar-compact"
             />
           </View>
         </View>
 
-        <View className="map-icon">
-          <Image
-            src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=map%20icon%20simple%20outline%20style%20gray&image_size=square"
-            className="icon-image"
-          />
+        {/* <View className="map-icon">
+          <EnvironmentOutline fontSize={20} color="#666" />
           <Text className="icon-text">地图</Text>
-        </View>
+        </View> */}
 
         <View className="more-options">
-          <Text className="more-dots">•••</Text>
+          <MoreOutline fontSize={20} color="#666" />
           <Text className="icon-text">更多</Text>
         </View>
       </View>
 
       {showMainSelector && (
-        <View
-          className="main-selector"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <View className="main-selector" onClick={(e) => e.stopPropagation()}>
           <View
             className="selector-row"
             onClick={(e) => {
@@ -618,7 +743,10 @@ export default function CoreFilterHeader({
             </Text>
           </View>
 
-          <View className="confirm-button" onClick={() => setShowMainSelector(false)}>
+          <View
+            className="confirm-button"
+            onClick={() => setShowMainSelector(false)}
+          >
             <Text className="confirm-text">确定</Text>
           </View>
         </View>
@@ -651,12 +779,16 @@ export default function CoreFilterHeader({
             setActiveSortTab('distance')
             setShowWelcomeDropdown(false)
             setWelcomeArrowUp(false)
-            setShowDistanceDropdown(!showDistanceDropdown)
-            setDistanceArrowUp(!showDistanceDropdown)
+            const willOpen = !showDistanceDropdown
+            setShowDistanceDropdown(willOpen)
+            setDistanceArrowUp(willOpen)
             setShowPriceDropdown(false)
             setPriceArrowUp(false)
             setShowFilterDropdown(false)
             setFilterArrowUp(false)
+            if (willOpen && locationPOIs[activeLocationCategory].length === 0) {
+              searchPOIs(activeLocationCategory)
+            }
           }}
         >
           <Text>位置距离</Text>
@@ -703,19 +835,34 @@ export default function CoreFilterHeader({
 
         {showWelcomeDropdown && (
           <View className="dropdown-panel" onClick={(e) => e.stopPropagation()}>
-            {['价格从低到高', '价格从高到低', '评分从高到低', '距离从近到远'].map((option) => (
+            {[
+              '价格从低到高',
+              '价格从高到低',
+              '评分从高到低',
+              '距离从近到远',
+            ].map((option) => (
               <View
                 key={option}
                 className={`dropdown-item ${selectedSortOption === option ? 'selected' : ''}`}
                 onClick={(e) => {
                   e.stopPropagation()
                   setSelectedSortOption(option)
-                  const sortBy = option === '价格从低到高' ? 'price_asc' :
-                                option === '价格从高到低' ? 'price_desc' :
-                                option === '评分从高到低' ? 'rating_desc' : 'distance_asc'
+                  const sortBy =
+                    option === '价格从低到高'
+                      ? 'price_asc'
+                      : option === '价格从高到低'
+                        ? 'price_desc'
+                        : option === '评分从高到低'
+                          ? 'rating_desc'
+                          : 'distance_asc'
                   onSearch({
                     ...params,
+                    keyword: searchValue || params.keyword,
                     ...advancedOptions,
+                    minPrice: priceRange.min,
+                    maxPrice: priceRange.max,
+                    starRating: selectedStarRating,
+                    facilities: selectedTags,
                     sortBy,
                   })
                   setShowWelcomeDropdown(false)
@@ -731,7 +878,10 @@ export default function CoreFilterHeader({
         )}
 
         {showDistanceDropdown && (
-          <View className="dropdown-panel location-dropdown" onClick={(e) => e.stopPropagation()}>
+          <View
+            className="dropdown-panel location-dropdown"
+            onClick={(e) => e.stopPropagation()}
+          >
             <View className="location-content">
               <View className="location-sidebar">
                 {['热门地标', '地铁站', '景点'].map((category) => (
@@ -758,14 +908,28 @@ export default function CoreFilterHeader({
                     {locationPOIs[activeLocationCategory].map((item, index) => (
                       <View
                         key={index}
-                        className={`poi-tag ${selectedDistanceOption === item ? 'selected' : ''}`}
+                        className={`poi-tag ${selectedLocation?.name === item.name ? 'selected' : ''}`}
                         onClick={(e) => {
                           e.stopPropagation()
-                          setSelectedDistanceOption(item)
+                          setSelectedLocation({
+                            name: item.name,
+                            lat: item.lat,
+                            lng: item.lng,
+                          })
+                          setSelectedDistanceOption(item.name)
+                          onSearch({
+                            ...params,
+                            keyword: item.name,
+                            ...advancedOptions,
+                            minPrice: priceRange.min,
+                            maxPrice: priceRange.max,
+                            starRating: selectedStarRating,
+                            facilities: selectedTags,
+                          })
                           setShowDistanceDropdown(false)
                         }}
                       >
-                        <Text className="poi-text">{item}</Text>
+                        <Text className="poi-text">{item.name}</Text>
                       </View>
                     ))}
                   </View>
@@ -780,7 +944,10 @@ export default function CoreFilterHeader({
         )}
 
         {showPriceDropdown && (
-          <View className="dropdown-panel price-dropdown" onClick={(e) => e.stopPropagation()}>
+          <View
+            className="dropdown-panel price-dropdown"
+            onClick={(e) => e.stopPropagation()}
+          >
             <View className="price-section">
               <Text className="section-title">价格区间</Text>
               <View className="price-slider-container">
@@ -788,61 +955,108 @@ export default function CoreFilterHeader({
                   <View
                     className="slider-track"
                     style={{
-                      left: `${(priceRange.min / 100) * 100}%`,
-                      width: `${((priceRange.max - priceRange.min) / 100) * 100}%`,
+                      left: `${(priceRange.min / 10000) * 100}%`,
+                      width: `${((priceRange.max - priceRange.min) / 10000) * 100}%`,
                     }}
                   />
                   <View
                     className="slider-handle"
-                    style={{ left: `${(priceRange.min / 100) * 100}%` }}
+                    style={{ left: `${(priceRange.min / 10000) * 100}%` }}
                     onMouseDown={handlePriceSliderStart('min')}
                     onTouchStart={handlePriceSliderStart('min')}
                   />
                   <View
                     className="slider-handle"
-                    style={{ left: `${(priceRange.max / 100) * 100}%` }}
+                    style={{ left: `${(priceRange.max / 10000) * 100}%` }}
                     onMouseDown={handlePriceSliderStart('max')}
                     onTouchStart={handlePriceSliderStart('max')}
                   />
                 </View>
                 <View className="price-labels">
                   <Text className="price-label">¥0</Text>
-                  <Text className="price-current">¥{priceRange.min}-¥{priceRange.max}</Text>
-                  <Text className="price-label">¥100以上</Text>
+                  <Text className="price-current">
+                    ¥{priceRange.min}-¥{priceRange.max}
+                  </Text>
+                  <Text className="price-label">¥10000以上</Text>
                 </View>
               </View>
               <View className="price-presets">
-                {['¥50以下', '¥50-80', '¥80-100', '¥100以上'].map((item) => (
-                  <View
-                    key={item}
-                    className="preset-tag"
-                    onClick={() => {
-                      if (item === '¥50以下') setPriceRange({ min: 0, max: 50 })
-                      else if (item === '¥50-80') setPriceRange({ min: 50, max: 80 })
-                      else if (item === '¥80-100') setPriceRange({ min: 80, max: 100 })
-                      else setPriceRange({ min: 100, max: 100 })
-                    }}
-                  >
-                    <Text className="preset-text">{item}</Text>
-                  </View>
-                ))}
+                {['¥200以下', '¥200-500', '¥500-1000', '¥1000以上'].map(
+                  (item) => (
+                    <View
+                      key={item}
+                      className="preset-tag"
+                      onClick={() => {
+                        if (item === '¥200以下')
+                          setPriceRange({ min: 0, max: 200 })
+                        else if (item === '¥200-500')
+                          setPriceRange({ min: 200, max: 500 })
+                        else if (item === '¥500-1000')
+                          setPriceRange({ min: 500, max: 1000 })
+                        else setPriceRange({ min: 1000, max: 10000 })
+                      }}
+                    >
+                      <Text className="preset-text">{item}</Text>
+                    </View>
+                  )
+                )}
               </View>
             </View>
             <View className="star-section">
               <Text className="section-title">星级/档次</Text>
               <View className="star-options">
-                {['2星及以下', '3星/舒适', '4星/高档', '5星/豪华', '经济型', '舒适型', '高档型', '豪华型'].map((item) => (
-                  <View key={item} className="star-tag">
-                    <Text className="star-text">{item}</Text>
+                {[
+                  { label: '2星及以下', value: 2 },
+                  { label: '3星/舒适', value: 3 },
+                  { label: '4星/高档', value: 4 },
+                  { label: '5星/豪华', value: 5 },
+                ].map((item) => (
+                  <View
+                    key={item.label}
+                    className={`star-tag ${selectedStarRating.includes(item.value) ? 'selected' : ''}`}
+                    onClick={() => {
+                      if (selectedStarRating.includes(item.value)) {
+                        setSelectedStarRating(
+                          selectedStarRating.filter((s) => s !== item.value)
+                        )
+                      } else {
+                        setSelectedStarRating([
+                          ...selectedStarRating,
+                          item.value,
+                        ])
+                      }
+                    }}
+                  >
+                    <Text className="star-text">{item.label}</Text>
                   </View>
                 ))}
               </View>
             </View>
             <View className="dropdown-actions">
-              <View className="action-btn secondary" onClick={() => setPriceRange({ min: 0, max: 100 })}>
+              <View
+                className="action-btn secondary"
+                onClick={() => {
+                  setPriceRange({ min: 0, max: 10000 })
+                  setSelectedStarRating([])
+                }}
+              >
                 <Text className="action-text">清除</Text>
               </View>
-              <View className="action-btn primary" onClick={() => setShowPriceDropdown(false)}>
+              <View
+                className="action-btn primary"
+                onClick={() => {
+                  onSearch({
+                    ...params,
+                    keyword: searchValue || params.keyword,
+                    ...advancedOptions,
+                    minPrice: priceRange.min,
+                    maxPrice: priceRange.max,
+                    starRating: selectedStarRating,
+                    facilities: selectedTags,
+                  })
+                  setShowPriceDropdown(false)
+                }}
+              >
                 <Text className="action-text primary">确定</Text>
               </View>
             </View>
@@ -850,39 +1064,239 @@ export default function CoreFilterHeader({
         )}
 
         {showFilterDropdown && (
-          <View className="dropdown-panel filter-dropdown" onClick={(e) => e.stopPropagation()}>
+          <View
+            className="dropdown-panel filter-dropdown"
+            onClick={(e) => e.stopPropagation()}
+          >
             <View className="filter-content">
               <View className="filter-sidebar">
-                {['热门筛选', '品牌', '类型特色', '设施', '床型', '房间面积', '点评', '服务/支付', '适用人群'].map((category) => (
-                  <View
-                    key={category}
-                    className={`sidebar-item ${activeFilterCategory === category ? 'active' : ''}`}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setActiveFilterCategory(category)
-                    }}
-                  >
-                    <Text className="sidebar-text">{category}</Text>
-                  </View>
-                ))}
+                {['热门筛选', '品牌', '类型特色', '设施', '床型', '点评'].map(
+                  (category) => (
+                    <View
+                      key={category}
+                      className={`sidebar-item ${activeFilterCategory === category ? 'active' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setActiveFilterCategory(category)
+                      }}
+                    >
+                      <Text className="sidebar-text">{category}</Text>
+                    </View>
+                  )
+                )}
               </View>
               <View className="filter-options">
-                {['免费WiFi', '停车场', '游泳池', '健身房', '餐厅', '无烟房', '商务中心', '会议室', 'SPA', '24小时前台', '行李寄存'].map((item) => (
-                  <View
-                    key={item}
-                    className={`filter-tag ${selectedTags.includes(item) ? 'selected' : ''}`}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      if (selectedTags.includes(item)) {
-                        setSelectedTags(selectedTags.filter((tag) => tag !== item))
-                      } else {
-                        setSelectedTags([...selectedTags, item])
-                      }
-                    }}
-                  >
-                    <Text className="filter-tag-text">{item}</Text>
-                  </View>
-                ))}
+                {activeFilterCategory === '热门筛选' && (
+                  <>
+                    {[
+                      { label: '免费WiFi', value: '免费WiFi' },
+                      { label: '停车场', value: '停车场' },
+                      { label: '含早餐', value: '含早餐' },
+                      { label: '游泳池', value: '游泳池' },
+                      { label: '健身房', value: '健身房' },
+                      { label: '无烟房', value: '无烟房' },
+                    ].map((item) => (
+                      <View
+                        key={item.value}
+                        className={`filter-tag ${selectedTags.includes(item.value) ? 'selected' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (selectedTags.includes(item.value)) {
+                            setSelectedTags(
+                              selectedTags.filter((tag) => tag !== item.value)
+                            )
+                          } else {
+                            setSelectedTags([...selectedTags, item.value])
+                          }
+                        }}
+                      >
+                        <Text className="filter-tag-text">{item.label}</Text>
+                      </View>
+                    ))}
+                  </>
+                )}
+                {activeFilterCategory === '品牌' && (
+                  <>
+                    {[
+                      { label: '希尔顿', value: '希尔顿' },
+                      { label: '万豪', value: '万豪' },
+                      { label: '洲际', value: '洲际' },
+                      { label: '凯悦', value: '凯悦' },
+                      { label: '雅高', value: '雅高' },
+                      { label: '锦江', value: '锦江' },
+                      { label: '如家', value: '如家' },
+                      { label: '汉庭', value: '汉庭' },
+                    ].map((item) => (
+                      <View
+                        key={item.value}
+                        className={`filter-tag ${advancedOptions.brand === item.value ? 'selected' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setAdvancedOptions((prev) => ({
+                            ...prev,
+                            brand:
+                              prev.brand === item.value
+                                ? undefined
+                                : item.value,
+                          }))
+                        }}
+                      >
+                        <Text className="filter-tag-text">{item.label}</Text>
+                      </View>
+                    ))}
+                  </>
+                )}
+                {activeFilterCategory === '类型特色' && (
+                  <>
+                    {[
+                      { label: '亲子酒店', value: '亲子酒店' },
+                      { label: '情侣酒店', value: '情侣酒店' },
+                      { label: '商务酒店', value: '商务酒店' },
+                      { label: '度假酒店', value: '度假酒店' },
+                      { label: '民宿', value: '民宿' },
+                      { label: '公寓', value: '公寓' },
+                    ].map((item) => (
+                      <View
+                        key={item.value}
+                        className={`filter-tag ${selectedTags.includes(item.value) ? 'selected' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (selectedTags.includes(item.value)) {
+                            setSelectedTags(
+                              selectedTags.filter((tag) => tag !== item.value)
+                            )
+                          } else {
+                            setSelectedTags([...selectedTags, item.value])
+                          }
+                        }}
+                      >
+                        <Text className="filter-tag-text">{item.label}</Text>
+                      </View>
+                    ))}
+                  </>
+                )}
+                {activeFilterCategory === '设施' && (
+                  <>
+                    {[
+                      '免费WiFi',
+                      '停车场',
+                      '游泳池',
+                      '健身房',
+                      '餐厅',
+                      'SPA',
+                      '商务中心',
+                      '会议室',
+                      '24小时前台',
+                      '行李寄存',
+                      '洗衣服务',
+                      '接机服务',
+                    ].map((item) => (
+                      <View
+                        key={item}
+                        className={`filter-tag ${selectedTags.includes(item) ? 'selected' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (selectedTags.includes(item)) {
+                            setSelectedTags(
+                              selectedTags.filter((tag) => tag !== item)
+                            )
+                          } else {
+                            setSelectedTags([...selectedTags, item])
+                          }
+                        }}
+                      >
+                        <Text className="filter-tag-text">{item}</Text>
+                      </View>
+                    ))}
+                  </>
+                )}
+                {activeFilterCategory === '床型' && (
+                  <>
+                    {[
+                      { label: '大床房', value: '大床房' },
+                      { label: '双床房', value: '双床房' },
+                      { label: '套房', value: '套房' },
+                      { label: '家庭房', value: '家庭房' },
+                      { label: '亲子房', value: '亲子房' },
+                    ].map((item) => (
+                      <View
+                        key={item.value}
+                        className={`filter-tag ${advancedOptions.roomType === item.value ? 'selected' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setAdvancedOptions((prev) => ({
+                            ...prev,
+                            roomType:
+                              prev.roomType === item.value
+                                ? undefined
+                                : item.value,
+                          }))
+                        }}
+                      >
+                        <Text className="filter-tag-text">{item.label}</Text>
+                      </View>
+                    ))}
+                  </>
+                )}
+                {activeFilterCategory === '点评' && (
+                  <>
+                    {[
+                      { label: '4.5分以上', value: 4.5 },
+                      { label: '4.0分以上', value: 4.0 },
+                      { label: '3.5分以上', value: 3.5 },
+                      { label: '3.0分以上', value: 3.0 },
+                    ].map((item) => (
+                      <View
+                        key={item.value}
+                        className={`filter-tag ${advancedOptions.minRating === item.value ? 'selected' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setAdvancedOptions((prev) => ({
+                            ...prev,
+                            minRating:
+                              prev.minRating === item.value
+                                ? undefined
+                                : item.value,
+                          }))
+                        }}
+                      >
+                        <Text className="filter-tag-text">{item.label}</Text>
+                      </View>
+                    ))}
+                  </>
+                )}
+              </View>
+            </View>
+            <View className="dropdown-actions">
+              <View
+                className="action-btn secondary"
+                onClick={() => {
+                  setSelectedTags([])
+                  setAdvancedOptions({
+                    starRating: [],
+                    facilities: [],
+                    priceRange: { min: 0, max: 10000 },
+                  })
+                }}
+              >
+                <Text className="action-text">清除</Text>
+              </View>
+              <View
+                className="action-btn primary"
+                onClick={() => {
+                  onSearch({
+                    ...params,
+                    keyword: searchValue || params.keyword,
+                    ...advancedOptions,
+                    minPrice: priceRange.min,
+                    maxPrice: priceRange.max,
+                    starRating: selectedStarRating,
+                    facilities: selectedTags,
+                  })
+                  setShowFilterDropdown(false)
+                }}
+              >
+                <Text className="action-text primary">确定</Text>
               </View>
             </View>
           </View>

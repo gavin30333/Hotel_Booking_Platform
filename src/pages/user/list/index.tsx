@@ -1,17 +1,25 @@
 import { Toast } from 'antd-mobile'
-import { View, Text, ScrollView } from '@tarojs/components'
-import Taro, { useLoad, useReachBottom, usePullDownRefresh } from '@tarojs/taro'
-import { useState, useEffect } from 'react'
+import { View } from '@tarojs/components'
+import Taro, {
+  useLoad,
+  useReachBottom,
+  usePullDownRefresh,
+  useRouter,
+} from '@tarojs/taro'
+import { useState, useEffect, useCallback } from 'react'
 import './index.less'
 import { useHotelList } from '../../../hooks/useHotelList'
 import { useHotelStore } from '../../../store/hotelStore'
-import HotelCard from '../../../components/common/HotelCard'
-import CoreFilterHeader from '../../../components/filter/CoreFilterHeader'
+import HotelListHeader from './components/HotelListHeader'
+import FilterTags from './components/FilterTags'
+import FilterDropdown from './components/FilterDropdown'
+import HotelListContent from './components/HotelListContent'
 
 export default function HotelList() {
+  const router = useRouter()
   const { hotelList, loading, hasMore, error, refreshHotels, loadMore } =
     useHotelList()
-  const { filters, setFilters } = useHotelStore()
+  const { filters, setFilters, resetFilters } = useHotelStore()
   const [showStayDurationPopover, setShowStayDurationPopover] = useState(false)
   const [showBrandPopover, setShowBrandPopover] = useState(false)
   const [showSortPopover, setShowSortPopover] = useState(false)
@@ -22,6 +30,7 @@ export default function HotelList() {
     useState(false)
   const [isAnyDropdownOpen, setIsAnyDropdownOpen] = useState(false)
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
+  const [isInitialized, setIsInitialized] = useState(false)
 
   useEffect(() => {
     setIsLocalDropdownOpen(
@@ -48,13 +57,68 @@ export default function HotelList() {
     }
   }, [])
 
-  const displayHotels = hotelList
+  const initFromUrl = useCallback(() => {
+    const {
+      city,
+      keyword,
+      checkInDate,
+      checkOutDate,
+      rooms,
+      adults,
+      children,
+    } = router.params
+
+    const newFilters: any = {}
+    let hasParams = false
+
+    if (city) {
+      newFilters.city = decodeURIComponent(city)
+      hasParams = true
+    }
+    if (keyword) {
+      newFilters.keyword = decodeURIComponent(keyword)
+      hasParams = true
+    }
+    if (checkInDate) {
+      newFilters.checkInDate = decodeURIComponent(checkInDate)
+      hasParams = true
+    }
+    if (checkOutDate) {
+      newFilters.checkOutDate = decodeURIComponent(checkOutDate)
+      hasParams = true
+    }
+    if (rooms) {
+      newFilters.rooms = Number(rooms)
+    }
+    if (adults) {
+      newFilters.adults = Number(adults)
+    }
+    if (children) {
+      newFilters.children = Number(children)
+    }
+
+    if (hasParams) {
+      resetFilters()
+      setFilters(newFilters)
+    }
+
+    return hasParams
+  }, [router.params, resetFilters, setFilters])
 
   useLoad(() => {
-    if (hotelList.length === 0) {
+    const hasParams = initFromUrl()
+    setIsInitialized(true)
+
+    if (!hasParams) {
       loadMore()
     }
   })
+
+  useEffect(() => {
+    if (isInitialized && hasMore && hotelList.length === 0) {
+      loadMore()
+    }
+  }, [isInitialized])
 
   usePullDownRefresh(() => {
     refreshHotels()
@@ -68,22 +132,48 @@ export default function HotelList() {
   })
 
   const handleSearch = (params: Record<string, unknown>) => {
-    const formattedFilters = {
+    const formattedFilters: Record<string, unknown> = {
       city: params.city as string,
+      keyword: params.keyword as string,
       checkInDate: params.checkInDate as string,
       checkOutDate: params.checkOutDate as string,
-      minPrice: (params.priceRange as { min?: number })?.min || 0,
-      maxPrice: (params.priceRange as { max?: number })?.max || 10000,
+      minPrice: params.minPrice ?? 0,
+      maxPrice: params.maxPrice ?? 10000,
       starRating: (params.starRating as number[]) || [],
       facilities: (params.facilities as string[]) || [],
+      rooms: (params.rooms as number) || 1,
+      adults: (params.adults as number) || 2,
+      children: (params.children as number) || 0,
     }
+
+    if (params.sortBy) {
+      formattedFilters.sortBy = params.sortBy
+    }
+
+    if (params.location) {
+      formattedFilters.location = params.location
+    }
+
+    if (params.brand) {
+      formattedFilters.brand = params.brand
+    }
+
+    if (params.minRating !== undefined) {
+      formattedFilters.minRating = params.minRating
+    }
+
+    if (params.roomType) {
+      formattedFilters.roomType = params.roomType
+    }
+
     setFilters(formattedFilters)
     refreshHotels()
   }
 
-  const handleStayDurationSelect = (value: string) => {
+  const handleStayDurationSelect = (value: string, label: string) => {
     setShowStayDurationPopover(false)
-    Toast.show({ content: `选择了${value}晚` })
+    setStayDurationArrowUp(false)
+    Toast.show({ content: `选择了${label}` })
     setFilters({ stayDuration: value })
     refreshHotels()
     setTimeout(() => {
@@ -91,9 +181,10 @@ export default function HotelList() {
     }, 500)
   }
 
-  const handleBrandSelect = (value: string) => {
+  const handleBrandSelect = (value: string, label: string) => {
     setShowBrandPopover(false)
-    Toast.show({ content: `选择了${value}` })
+    setBrandArrowUp(false)
+    Toast.show({ content: `选择了${label}` })
     setFilters({ brand: value })
     refreshHotels()
     setTimeout(() => {
@@ -101,11 +192,11 @@ export default function HotelList() {
     }, 500)
   }
 
-  const handleSortSelect = (value: string) => {
+  const handleSortSelect = (key: string, label: string) => {
     setShowSortPopover(false)
-    Toast.show({ content: `选择了${value}` })
+    Toast.show({ content: `选择了${label}` })
     setFilters({
-      sortBy: value as
+      sortBy: key as
         | 'price_asc'
         | 'price_desc'
         | 'rating_desc'
@@ -115,6 +206,30 @@ export default function HotelList() {
     setTimeout(() => {
       Toast.show({ content: '排序成功' })
     }, 500)
+  }
+
+  const handleStayDurationClick = () => {
+    setShowStayDurationPopover(!showStayDurationPopover)
+    setStayDurationArrowUp(!showStayDurationPopover)
+    setShowBrandPopover(false)
+    setBrandArrowUp(false)
+    setShowSortPopover(false)
+  }
+
+  const handleBrandClick = () => {
+    setShowBrandPopover(!showBrandPopover)
+    setBrandArrowUp(!showBrandPopover)
+    setShowStayDurationPopover(false)
+    setStayDurationArrowUp(false)
+    setShowSortPopover(false)
+  }
+
+  const handleSortClick = () => {
+    setShowSortPopover(!showSortPopover)
+    setShowStayDurationPopover(false)
+    setStayDurationArrowUp(false)
+    setShowBrandPopover(false)
+    setBrandArrowUp(false)
   }
 
   const sortOptions = [
@@ -180,249 +295,54 @@ export default function HotelList() {
         overflow: 'hidden',
       }}
     >
+      <HotelListHeader
+        onSearch={handleSearch}
+        onDropdownStateChange={setIsCoreFilterDropdownOpen}
+        initialFilters={filters}
+      />
+
       <View style={{ position: 'relative', zIndex: 100 }}>
-        <CoreFilterHeader
-          onSearch={handleSearch}
-          onDropdownStateChange={(isOpen) =>
-            setIsCoreFilterDropdownOpen(isOpen)
-          }
+        <FilterTags
+          showStayDurationPopover={showStayDurationPopover}
+          showBrandPopover={showBrandPopover}
+          showSortPopover={showSortPopover}
+          stayDurationArrowUp={stayDurationArrowUp}
+          brandArrowUp={brandArrowUp}
+          selectedFilters={selectedFilters}
+          filterTags={filterTags}
+          onStayDurationClick={handleStayDurationClick}
+          onBrandClick={handleBrandClick}
+          onSortClick={handleSortClick}
+          onFilterTagClick={handleFilterTagClick}
+          onRemoveFilter={handleRemoveFilter}
         />
 
-        <View style={{ position: 'relative' }}>
-          <View className="filter-tags">
-            <ScrollView scrollX>
-              <View
-                className="filter-tag"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setShowStayDurationPopover(!showStayDurationPopover)
-                  setStayDurationArrowUp(!showStayDurationPopover)
-                  setShowBrandPopover(false)
-                  setBrandArrowUp(false)
-                  setShowSortPopover(false)
-                }}
-              >
-                <Text>入住时长</Text>
-                <Text className="arrow">{stayDurationArrowUp ? '▲' : '▼'}</Text>
-              </View>
+        <FilterDropdown
+          visible={showStayDurationPopover}
+          options={stayDurationOptions}
+          onSelect={handleStayDurationSelect}
+        />
 
-              <View
-                className="filter-tag"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setShowBrandPopover(!showBrandPopover)
-                  setBrandArrowUp(!showBrandPopover)
-                  setShowStayDurationPopover(false)
-                  setStayDurationArrowUp(false)
-                  setShowSortPopover(false)
-                }}
-              >
-                <Text>热门品牌</Text>
-                <Text className="arrow">{brandArrowUp ? '▲' : '▼'}</Text>
-              </View>
+        <FilterDropdown
+          visible={showBrandPopover}
+          options={brandOptions}
+          onSelect={handleBrandSelect}
+        />
 
-              {filterTags.map((tag) => (
-                <View
-                  key={tag.name}
-                  className={`filter-tag ${selectedFilters.includes(tag.name) ? 'filter-tag-active' : ''}`}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleFilterTagClick(tag.name, { [tag.key]: tag.value })
-                  }}
-                >
-                  <Text>{tag.name}</Text>
-                  {selectedFilters.includes(tag.name) && (
-                    <Text
-                      className="filter-tag-close"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleRemoveFilter(tag.name, tag.key)
-                      }}
-                    >
-                      ×
-                    </Text>
-                  )}
-                </View>
-              ))}
-            </ScrollView>
-          </View>
-
-          {showStayDurationPopover && (
-            <View
-              style={{
-                position: 'absolute',
-                top: '100%',
-                left: '0',
-                right: '0',
-                zIndex: 9999,
-                backgroundColor: '#fff',
-                borderRadius: '0 0 8px 8px',
-                padding: '12px',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '8px',
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {stayDurationOptions.map((option) => (
-                <View
-                  key={option.value}
-                  style={{
-                    padding: '8px',
-                    fontSize: '12px',
-                    color: '#333',
-                    cursor: 'pointer',
-                    backgroundColor: '#f8f8f8',
-                    borderRadius: '4px',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '1px solid #e8e8e8',
-                  }}
-                  onClick={() => handleStayDurationSelect(option.value)}
-                >
-                  <Text>{option.label}</Text>
-                </View>
-              ))}
-            </View>
-          )}
-
-          {showBrandPopover && (
-            <View
-              style={{
-                position: 'absolute',
-                top: '100%',
-                left: '0',
-                right: '0',
-                zIndex: 9999,
-                backgroundColor: '#fff',
-                borderRadius: '0 0 8px 8px',
-                padding: '12px',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '8px',
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {brandOptions.map((option) => (
-                <View
-                  key={option.value}
-                  style={{
-                    padding: '8px',
-                    fontSize: '12px',
-                    color: '#333',
-                    cursor: 'pointer',
-                    backgroundColor: '#f8f8f8',
-                    borderRadius: '4px',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '1px solid #e8e8e8',
-                  }}
-                  onClick={() => handleBrandSelect(option.label)}
-                >
-                  <Text>{option.label}</Text>
-                </View>
-              ))}
-            </View>
-          )}
-
-          {showSortPopover && (
-            <View
-              style={{
-                position: 'absolute',
-                top: '100%',
-                left: '0',
-                right: '0',
-                zIndex: 9999,
-                backgroundColor: '#fff',
-                borderRadius: '0 0 8px 8px',
-                padding: '12px',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '8px',
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {sortOptions.map((option) => (
-                <View
-                  key={option.key}
-                  style={{
-                    padding: '8px',
-                    fontSize: '12px',
-                    color: '#333',
-                    cursor: 'pointer',
-                    backgroundColor: '#f8f8f8',
-                    borderRadius: '4px',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '1px solid #e8e8e8',
-                  }}
-                  onClick={() => handleSortSelect(option.label)}
-                >
-                  <Text>{option.label}</Text>
-                </View>
-              ))}
-            </View>
-          )}
-        </View>
+        <FilterDropdown
+          visible={showSortPopover}
+          options={sortOptions}
+          onSelect={handleSortSelect}
+        />
       </View>
 
-      <View style={{ flex: 1, position: 'relative', overflow: 'auto' }}>
-        {isAnyDropdownOpen && (
-          <View
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.3)',
-              zIndex: 1,
-              transition: 'opacity 0.3s ease',
-            }}
-          />
-        )}
-
-        {loading ? (
-          <View className="loading">
-            <Text>筛选中...</Text>
-          </View>
-        ) : displayHotels.length > 0 ? (
-          <ScrollView
-            style={{ flex: 1, zIndex: 0 }}
-            scrollY
-            scrollWithAnimation
-          >
-            {displayHotels.map((hotel) => (
-              <HotelCard key={hotel.id} hotel={hotel} />
-            ))}
-
-            {hasMore && (
-              <View className="loading-more">
-                <Text>{loading ? '加载中...' : '上拉加载更多'}</Text>
-              </View>
-            )}
-
-            {!hasMore && displayHotels.length > 0 && (
-              <View className="loading-more">
-                <Text>已加载全部酒店</Text>
-              </View>
-            )}
-
-            {error && (
-              <View className="error">
-                <Text>{error}</Text>
-              </View>
-            )}
-          </ScrollView>
-        ) : (
-          <View className="no-data" style={{ zIndex: 0 }}>
-            <Text>暂无符合条件的酒店</Text>
-            <Text style={{ fontSize: '12px', color: '#999', marginTop: '8px' }}>
-              请尝试调整筛选条件
-            </Text>
-          </View>
-        )}
-      </View>
+      <HotelListContent
+        hotelList={hotelList}
+        loading={loading}
+        hasMore={hasMore}
+        error={error}
+        isAnyDropdownOpen={isAnyDropdownOpen}
+      />
     </View>
   )
 }

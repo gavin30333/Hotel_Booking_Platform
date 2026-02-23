@@ -3,9 +3,16 @@ import { Hotel } from '../services/hotel'
 
 type SortBy = 'price_asc' | 'price_desc' | 'rating_desc' | 'distance_asc'
 
+interface LocationFilter {
+  name: string
+  lat: number
+  lng: number
+}
+
 interface HotelState {
   filters: {
     city: string
+    keyword: string
     checkInDate: string
     checkOutDate: string
     minPrice: number
@@ -18,9 +25,13 @@ interface HotelState {
     minRating?: number
     roomType?: string
     smokeFree?: boolean
+    rooms: number
+    adults: number
+    children: number
+    location?: LocationFilter
+    maxDistance?: number
   }
 
-  // 酒店列表数据
   hotelList: Hotel[]
   total: number
   page: number
@@ -28,7 +39,6 @@ interface HotelState {
   loading: boolean
   hasMore: boolean
 
-  // 操作方法
   setFilters: (filters: Partial<HotelState['filters']>) => void
   resetFilters: () => void
   setHotelList: (list: Hotel[]) => void
@@ -42,6 +52,7 @@ interface HotelState {
 
 const defaultFilters: HotelState['filters'] = {
   city: '',
+  keyword: '',
   checkInDate: '',
   checkOutDate: '',
   minPrice: 0,
@@ -49,10 +60,14 @@ const defaultFilters: HotelState['filters'] = {
   starRating: [],
   facilities: [],
   sortBy: 'price_asc',
+  rooms: 1,
+  adults: 2,
+  children: 0,
+  location: undefined,
+  maxDistance: 10000,
 }
 
 export const useHotelStore = create<HotelState>((set) => ({
-  // 初始状态
   filters: defaultFilters,
   hotelList: [],
   total: 0,
@@ -61,11 +76,28 @@ export const useHotelStore = create<HotelState>((set) => ({
   loading: false,
   hasMore: true,
 
-  // 操作方法
   setFilters: (filters) =>
     set((state) => {
-      // 如果排序方式改变，重置酒店列表状态
-      if (filters.sortBy && filters.sortBy !== state.filters.sortBy) {
+      const filterKeys = [
+        'city',
+        'keyword',
+        'minPrice',
+        'maxPrice',
+        'starRating',
+        'facilities',
+        'minRating',
+        'brand',
+        'roomType',
+        'sortBy',
+      ]
+      const hasKeyFilterChange = filterKeys.some(
+        (key) =>
+          filters[key as keyof typeof filters] !== undefined &&
+          JSON.stringify(filters[key as keyof typeof filters]) !==
+            JSON.stringify(state.filters[key as keyof typeof state.filters])
+      )
+
+      if (hasKeyFilterChange) {
         return {
           filters: { ...state.filters, ...filters },
           hotelList: [],
@@ -79,7 +111,14 @@ export const useHotelStore = create<HotelState>((set) => ({
       }
     }),
 
-  resetFilters: () => set({ filters: defaultFilters }),
+  resetFilters: () =>
+    set({
+      filters: defaultFilters,
+      hotelList: [],
+      total: 0,
+      page: 1,
+      hasMore: true,
+    }),
 
   setHotelList: (list) => set({ hotelList: list }),
 

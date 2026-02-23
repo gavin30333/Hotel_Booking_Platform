@@ -396,6 +396,72 @@
       }
     }
 
+    /* 周边信息 */
+    .nearby-section {
+      background-color: #fff;
+      padding: @spacing-lg;
+      margin-bottom: @spacing-xs;
+
+      .section-title {
+        font-size: @font-size-md;
+        font-weight: 600;
+        color: @text-color;
+        margin-bottom: @spacing-md;
+        display: block;
+      }
+
+      .nearby-group {
+        margin-bottom: @spacing-md;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .nearby-header {
+          display: flex;
+          align-items: center;
+          gap: @spacing-xs;
+          margin-bottom: @spacing-sm;
+
+          .nearby-title {
+            font-size: @font-size-base;
+            font-weight: 500;
+            color: @text-color;
+          }
+        }
+
+        .nearby-list {
+          .nearby-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: @spacing-xs 0;
+            border-bottom: 1px solid #f5f5f5;
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            .transport-item {
+              display: flex;
+              align-items: center;
+              gap: @spacing-xs;
+            }
+
+            .nearby-name {
+              font-size: @font-size-base;
+              color: @text-color;
+            }
+
+            .nearby-distance {
+              font-size: @font-size-sm;
+              color: @text-secondary;
+            }
+          }
+        }
+      }
+    }
+
     /* 日期价格部分 */
     .date-price-section {
       background-color: #fff;
