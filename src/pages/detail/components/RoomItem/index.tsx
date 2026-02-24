@@ -7,7 +7,6 @@ import {
   GiftOutline,
   TravelOutline,
 } from 'antd-mobile-icons'
-import Taro from '@tarojs/taro'
 import { Room } from '../../types'
 import { DEFAULT_HOTEL_IMAGE } from '@/constants'
 import { RoomCountPopup } from '@/components/common/popup'
@@ -20,9 +19,6 @@ interface RoomItemProps {
   onBookNow: (index: number, breakfastCount?: number) => void
   onRoomCountChange?: (count: number) => void
   hotelImages: string[]
-  topOffset?: number
-  isFixed?: boolean
-  onExpandChange?: (index: number, isExpanded: boolean) => void
 }
 
 export default function RoomItem({
@@ -32,45 +28,19 @@ export default function RoomItem({
   onBookNow,
   onRoomCountChange,
   hotelImages,
-  topOffset = 0,
-  isFixed = false,
-  onExpandChange,
 }: RoomItemProps) {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [placeholderHeight, setPlaceholderHeight] = useState(0)
   const [showRoomCountPopup, setShowRoomCountPopup] = useState(false)
   const roomCardId = `room-card-${index}`
-  const roomItemHeightRef = useRef<number>(0)
 
   const handleToggle = () => {
     const newExpanded = !isExpanded
     setIsExpanded(newExpanded)
-    onExpandChange?.(index, newExpanded)
-    if (!newExpanded) {
-      setPlaceholderHeight(0)
-      roomItemHeightRef.current = 0
-    }
   }
 
   const handleRoomCountConfirm = (count: number) => {
     onRoomCountChange?.(count)
   }
-
-  useEffect(() => {
-    if (isFixed && roomItemHeightRef.current === 0) {
-      Taro.createSelectorQuery()
-        .selectAll('.room-item')
-        .boundingClientRect()
-        .exec((res) => {
-          if (res && res[0] && res[0][index]) {
-            roomItemHeightRef.current = res[0][index].height
-            setPlaceholderHeight(res[0][index].height)
-          }
-        })
-    } else if (!isFixed) {
-      setPlaceholderHeight(0)
-    }
-  }, [isFixed, index])
 
   const breakfastOptions = [
     {
@@ -125,14 +95,9 @@ export default function RoomItem({
 
   return (
     <>
-      <View
-        className="room-card-placeholder"
-        style={{ height: `${placeholderHeight}px` }}
-      />
       <View id={roomCardId} className="room-card" data-index={index}>
         <View
-          className={`room-item${isExpanded ? ' expanded' : ''}${isFixed ? ' fixed' : ''}`}
-          style={isFixed ? { top: `${topOffset}px` } : undefined}
+          className={`room-item${isExpanded ? ' expanded' : ''}`}
         >
           {index === 0 && (
             <View className="sales-tag">

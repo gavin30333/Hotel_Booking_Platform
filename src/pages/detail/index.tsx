@@ -76,22 +76,10 @@ export default function HotelDetailPage() {
   const [filterArrowUp, setFilterArrowUp] = useState(false)
 
   const [isDatePriceFixed, setIsDatePriceFixed] = useState(false)
-  const [datePriceMainHeight, setDatePriceMainHeight] = useState(0)
   const datePriceSectionTop = useRef(0)
   const isDatePriceFixedRef = useRef(false)
 
-  const [fixedRoomIndex, setFixedRoomIndex] = useState<number | undefined>(
-    undefined
-  )
-  const fixedRoomIndexRef = useRef<number | undefined>(undefined)
-  const expandedRoomIndexRef = useRef<number | undefined>(undefined)
-  const roomItemOriginalTopRef = useRef<number | null>(null)
-  const roomItemBottomRef = useRef<number | null>(null)
-  const breakfastOptionsTopRef = useRef<number | null>(null)
-  const currentScrollTopRef = useRef<number>(0)
-
   const TOP_NAV_BAR_HEIGHT = 56
-  const DATE_PRICE_MAIN_HEIGHT = 80
 
   useEffect(() => {
     fetchHotelDetail()
@@ -228,111 +216,16 @@ export default function HotelDetailPage() {
     })
   }
 
-  const handleRoomExpandChange = (index: number, isExpanded: boolean) => {
-    if (isExpanded) {
-      expandedRoomIndexRef.current = index
-      roomItemOriginalTopRef.current = null
-      roomItemBottomRef.current = null
-      setTimeout(() => {
-        updateRoomItemPosition(index)
-      }, 300)
-    } else {
-      if (expandedRoomIndexRef.current === index) {
-        expandedRoomIndexRef.current = undefined
-        roomItemOriginalTopRef.current = null
-        roomItemBottomRef.current = null
-      }
-      if (fixedRoomIndexRef.current === index) {
-        setFixedRoomIndex(undefined)
-        fixedRoomIndexRef.current = undefined
-      }
-    }
-  }
-
-  const updateRoomItemPosition = (index: number) => {
-    const currentScrollTop = currentScrollTopRef.current
-    Taro.createSelectorQuery()
-      .selectAll('.room-item')
-      .boundingClientRect()
-      .exec((res) => {
-        if (res && res[0] && res[0][index]) {
-          roomItemOriginalTopRef.current = res[0][index].top + currentScrollTop
-        }
-      })
-
-    Taro.createSelectorQuery()
-      .selectAll('.room-card')
-      .boundingClientRect()
-      .exec((res) => {
-        if (res && res[0] && res[0][index]) {
-          roomItemBottomRef.current = res[0][index].bottom + currentScrollTop
-        }
-      })
-
-    Taro.createSelectorQuery()
-      .selectAll('.breakfast-options')
-      .boundingClientRect()
-      .exec((res) => {
-        if (res && res[0] && res[0][0]) {
-          breakfastOptionsTopRef.current = res[0][0].top + currentScrollTop
-        }
-      })
-  }
-
   usePageScroll((res) => {
     const scrollTop = res.scrollTop
-    currentScrollTopRef.current = scrollTop
     const datePriceThreshold = datePriceSectionTop.current - TOP_NAV_BAR_HEIGHT
 
     if (scrollTop > datePriceThreshold && !isDatePriceFixedRef.current) {
       setIsDatePriceFixed(true)
       isDatePriceFixedRef.current = true
-      setDatePriceMainHeight(TOP_NAV_BAR_HEIGHT)
     } else if (scrollTop <= datePriceThreshold && isDatePriceFixedRef.current) {
       setIsDatePriceFixed(false)
       isDatePriceFixedRef.current = false
-      setDatePriceMainHeight(0)
-    }
-
-    const expandedIndex = expandedRoomIndexRef.current
-    if (expandedIndex !== undefined && isDatePriceFixedRef.current) {
-      if (
-        roomItemOriginalTopRef.current === null ||
-        roomItemBottomRef.current === null ||
-        breakfastOptionsTopRef.current === null
-      ) {
-        return
-      }
-
-      const roomTopThreshold =
-        roomItemOriginalTopRef.current -
-        TOP_NAV_BAR_HEIGHT -
-        DATE_PRICE_MAIN_HEIGHT
-      const roomBottomThreshold =
-        roomItemBottomRef.current -
-        TOP_NAV_BAR_HEIGHT -
-        DATE_PRICE_MAIN_HEIGHT -
-        100
-      const breakfastOptionsThreshold =
-        breakfastOptionsTopRef.current -
-        TOP_NAV_BAR_HEIGHT -
-        DATE_PRICE_MAIN_HEIGHT
-
-      if (
-        scrollTop > roomTopThreshold &&
-        scrollTop < roomBottomThreshold &&
-        fixedRoomIndexRef.current !== expandedIndex
-      ) {
-        setFixedRoomIndex(expandedIndex)
-        fixedRoomIndexRef.current = expandedIndex
-      } else if (
-        (scrollTop >= roomBottomThreshold ||
-          scrollTop <= breakfastOptionsThreshold) &&
-        fixedRoomIndexRef.current === expandedIndex
-      ) {
-        setFixedRoomIndex(undefined)
-        fixedRoomIndexRef.current = undefined
-      }
     }
   })
 
@@ -510,9 +403,6 @@ export default function HotelDetailPage() {
           onBookNow={handleBookNow}
           onRoomCountChange={setRoomCount}
           hotelImages={hotelImages}
-          datePriceMainHeight={datePriceMainHeight + 80}
-          fixedRoomIndex={fixedRoomIndex}
-          onExpandChange={handleRoomExpandChange}
         />
 
         {(nearbyAttractions.length > 0 ||
