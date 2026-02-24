@@ -70,15 +70,15 @@ export default defineConfig<'vite'>(async (merge) => {
       },
       devServer: {
         open: true,
+        historyApiFallback: true,
       },
       router: {
-        mode: 'browser',
+        mode: 'hash',
         customRoutes: {
-          '/pages/user/search/index': '/search',
-          '/pages/user/list/index': '/list',
+          '/pages/search/index': '/search',
+          '/pages/list/index': '/list',
           '/pages/detail/index': '/detail',
-          '/pages/user/detail/index': '/hotel',
-          '/pages/user/map/index': '/map',
+          '/pages/map/index': '/map',
         },
       },
     },

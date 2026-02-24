@@ -34,7 +34,7 @@ export const QueryCard: React.FC<QueryCardProps> = ({
     const checkOutDate = searchData.dates?.endDate || ''
 
     Taro.navigateTo({
-      url: `/pages/user/list/index?city=${encodeURIComponent(city)}&keyword=${encodeURIComponent(keyword)}&checkInDate=${encodeURIComponent(checkInDate)}&checkOutDate=${encodeURIComponent(checkOutDate)}`,
+      url: `/pages/list/index?city=${encodeURIComponent(city)}&keyword=${encodeURIComponent(keyword)}&checkInDate=${encodeURIComponent(checkInDate)}&checkOutDate=${encodeURIComponent(checkOutDate)}`,
     })
 
     if (onSearch) {
@@ -64,11 +64,12 @@ export const QueryCard: React.FC<QueryCardProps> = ({
 
       <View className="card-content">
         <FormField
-        fields={currentConfig.fields}
-        formData={formData}
-        onUpdate={updateField}
-        onSearch={handleSearch}
-      />
+          fields={currentConfig.fields}
+          formData={formData}
+          onUpdate={updateField}
+          onSearch={handleSearch}
+          onSceneChange={handleTabChange}
+        />
         {currentConfig.specialFeatures
           ?.filter((f) => f.type === 'notice')
           .map((f, i) => renderSpecialFeature(f, i))}

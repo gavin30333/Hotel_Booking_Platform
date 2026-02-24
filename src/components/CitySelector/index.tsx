@@ -19,6 +19,8 @@ interface CitySelectorProps {
   onClose: () => void
   onSelect: (city: string) => void
   currentCity?: string
+  defaultTab?: CityTab
+  onTabChange?: (tab: CityTab) => void
 }
 
 export const CitySelector: React.FC<CitySelectorProps> = ({
@@ -26,11 +28,19 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
   onClose,
   onSelect,
   currentCity,
+  defaultTab = 'domestic',
+  onTabChange,
 }) => {
-  const [activeTab, setActiveTab] = useState<CityTab>('domestic')
+  const [activeTab, setActiveTab] = useState<CityTab>(defaultTab)
   const [isSticky, setIsSticky] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    if (visible) {
+      setActiveTab(defaultTab)
+    }
+  }, [visible, defaultTab])
 
   const handleSelect = React.useCallback(
     (city: string) => {
@@ -110,7 +120,11 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
 
         <Tabs
           activeKey={activeTab}
-          onChange={(key) => setActiveTab(key as CityTab)}
+          onChange={(key) => {
+            const tab = key as CityTab
+            setActiveTab(tab)
+            onTabChange?.(tab)
+          }}
           className="city-tabs"
         >
           <Tabs.Tab title="国内(含港澳台)" key="domestic">

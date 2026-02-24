@@ -1,6 +1,6 @@
-import { View, Text, ScrollView, Image } from '@tarojs/components'
-import { useState, useEffect, useMemo } from 'react'
-import Taro, { useRouter, showToast } from '@tarojs/taro'
+import { View, Text, ScrollView } from '@tarojs/components'
+import { useState, useEffect, useRef } from 'react'
+import Taro, { useRouter, showToast, usePageScroll } from '@tarojs/taro'
 import { getHotelDetail } from '@/services/hotel'
 import dayjs from 'dayjs'
 import {
@@ -9,23 +9,29 @@ import {
   ShopbagOutline,
   TravelOutline,
   LocationOutline,
-  GlobalOutline,
-  TruckOutline,
-  GiftOutline,
-  ScanningFaceOutline,
-  SmileOutline,
-  SetOutline,
-  ClockCircleOutline,
-  AppstoreOutline,
-  UserOutline,
 } from 'antd-mobile-icons'
 import { CalendarPicker } from '@/components/common/form/CalendarPicker'
-import { PolicyPopup } from '@/components/common/popup/PolicyPopup'
-import { GuestSelectionPopup } from '@/components/common/popup/GuestSelectionPopup'
+import {
+  PolicyPopup,
+  GuestSelectionPopup,
+  DiscountPopup,
+} from '@/components/common/popup'
 import { GuestInfo } from '@/types/query.types'
-import './index.less'
+import { getTransportIcon } from './utils'
+import {
+  DEFAULT_HOTEL_RATING,
+  DEFAULT_RATING_LABEL,
+  DEFAULT_REVIEW_TAGS,
+  DEFAULT_DISTANCE_TEXT,
+  DEFAULT_OPENING_DATE,
+  CAROUSEL_TABS,
+  HOLIDAY_DATA,
+  LOWEST_PRICE_DATA,
+} from './constants'
+import './DetailPage.less'
+
 import HotelDetailHeader from './components/HotelDetailHeader'
-import ImageCarousel from './components/ImageCarousel'
+import ImageCarousel from '@/components/common/display/ImageCarousel'
 import HotelInfo from './components/HotelInfo'
 import ServiceTags from './components/ServiceTags'
 import DatePriceSelector from './components/DatePriceSelector'
@@ -60,15 +66,31 @@ export default function HotelDetailPage() {
   const [showCalendar, setShowCalendar] = useState(false)
   const [showPolicyPopup, setShowPolicyPopup] = useState(false)
   const [showGuestPicker, setShowGuestPicker] = useState(false)
+  const [showDiscountPopup, setShowDiscountPopup] = useState(false)
   const [showPriceFilter, setShowPriceFilter] = useState(false)
   const [showRoomTypeFilter, setShowRoomTypeFilter] = useState(false)
   const [showSortFilter, setShowSortFilter] = useState(false)
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
   const [showFilterDropdown, setShowFilterDropdown] = useState(false)
   const [filterArrowUp, setFilterArrowUp] = useState(false)
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 100 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [draggedHandle, setDraggedHandle] = useState<'min' | 'max' | null>(null)
+
+  const [isDatePriceFixed, setIsDatePriceFixed] = useState(false)
+  const [datePriceMainHeight, setDatePriceMainHeight] = useState(0)
+  const datePriceSectionTop = useRef(0)
+  const isDatePriceFixedRef = useRef(false)
+
+  const [fixedRoomIndex, setFixedRoomIndex] = useState<number | undefined>(
+    undefined
+  )
+  const fixedRoomIndexRef = useRef<number | undefined>(undefined)
+  const expandedRoomIndexRef = useRef<number | undefined>(undefined)
+  const roomItemOriginalTopRef = useRef<number | null>(null)
+  const roomItemBottomRef = useRef<number | null>(null)
+  const breakfastOptionsTopRef = useRef<number | null>(null)
+  const currentScrollTopRef = useRef<number>(0)
+
+  const TOP_NAV_BAR_HEIGHT = 56
+  const DATE_PRICE_MAIN_HEIGHT = 80
 
   useEffect(() => {
     fetchHotelDetail()
@@ -86,7 +108,7 @@ export default function HotelDetailPage() {
     }
   }
 
-  const handleBookNow = (roomIndex: number) => {
+  const handleBookNow = (roomIndex: number, breakfastCount?: number) => {
     const selectedRoom = hotel.roomTypes?.[roomIndex]
     if (!selectedRoom) {
       showToast({
@@ -96,27 +118,23 @@ export default function HotelDetailPage() {
       return
     }
 
-    // 检查用户是否已登录
     const isLoggedIn = Taro.getStorageSync('isLoggedIn')
     if (!isLoggedIn) {
-      // 未登录，跳转到登录页
       showToast({
         title: '请先登录后操作',
         icon: 'none',
         duration: 1500,
       })
 
-      // 跳转到登录页，并传递来源页面信息
-      const fromPage = `/pages/booking/index?hotelId=${hotelId}&roomTypeId=${roomIndex}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`
+      const fromPage = `/pages/booking/index?hotelId=${hotelId}&roomTypeId=${roomIndex}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&breakfastCount=${breakfastCount || 0}`
       Taro.navigateTo({
         url: `/pages/login/index?fromPage=${encodeURIComponent(fromPage)}`,
       })
       return
     }
 
-    // 已登录，直接跳转到预订页面
     Taro.navigateTo({
-      url: `/pages/booking/index?hotelId=${hotelId}&roomTypeId=${roomIndex}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`,
+      url: `/pages/booking/index?hotelId=${hotelId}&roomTypeId=${roomIndex}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&breakfastCount=${breakfastCount || 0}`,
     })
   }
 
@@ -164,77 +182,6 @@ export default function HotelDetailPage() {
     childAges: [],
   }
 
-  const getNightsCount = () => {
-    const checkIn = new Date(checkInDate)
-    const checkOut = new Date(checkOutDate)
-    const diffTime = Math.abs(checkOut.getTime() - checkIn.getTime())
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return diffDays
-  }
-
-  // 价格数据将在 roomTypes 定义后计算
-
-  const getFacilityIcon = (facility: string) => {
-    const facilityLower = facility.toLowerCase()
-    if (
-      facilityLower.includes('wifi') ||
-      facilityLower.includes('网络') ||
-      facilityLower.includes('无线')
-    ) {
-      return GlobalOutline
-    }
-    if (
-      facilityLower.includes('停车') ||
-      facilityLower.includes('车位') ||
-      facilityLower.includes('车库')
-    ) {
-      return TruckOutline
-    }
-    if (
-      facilityLower.includes('早餐') ||
-      facilityLower.includes('餐厅') ||
-      facilityLower.includes('餐饮')
-    ) {
-      return GiftOutline
-    }
-    if (
-      facilityLower.includes('健身') ||
-      facilityLower.includes('泳池') ||
-      facilityLower.includes('运动')
-    ) {
-      return ScanningFaceOutline
-    }
-    if (
-      facilityLower.includes('前台') ||
-      facilityLower.includes('服务') ||
-      facilityLower.includes('接待')
-    ) {
-      return SmileOutline
-    }
-    if (facilityLower.includes('空调') || facilityLower.includes('暖气')) {
-      return SetOutline
-    }
-    if (facilityLower.includes('洗浴') || facilityLower.includes('淋浴')) {
-      return ClockCircleOutline
-    }
-    return FireFill
-  }
-
-  const getTransportIcon = (type: string) => {
-    switch (type) {
-      case 'subway':
-      case 'highspeed':
-      case 'train':
-        return TravelOutline
-      case 'bus':
-        return TruckOutline
-      case 'airport':
-        return GlobalOutline
-      default:
-        return LocationOutline
-    }
-  }
-
   const handleFilterTagClick = (filterType: string) => {
     switch (filterType) {
       case '价格':
@@ -280,49 +227,128 @@ export default function HotelDetailPage() {
     })
   }
 
-  const handlePriceSliderStart = (handle: 'min' | 'max') => (e: any) => {
-    e.stopPropagation()
-    setIsDragging(true)
-    setDraggedHandle(handle)
-    document.addEventListener('mousemove', handlePriceSliderMove)
-    document.addEventListener('mouseup', handlePriceSliderEnd)
-    document.addEventListener('touchmove', handlePriceSliderMove)
-    document.addEventListener('touchend', handlePriceSliderEnd)
-  }
-
-  const handlePriceSliderMove = (e: any) => {
-    if (!isDragging || !draggedHandle) return
-    const slider = document.querySelector('.price-slider')
-    if (!slider) return
-    const rect = slider.getBoundingClientRect()
-    let x: number
-    if (e.touches) {
-      x = Math.max(0, Math.min(e.touches[0].clientX - rect.left, rect.width))
-    } else if (e.clientX) {
-      x = Math.max(0, Math.min(e.clientX - rect.left, rect.width))
+  const handleRoomExpandChange = (index: number, isExpanded: boolean) => {
+    if (isExpanded) {
+      expandedRoomIndexRef.current = index
+      roomItemOriginalTopRef.current = null
+      roomItemBottomRef.current = null
+      setTimeout(() => {
+        updateRoomItemPosition(index)
+      }, 300)
     } else {
-      return
-    }
-    const percentage = x / rect.width
-    const price = Math.round(percentage * 100)
-    const roundedPrice = Math.round(price / 10) * 10
-    setPriceRange((prev) => {
-      if (draggedHandle === 'min') {
-        return { min: Math.min(roundedPrice, prev.max - 10), max: prev.max }
-      } else {
-        return { min: prev.min, max: Math.max(roundedPrice, prev.min + 10) }
+      if (expandedRoomIndexRef.current === index) {
+        expandedRoomIndexRef.current = undefined
+        roomItemOriginalTopRef.current = null
+        roomItemBottomRef.current = null
       }
-    })
+      if (fixedRoomIndexRef.current === index) {
+        setFixedRoomIndex(undefined)
+        fixedRoomIndexRef.current = undefined
+      }
+    }
   }
 
-  const handlePriceSliderEnd = () => {
-    setIsDragging(false)
-    setDraggedHandle(null)
-    document.removeEventListener('mousemove', handlePriceSliderMove)
-    document.removeEventListener('mouseup', handlePriceSliderEnd)
-    document.removeEventListener('touchmove', handlePriceSliderMove)
-    document.removeEventListener('touchend', handlePriceSliderEnd)
+  const updateRoomItemPosition = (index: number) => {
+    const currentScrollTop = currentScrollTopRef.current
+    Taro.createSelectorQuery()
+      .selectAll('.room-item')
+      .boundingClientRect()
+      .exec((res) => {
+        if (res && res[0] && res[0][index]) {
+          roomItemOriginalTopRef.current = res[0][index].top + currentScrollTop
+        }
+      })
+
+    Taro.createSelectorQuery()
+      .selectAll('.room-card')
+      .boundingClientRect()
+      .exec((res) => {
+        if (res && res[0] && res[0][index]) {
+          roomItemBottomRef.current = res[0][index].bottom + currentScrollTop
+        }
+      })
+
+    Taro.createSelectorQuery()
+      .selectAll('.breakfast-options')
+      .boundingClientRect()
+      .exec((res) => {
+        if (res && res[0] && res[0][0]) {
+          breakfastOptionsTopRef.current = res[0][0].top + currentScrollTop
+        }
+      })
   }
+
+  usePageScroll((res) => {
+    const scrollTop = res.scrollTop
+    currentScrollTopRef.current = scrollTop
+    const datePriceThreshold = datePriceSectionTop.current - TOP_NAV_BAR_HEIGHT
+
+    if (scrollTop > datePriceThreshold && !isDatePriceFixedRef.current) {
+      setIsDatePriceFixed(true)
+      isDatePriceFixedRef.current = true
+      setDatePriceMainHeight(TOP_NAV_BAR_HEIGHT)
+    } else if (scrollTop <= datePriceThreshold && isDatePriceFixedRef.current) {
+      setIsDatePriceFixed(false)
+      isDatePriceFixedRef.current = false
+      setDatePriceMainHeight(0)
+    }
+
+    const expandedIndex = expandedRoomIndexRef.current
+    if (expandedIndex !== undefined && isDatePriceFixedRef.current) {
+      if (
+        roomItemOriginalTopRef.current === null ||
+        roomItemBottomRef.current === null ||
+        breakfastOptionsTopRef.current === null
+      ) {
+        return
+      }
+
+      const roomTopThreshold =
+        roomItemOriginalTopRef.current -
+        TOP_NAV_BAR_HEIGHT -
+        DATE_PRICE_MAIN_HEIGHT
+      const roomBottomThreshold =
+        roomItemBottomRef.current -
+        TOP_NAV_BAR_HEIGHT -
+        DATE_PRICE_MAIN_HEIGHT -
+        100
+      const breakfastOptionsThreshold =
+        breakfastOptionsTopRef.current -
+        TOP_NAV_BAR_HEIGHT -
+        DATE_PRICE_MAIN_HEIGHT
+
+      if (
+        scrollTop > roomTopThreshold &&
+        scrollTop < roomBottomThreshold &&
+        fixedRoomIndexRef.current !== expandedIndex
+      ) {
+        setFixedRoomIndex(expandedIndex)
+        fixedRoomIndexRef.current = expandedIndex
+      } else if (
+        (scrollTop >= roomBottomThreshold ||
+          scrollTop <= breakfastOptionsThreshold) &&
+        fixedRoomIndexRef.current === expandedIndex
+      ) {
+        setFixedRoomIndex(undefined)
+        fixedRoomIndexRef.current = undefined
+      }
+    }
+  })
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      Taro.createSelectorQuery()
+        .select('.date-price-card')
+        .boundingClientRect((rect: any) => {
+          if (rect) {
+            datePriceSectionTop.current = rect.top + (window?.scrollY || 0)
+          }
+        })
+        .exec()
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [hotel])
 
   if (loading) {
     return (
@@ -342,7 +368,7 @@ export default function HotelDetailPage() {
 
   const hotelName = hotel.name || hotel.hotelNameCn || '未知酒店'
   const hotelImages = hotel.images || []
-  const hotelRating = hotel.rating || hotel.score || 4.5
+  const hotelRating = hotel.rating || hotel.score || DEFAULT_HOTEL_RATING
   const hotelReviewCount = hotel.reviewCount || 0
   const hotelAddress = hotel.address || hotel.hotelAddress || ''
   const roomTypes = hotel.roomTypes || []
@@ -352,23 +378,18 @@ export default function HotelDetailPage() {
   const transportations = hotel.transportations || []
   const shoppingMalls = hotel.shoppingMalls || []
 
-  // 直接计算价格数据，不使用useMemo
   const getPriceData = () => {
-    // 使用第一个房间的价格作为所有日期的价格
     const basePrice = roomTypes[0]?.price || roomTypes[0]?.currentPrice || 400
     const priceData: Record<string, number> = {}
-    // 生成当前月份和下一个月的价格数据
     const currentMonth = dayjs()
     const nextMonth = dayjs().add(1, 'month')
 
-    // 生成当前月份的价格数据
     const daysInCurrentMonth = currentMonth.daysInMonth()
     for (let i = 1; i <= daysInCurrentMonth; i++) {
       const dateStr = currentMonth.date(i).format('YYYY-MM-DD')
       priceData[dateStr] = basePrice
     }
 
-    // 生成下一个月的价格数据
     const daysInNextMonth = nextMonth.daysInMonth()
     for (let i = 1; i <= daysInNextMonth; i++) {
       const dateStr = nextMonth.date(i).format('YYYY-MM-DD')
@@ -381,15 +402,26 @@ export default function HotelDetailPage() {
 
   return (
     <View className="hotel-detail-page">
-      <HotelDetailHeader onBack={handleBack} />
+      <HotelDetailHeader onBack={handleBack} hotelName={hotelName} />
 
       <ScrollView className="detail-content" scrollY>
         <ImageCarousel images={hotelImages} onImageClick={handleImageClick} />
 
+        <View className="carousel-tabs">
+          {CAROUSEL_TABS.map((tab, index) => (
+            <Text
+              key={tab}
+              className={`tab-item ${index === 0 ? 'active' : ''}`}
+            >
+              {tab}
+            </Text>
+          ))}
+        </View>
+
         <HotelInfo
           name={hotelName}
           starRating={hotel.starRating || 5}
-          address={hotelAddress}
+          openingDate={hotel.openingDate || DEFAULT_OPENING_DATE}
           rating={hotelRating}
           reviewCount={hotelReviewCount}
         />
@@ -402,46 +434,85 @@ export default function HotelDetailPage() {
         <View className="review-map-container">
           <View className="review-section">
             <View className="review-header">
-              <Text className="review-title">用户评价</Text>
-              <Text className="review-count">{hotelReviewCount}条点评</Text>
+              <View className="rating-badge">
+                <Text className="rating-value">{DEFAULT_HOTEL_RATING}</Text>
+              </View>
+              <Text className="rating-label">{DEFAULT_RATING_LABEL}</Text>
+              <Text className="review-count">{hotelReviewCount}条&gt;</Text>
             </View>
             <View className="review-content">
-              <Text className="review-rating">{hotelRating}</Text>
-              <Text className="review-label">很好</Text>
-              <Text className="review-tags">安静舒适 交通便利 服务周到</Text>
+              <Text className="review-tags">"{DEFAULT_REVIEW_TAGS}"</Text>
             </View>
           </View>
 
           <View className="map-section">
-            <View className="map-header">
-              <Text className="map-title">酒店位置</Text>
-            </View>
             <View className="map-content">
-              <Text className="location-text">{hotelAddress}</Text>
-              <View className="map-btn">
+              <View className="location-info">
+                <Text className="distance-text">{DEFAULT_DISTANCE_TEXT}</Text>
+                <Text className="address-text">{hotelAddress}</Text>
+              </View>
+              <View className="map-icon-container">
                 <View className="map-icon">
                   <EnvironmentOutline color="#666" />
                 </View>
-                <Text className="map-text">查看地图</Text>
+                <Text className="map-text">地图</Text>
               </View>
             </View>
           </View>
         </View>
 
-        {(hotel.discounts || []).length > 0 && (
-          <View className="promotion-section">
-            {hotel.discounts.map((discount: any, index: number) => (
-              <View key={index} className="promotion-item">
-                <View className="promotion-icon">
-                  <FireFill color="#ff4d4f" />
+        <View className="date-price-card">
+          {(hotel.discounts || []).length > 0 && (
+            <View className="promotion-section">
+              <ScrollView className="promotion-scroll" scrollX>
+                <View className="promotion-tags">
+                  {hotel.discounts.map((discount: any, index: number) => (
+                    <View key={index} className="promotion-tag">
+                      <View className="promotion-icon">
+                        <FireFill color="#ff7a45" />
+                      </View>
+                      <Text className="promotion-text">
+                        {discount.name}: {discount.description}
+                      </Text>
+                    </View>
+                  ))}
                 </View>
-                <Text className="promotion-text">
-                  {discount.name}: {discount.description}
-                </Text>
+              </ScrollView>
+              <View
+                className="promotion-more"
+                onClick={() => setShowDiscountPopup(true)}
+              >
+                <Text className="more-text">更多优惠</Text>
               </View>
-            ))}
-          </View>
-        )}
+            </View>
+          )}
+
+          <DatePriceSelector
+            checkInDate={checkInDate}
+            checkOutDate={checkOutDate}
+            roomCount={roomCount}
+            adultCount={adultCount}
+            childCount={childCount}
+            selectedFilters={selectedFilters}
+            onDateClick={() => setShowCalendar(true)}
+            onGuestClick={() => setShowGuestPicker(true)}
+            onFilterTagClick={handleFilterTagClick}
+            onRemoveFilter={handleRemoveFilter}
+            isFixed={isDatePriceFixed}
+            topOffset={TOP_NAV_BAR_HEIGHT}
+          />
+        </View>
+
+        <RoomList
+          rooms={roomTypes}
+          roomCount={roomCount}
+          onBookNow={handleBookNow}
+          onRoomCountChange={setRoomCount}
+          hotelImages={hotelImages}
+          datePriceMainHeight={datePriceMainHeight + 80}
+          fixedRoomIndex={fixedRoomIndex}
+          onExpandChange={handleRoomExpandChange}
+        />
 
         {(nearbyAttractions.length > 0 ||
           transportations.length > 0 ||
@@ -521,223 +592,6 @@ export default function HotelDetailPage() {
             )}
           </View>
         )}
-
-        <View className="date-price-section">
-          <View className="date-price-main">
-            <View
-              className="date-section"
-              onClick={() => setShowCalendar(true)}
-            >
-              <View className="date-combined">
-                <View className="date-part">
-                  <View className="date-item">
-                    <Text className="date-label today">
-                      {checkInDate === today.toISOString().split('T')[0]
-                        ? '今天'
-                        : '入住'}
-                    </Text>
-                    <Text className="date-value">
-                      {(() => {
-                        const checkIn = new Date(checkInDate)
-                        return `${checkIn.getMonth() + 1}月${checkIn.getDate()}日`
-                      })()}
-                    </Text>
-                  </View>
-                  <View className="date-separator">
-                    <Text className="separator-text">-</Text>
-                  </View>
-                  <View className="date-item">
-                    <Text className="date-label tomorrow">
-                      {checkOutDate === tomorrow.toISOString().split('T')[0]
-                        ? '明天'
-                        : '退房'}
-                    </Text>
-                    <Text className="date-value">
-                      {(() => {
-                        const checkOut = new Date(checkOutDate)
-                        return `${checkOut.getMonth() + 1}月${checkOut.getDate()}日`
-                      })()}
-                    </Text>
-                    <View className="low-price-badge">
-                      <Text className="low-price-text">看低价</Text>
-                    </View>
-                  </View>
-                </View>
-                <View className="night-count">
-                  <Text className="night-count-text">
-                    共{getNightsCount()}晚
-                  </Text>
-                </View>
-              </View>
-            </View>
-            <View className="divider"></View>
-            <View
-              className="guest-section"
-              onClick={() => setShowGuestPicker(true)}
-            >
-              <View className="guest-combined">
-                <Text className="guest-label">间数人数</Text>
-                <View className="guest-value">
-                  <Text>{roomCount}</Text>
-                  <AppstoreOutline
-                    style={{
-                      marginLeft: '4px',
-                      marginRight: '4px',
-                      fontSize: '14px',
-                    }}
-                  />
-                  <Text>{adultCount}</Text>
-                  <UserOutline
-                    style={{
-                      marginLeft: '4px',
-                      marginRight: '4px',
-                      fontSize: '14px',
-                    }}
-                  />
-                  <Text>{childCount}</Text>
-                  <SmileOutline
-                    style={{
-                      marginLeft: '4px',
-                      marginRight: '4px',
-                      fontSize: '14px',
-                    }}
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-
-          <View className="filter-tags-container">
-            <ScrollView scrollX>
-              <View
-                className="filter-tag"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleFilterTagClick('价格')
-                }}
-              >
-                <Text className="filter-tag-text">¥100以上</Text>
-                <Text className="filter-tag-arrow">▼</Text>
-              </View>
-              <View
-                className={`filter-tag ${selectedFilters.includes('双床房') ? 'active' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleFilterTagClick('双床房')
-                }}
-              >
-                <Text className="filter-tag-text">双床房</Text>
-                {selectedFilters.includes('双床房') && (
-                  <Text
-                    className="filter-tag-close"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleRemoveFilter('双床房')
-                    }}
-                  >
-                    ×
-                  </Text>
-                )}
-              </View>
-              <View
-                className={`filter-tag ${selectedFilters.includes('大床房') ? 'active' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleFilterTagClick('大床房')
-                }}
-              >
-                <Text className="filter-tag-text">大床房</Text>
-                {selectedFilters.includes('大床房') && (
-                  <Text
-                    className="filter-tag-close"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleRemoveFilter('大床房')
-                    }}
-                  >
-                    ×
-                  </Text>
-                )}
-              </View>
-            </ScrollView>
-            <View
-              className="filter-button"
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowFilterDropdown(!showFilterDropdown)
-                setFilterArrowUp(!filterArrowUp)
-              }}
-            >
-              <Text className="filter-button-text">筛选</Text>
-              <Text className="filter-button-arrow">
-                {filterArrowUp ? '▲' : '▼'}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        <View className="rooms-section">
-          {roomTypes.map((room: any, index: number) => (
-            <View key={room.id || room._id || index} className="room-item">
-              <View className="room-image">
-                <Image
-                  src={
-                    room.images?.[0] ||
-                    hotelImages[0] ||
-                    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800'
-                  }
-                  mode="aspectFill"
-                  className="room-img"
-                />
-                {index === 0 && (
-                  <View className="sales-tag">
-                    <Text className="sales-tag-text">本店销量No.1</Text>
-                  </View>
-                )}
-              </View>
-              <View className="room-info">
-                <Text className="room-name">
-                  {room.name || room.roomTypeName}
-                </Text>
-                <Text className="room-description">
-                  {room.description || '舒适温馨的客房'}
-                </Text>
-                <Text className="room-detail">
-                  {room.bedType || '大床'} {room.area || 30}㎡{' '}
-                  {room.maxOccupancy || 2}人入住
-                </Text>
-                <Text className="room-notice">
-                  {room.breakfast ? '含早餐' : '无早餐'}{' '}
-                  入住当天18:00前可免费取消
-                </Text>
-                <View className="room-bottom">
-                  <View className="room-price">
-                    {room.originalPrice && (
-                      <Text className="price-original">
-                        ¥{room.originalPrice}
-                      </Text>
-                    )}
-                    <Text className="price-current">
-                      ¥{room.price || room.currentPrice}
-                    </Text>
-                  </View>
-                  <View className="room-booking">
-                    <View className="room-count">
-                      <Text className="count-text">{roomCount}间</Text>
-                      <Text className="count-arrow">▼</Text>
-                    </View>
-                    <View
-                      className="book-btn"
-                      onClick={() => handleBookNow(index)}
-                    >
-                      <Text className="book-btn-text">订</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </View>
-          ))}
-        </View>
       </ScrollView>
 
       <CalendarPicker
@@ -748,12 +602,8 @@ export default function HotelDetailPage() {
         defaultEndDate={checkOutDate}
         title="选择入住日期"
         priceData={calendarPriceData}
-        holidayData={{
-          '2026-02-23': { type: 'holiday', name: '春节' },
-          '2026-02-24': { type: 'rest' },
-          '2026-03-01': { type: 'work' },
-        }}
-        lowestPriceData={['2026-02-25', '2026-02-29', '2026-03-02']}
+        holidayData={HOLIDAY_DATA}
+        lowestPriceData={LOWEST_PRICE_DATA}
         showPrice
       />
 
@@ -768,6 +618,13 @@ export default function HotelDetailPage() {
         visible={showPolicyPopup}
         onClose={() => setShowPolicyPopup(false)}
         policies={policies}
+        hotelName={hotelName}
+      />
+
+      <DiscountPopup
+        visible={showDiscountPopup}
+        onClose={() => setShowDiscountPopup(false)}
+        discounts={hotel.discounts || []}
         hotelName={hotelName}
       />
     </View>

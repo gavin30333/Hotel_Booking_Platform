@@ -1,0 +1,20 @@
+@import '@/styles/variables.less';
+
+.rooms-section {
+  background-color: transparent;
+  margin-bottom: @spacing-md;
+
+  .section-title {
+    font-size: @font-size-md;
+    font-weight: 600;
+    color: @text-color;
+    margin: @spacing-md @spacing-xs;
+  }
+}
+
+@media (min-width: 786px) {
+  .rooms-section {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+}

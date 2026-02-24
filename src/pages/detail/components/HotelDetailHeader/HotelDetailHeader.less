@@ -1,0 +1,84 @@
+@import '@/styles/variables.less';
+
+.top-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: @spacing-lg;
+  background-color: transparent;
+  color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  transition: all 0.3s ease;
+
+  .nav-left {
+    .back-btn {
+      font-size: @font-size-xl;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .nav-center {
+    width: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 @spacing-md;
+
+    .hotel-name {
+      font-size: @font-size-md;
+      font-weight: 600;
+      color: #000;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+
+    .nav-icon {
+      font-size: @font-size-xl;
+      margin-left: @spacing-sm;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &.scrolled {
+    background-color: #fff;
+    color: #000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .nav-left {
+      .back-btn {
+        background-color: #f0f0f0;
+      }
+    }
+
+    .nav-right {
+      .nav-icon {
+        background-color: #f0f0f0;
+      }
+    }
+  }
+}

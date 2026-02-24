@@ -1,0 +1,48 @@
+import { View, Swiper, SwiperItem, Image } from '@tarojs/components'
+import { DEFAULT_HOTEL_IMAGE } from '@/constants'
+import './ImageCarousel.less'
+
+interface ImageCarouselProps {
+  images: string[]
+  onImageClick?: (index: number) => void
+}
+
+export default function ImageCarousel({ images, onImageClick }: ImageCarouselProps) {
+  return (
+    <View className="image-carousel">
+      <Swiper
+        className="swiper"
+        autoplay
+        interval={3000}
+        duration={500}
+      >
+        {images.length > 0 ? (
+          images.map((image, index) => (
+            <SwiperItem key={index}>
+              <View
+                className="image-container"
+                onClick={() => onImageClick?.(index)}
+              >
+                <Image
+                  src={image}
+                  mode="aspectFill"
+                  className="carousel-image"
+                />
+              </View>
+            </SwiperItem>
+          ))
+        ) : (
+          <SwiperItem>
+            <View className="image-container">
+              <Image
+                src={DEFAULT_HOTEL_IMAGE}
+                mode="aspectFill"
+                className="carousel-image"
+              />
+            </View>
+          </SwiperItem>
+        )}
+      </Swiper>
+    </View>
+  )
+}
