@@ -3,8 +3,8 @@
 .hotel-detail-page {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  background-color: @page-bg;
+  min-height: 100vh;
+  background-color: #f5f5f5;
 
   /* 详情内容 */
   .detail-content {
@@ -15,15 +15,14 @@
     /* 轮播图 Tabs */
     .carousel-tabs {
       position: absolute;
-      top: 240px; // 根据实际轮播图高度调整，ImageCarousel 默认高度300px，tab在底部
-      left: @spacing-lg;
+      top: 250px;
+      left: @spacing-sm;
       display: flex;
       gap: @spacing-xs;
       background-color: rgba(0, 0, 0, 0.6);
       padding: @spacing-xs;
       border-radius: @border-radius-xl;
       z-index: 10;
-      margin-top: -50px; // 向上偏移覆盖在轮播图上
 
       .tab-item {
         font-size: @font-size-sm;
@@ -44,26 +43,53 @@
     .review-map-container {
       display: flex;
       background-color: #fff;
-      margin-bottom: @spacing-xs;
-      height: 180px;
+      margin: 0 0 @spacing-md 0;
+      padding: @spacing-lg;
+      height: auto;
+      min-height: 100px;
+      gap: 10px;
+      border-radius: 0 0 @border-radius-md @border-radius-md;
+      overflow: hidden;
 
       /* 评价区域 */
       .review-section {
-        flex: 1;
-        padding: @spacing-lg;
-        border-right: 1px solid #f0f0f0;
+        flex: 4;
+        padding: @spacing-sm;
         display: flex;
         flex-direction: column;
+        background-color: #e6f0f8;
+        border-radius: @border-radius-md;
 
         .review-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          margin-bottom: @spacing-xs;
 
-          .review-title {
-            font-size: @font-size-md;
-            font-weight: 600;
-            color: @text-color;
+          .review-header {
+            display: flex;
+            align-items: center;
+            gap: @spacing-sm;
+          }
+
+          .rating-badge {
+            padding: 0 @spacing-xs;
+            background: @primary-color;
+            border-radius: 10px 10px 20px 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 139, 0.3);
+            transform: skew(-5deg);
+
+            .rating-value {
+              font-size: @font-size-md;
+              font-weight: 600;
+              color: #fff;
+            }
+          }
+
+          .rating-label {
+            font-size: @font-size-base;
+            color: @primary-color;
+            font-weight: 700;
           }
 
           .review-count {
@@ -73,19 +99,9 @@
         }
 
         .review-content {
-          .review-rating {
-            font-size: @font-size-lg;
-            font-weight: 600;
-            color: @primary-color;
-          }
-
-          .review-label {
-            font-size: @font-size-base;
-            color: @primary-color;
-          }
-
           .review-tags {
             font-size: @font-size-base;
+            font-weight: 600;
             color: @text-secondary;
             line-height: 1.4;
           }
@@ -94,61 +110,120 @@
 
       /* 地图区域 */
       .map-section {
-        flex: 1;
-        padding: @spacing-lg;
+        flex: 6;
+        padding: @spacing-sm;
         display: flex;
         flex-direction: column;
+        background-color: #e6f0e8;
+        position: relative;
+        overflow: hidden;
+        border-radius: @border-radius-md;
 
-        .map-header {
-          display: flex;
-          align-items: center;
-          margin-bottom: @spacing-lg;
+        /* 泡泡效果 */
+        &::before {
+          content: '';
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          width: 10px;
+          height: 10px;
+          background-color: rgba(255, 255, 255, 0.5);
+          border-radius: 50%;
+          animation: bubble 3s infinite ease-in-out;
+        }
 
-          .map-title {
-            font-size: @font-size-md;
-            font-weight: 600;
-            color: @text-color;
-          }
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 40px;
+          left: 30px;
+          width: 15px;
+          height: 15px;
+          background-color: rgba(255, 255, 255, 0.4);
+          border-radius: 50%;
+          animation: bubble 4s infinite ease-in-out 1s;
         }
 
         .map-content {
           display: flex;
-          flex-direction: column;
-          gap: @spacing-xs;
+          justify-content: space-between;
+          align-items: center;
+          height: 100%;
 
-          .location-text {
-            font-size: @font-size-base;
-            color: @text-color;
-          }
-
-          .address-text {
-            font-size: @font-size-base;
-            color: #999;
-          }
-
-          .map-btn {
+          .location-info {
+            flex: 1;
+            margin-right: @spacing-xs;
             display: flex;
+            flex-direction: column;
+            gap: @spacing-xs;
+
+            .distance-text {
+              font-size: @font-size-base;
+              font-weight: 600;
+              color: @text-color;
+              width: 100%;
+              white-space: normal;
+            }
+
+            .address-text {
+              font-size: @font-size-sm;
+              color: #999;
+              line-height: 1.3;
+              width: 100%;
+              white-space: normal;
+            }
+          }
+
+          .map-icon-container {
+            display: flex;
+            flex-direction: column;
             align-items: center;
+            gap: @spacing-xs;
 
             .map-icon {
-              font-size: @font-size-base;
-              margin-right: @spacing-xs;
+              width: 25px;
+              height: 25px;
+              border-radius: 50%;
+              background-color: #fff;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+              :global {
+                .antd-mobile-icon {
+                  font-size: 16px;
+                }
+              }
             }
 
             .map-text {
-              font-size: @font-size-base;
-              color: @text-secondary;
+              font-size: @font-size-sm;
+              color: @text-color;
+              text-align: center;
             }
           }
         }
       }
     }
 
+    /* 泡泡动画 */
+    @keyframes bubble {
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+      }
+    }
+
     /* 优惠信息 */
     .promotion-section {
       background-color: #fff;
-      padding: @spacing-md;
-      margin-bottom: @spacing-xs;
+      padding: 0 @spacing-md;
 
       .promotion-item {
         display: flex;
@@ -166,11 +241,118 @@
       }
     }
 
+    /* 日期价格卡片 */
+    .date-price-card {
+      background-color: #fff;
+      margin: 0 0 @spacing-md 0;
+      border-radius: @border-radius-md;
+      overflow: hidden;
+
+      /* 优惠信息区域 */
+      .promotion-section {
+        display: flex;
+        align-items: center;
+        padding: @spacing-md;
+        border-bottom: 1px solid #f0f0f0;
+        position: relative;
+
+        /* 横向滚动容器 */
+        .promotion-scroll {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          overflow-x: auto;
+          white-space: nowrap;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+          z-index: 1;
+
+          :global {
+            .taro-scroll-view__scrollbar {
+              display: none;
+            }
+            .taro-scroll-view {
+              flex: 1;
+              display: inline-flex;
+              align-items: center;
+              -ms-overflow-style: none;
+              scrollbar-width: none;
+
+              &::-webkit-scrollbar {
+                display: none;
+              }
+            }
+          }
+
+          /* 优惠标签容器 */
+          .promotion-tags {
+            display: flex;
+            align-items: center;
+            gap: @spacing-sm;
+            padding-right: 80px;
+
+            /* 优惠标签 */
+            .promotion-tag {
+              display: inline-flex;
+              align-items: center;
+              padding: 0 @spacing-xs;
+
+              border: 1px solid #ff7a45;
+              border-radius: @border-radius-sm;
+              white-space: nowrap;
+
+              .promotion-icon {
+                font-size: @font-size-sm;
+              }
+
+              .promotion-text {
+                font-size: @font-size-sm;
+                color: #ff7a45;
+                font-weight: 500;
+              }
+            }
+          }
+        }
+
+        /* 更多优惠按钮 */
+        .promotion-more {
+          position: absolute;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          min-width: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          z-index: 2;
+          background-color: #fff;
+          padding: 0 @spacing-sm;
+          box-shadow: -4px 0 8px rgba(255, 255, 255, 0.8);
+
+          .more-text {
+            font-size: @font-size-sm;
+            color: #ff7a45;
+            display: flex;
+            align-items: center;
+
+            &::after {
+              content: '>';
+              margin-left: @spacing-xs;
+              font-size: @font-size-sm;
+              color: #ff7a45;
+            }
+          }
+        }
+      }
+    }
+
     /* 周边信息 */
     .nearby-section {
       background-color: #fff;
       padding: @spacing-lg;
-      margin-bottom: @spacing-xs;
+      margin: 0 0 @spacing-md 0;
+      border-radius: @border-radius-md;
+      overflow: hidden;
 
       .section-title {
         font-size: @font-size-md;

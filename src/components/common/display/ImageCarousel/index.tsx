@@ -12,9 +12,6 @@ export default function ImageCarousel({ images, onImageClick }: ImageCarouselPro
     <View className="image-carousel">
       <Swiper
         className="swiper"
-        indicatorDots
-        indicatorColor="rgba(255, 255, 255, 0.5)"
-        indicatorActiveColor="#fff"
         autoplay
         interval={3000}
         duration={500}

@@ -1,19 +1,19 @@
 @import '../../../../styles/variables.less';
 
-.policy-popup {
+.discount-popup {
   .adm-popup-body {
     background-color: @bg-color;
   }
 }
 
-.policy-popup-container {
+.discount-popup-container {
   display: flex;
   flex-direction: column;
   max-height: 70vh;
   background-color: @bg-color;
   border-radius: @border-radius-lg @border-radius-lg 0 0;
 
-  .policy-header {
+  .discount-header {
     padding: @spacing-lg;
     border-bottom: 1px solid @border-color;
     text-align: center;
@@ -33,12 +33,12 @@
     }
   }
 
-  .policy-content {
+  .discount-content {
     flex: 1;
     overflow-y: auto;
     padding: @spacing-md @spacing-lg;
 
-    .policy-item {
+    .discount-item {
       display: flex;
       align-items: flex-start;
       padding: @spacing-md 0;
@@ -48,11 +48,11 @@
         border-bottom: none;
       }
 
-      .policy-icon {
+      .discount-icon {
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background-color: fade(@primary-color, 10%);
+        background-color: rgba(255, 122, 69, 0.1);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -60,28 +60,58 @@
         flex-shrink: 0;
       }
 
-      .policy-info {
+      .discount-info {
         flex: 1;
 
-        .policy-title {
-          font-size: @font-size-md;
-          font-weight: 600;
-          color: @text-color;
+        .discount-title-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: @spacing-xs;
+
+          .discount-name {
+            font-size: @font-size-md;
+            font-weight: 600;
+            color: @text-color;
+          }
+
+          .discount-type {
+            font-size: @font-size-sm;
+            color: #ff7a45;
+            font-weight: 600;
+            padding: 2px @spacing-sm;
+            background-color: rgba(255, 122, 69, 0.1);
+            border-radius: @border-radius-sm;
+          }
+        }
+
+        .discount-description {
+          font-size: @font-size-base;
+          color: @text-secondary;
+          line-height: 1.5;
           display: block;
           margin-bottom: @spacing-xs;
         }
 
-        .policy-value {
-          font-size: @font-size-base;
-          color: @text-secondary;
-          line-height: 1.5;
+        .discount-conditions {
+          font-size: @font-size-sm;
+          color: #999;
+          line-height: 1.4;
+          display: block;
+          margin-bottom: @spacing-xs;
+        }
+
+        .discount-date {
+          font-size: @font-size-xs;
+          color: #bbb;
+          line-height: 1.4;
           display: block;
         }
       }
     }
   }
 
-  .policy-footer {
+  .discount-footer {
     padding: @spacing-md @spacing-lg;
     border-top: 1px solid @border-color;
 
