@@ -5,10 +5,11 @@ import {
   HotelListResult,
 } from '../services/hotel'
 import { useHotelStore } from '../store/hotelStore'
+import { useListPageStore } from '../store/listPageStore'
 
 export const useHotelList = () => {
+  const { filters } = useHotelStore()
   const {
-    filters,
     hotelList,
     total,
     page,
@@ -21,8 +22,8 @@ export const useHotelList = () => {
     setPage,
     setLoading,
     setHasMore,
-    resetHotelList,
-  } = useHotelStore()
+    resetList,
+  } = useListPageStore()
 
   const [error, setError] = useState<string | null>(null)
   const isLoadingRef = useRef(false)
@@ -103,11 +104,11 @@ export const useHotelList = () => {
 
       try {
         const currentFilters = useHotelStore.getState().filters
-        const currentPage = useHotelStore.getState().page
+        const currentPage = useListPageStore.getState().page
         const params = buildParams(currentPage, currentFilters)
         const response: HotelListResult = await getHotelList(params)
 
-        const currentHotelList = useHotelStore.getState().hotelList
+        const currentHotelList = useListPageStore.getState().hotelList
         if (isRefresh) {
           setHotelList(response.list)
         } else {
@@ -144,9 +145,9 @@ export const useHotelList = () => {
   )
 
   const refreshHotels = useCallback(() => {
-    resetHotelList()
+    resetList()
     shouldRefreshRef.current = true
-  }, [resetHotelList])
+  }, [resetList])
 
   useEffect(() => {
     if (shouldRefreshRef.current) {

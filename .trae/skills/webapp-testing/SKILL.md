@@ -5,6 +5,7 @@ license: Complete terms in LICENSE.txt
 ---
 
 # Web Application Testing
+Mandatory Requirement: When executing all test scripts, you must use a Python virtual environment (e.g., the .venv directory created under the project) mandatorily; it is prohibited to add any Python test code to the project's source code directory, and all test scripts and their dependencies are only allowed to be stored/run within the virtual environment.
 
 To test local web applications, write native Python Playwright scripts.
 
@@ -82,7 +83,7 @@ with sync_playwright() as p:
 
 ## Best Practices
 
-- **Use bundled scripts as black boxes** - To accomplish a task, consider whether one of the scripts available in `scripts/` can help. These scripts handle common, complex workflows reliably without cluttering the context window. Use `--help` to see usage, then invoke directly. 
+- **Use bundled scripts as black boxes** - To accomplish a task, consider whether one of the scripts available in `scripts/` can help. These scripts handle common, complex workflows reliably without cluttering the context window. Use `--help` to see usage, then invoke directly.
 - Use `sync_playwright()` for synchronous scripts
 - Always close the browser when done
 - Use descriptive selectors: `text=`, `role=`, CSS selectors, or IDs

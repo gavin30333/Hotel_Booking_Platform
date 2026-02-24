@@ -1,505 +1,305 @@
-@import '../../../../styles/variables.less';
+@import '@/styles/variables.less';
 
 .hotel-card {
-  background-color: @bg-color;
-  margin: @spacing-xs @spacing-sm;
-  border-radius: @border-radius-md;
-  overflow: hidden;
-  box-shadow: @shadow-card;
   display: flex;
   flex-direction: row;
+  align-items: stretch;
+  background-color: #fff;
+  padding: 12px;
+  margin-bottom: 8px;
+  position: relative;
+  border-radius: 8px;
 
-  .hotel-image {
-    width: 100px;
-    min-width: 100px;
-    height: 120px;
-    min-height: 120px;
-    overflow: hidden;
+  // Card Left - Image
+  .hotel-card-left {
+    width: 110px;
+    min-height: 168px; // Increased from 146px based on screenshot analysis (approx 1.5x aspect ratio)
+    flex-shrink: 0;
+    margin-right: 10px;
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: 6px;
+    overflow: hidden;
+
+    .hotel-image {
+      width: 100%;
+      height: 100%;
+      border-radius: 6px;
+      // Override antd-mobile Image styles if needed
+      --width: 100%;
+      --height: 100%;
+
+      img {
+        object-fit: cover;
+      }
+    }
+
+    .play-icon {
+        position: absolute;
+        bottom: 6px;
+        right: 6px;
+        width: 18px;
+        height: 18px;
+        background: rgba(0,0,0,0.4);
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-top: 3px solid transparent;
+            border-bottom: 3px solid transparent;
+            border-left: 5px solid #fff;
+            margin-left: 2px;
+        }
+    }
   }
 
-  .hotel-info {
+  // Card Right - Content
+  .hotel-card-right {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: @spacing-xs;
+    overflow: hidden;
 
-    .hotel-name {
-      font-size: @font-size-base;
-      font-weight: 600;
-      color: @text-color;
-      margin-bottom: @spacing-xs;
-      line-height: 1.3;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    // 1. Title Row
+    .title-row {
+      margin-bottom: 2px;
+      line-height: 20px;
+      width: 100%; // Ensure Space takes full width
+
+      .hotel-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        flex: 1; // Allow ellipsis to work
+        overflow: hidden; // Critical for ellipsis
+      }
+
+      .diamonds {
+        display: flex;
+        align-items: center;
+        // Removed margin-top to rely on flexbox alignment from parent Space component
+        .diamond {
+          color: #FFB400;
+          font-size: 10px;
+          margin-right: 1px;
+          line-height: 1;
+        }
+      }
     }
 
-    .hotel-rating {
-      display: flex;
-      align-items: center;
-      margin-bottom: @spacing-xs;
-      flex-wrap: wrap;
+    // 2. Badge Row (Gold Diamond)
+    .badge-row {
+        margin-bottom: 2px;
+        display: flex;
 
-      .rating {
-        font-size: @font-size-sm;
-        font-weight: 600;
-        color: #ff4d4f;
+        .gold-diamond-badge {
+            background-color: #D4B180;
+            padding: 1px 3px;
+            border-radius: 2px;
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .badge-text {
+                color: #fff;
+                font-size: 10px;
+                line-height: 1;
+            }
+        }
+    }
+
+    // 3. Rating Row
+    .rating-row {
+      margin-bottom: 2px;
+      line-height: 16px; // Enforce line-height
+
+      .score-box {
+        background-color: #0086F6;
+        // Asymmetric border-radius to match design "leaf" shape: Top-Left & Bottom-Right sharp (2px), Top-Right & Bottom-Left rounded (8px)
+        border-radius: 2px 8px 2px 8px;
+        padding: 0 4px;
         margin-right: 4px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+
+        .score-text {
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 16px;
+        }
       }
 
       .rating-label {
-        font-size: @font-size-xs;
-        color: #ff4d4f;
-        margin-right: @spacing-xs;
+        color: #0086F6;
+        font-size: 11px; // Matched with review-count/distance-text/service-text
+        font-weight: bold;
+        margin-right: 6px;
+        line-height: 16px; // Match row height
       }
 
       .review-count {
-        font-size: @font-size-xs;
-        color: @text-secondary;
-        margin-right: @spacing-xs;
-      }
-
-      .favorite-count {
-        font-size: @font-size-xs;
-        color: @text-secondary;
+        color: #333;
+        font-size: 11px;
+        line-height: 16px; // Match row height
       }
     }
 
-    .hotel-location {
-      font-size: @font-size-xs;
-      color: @text-secondary;
-      margin-bottom: @spacing-xs;
-      line-height: 1.3;
+    // 4. Location Row
+    .location-row {
+      margin-bottom: 2px;
+      line-height: 16px; // Unified line-height
+
+      .distance-text {
+          font-size: 11px;
+          color: #666;
+          line-height: 16px; // Unified line-height
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+      }
+    }
+
+    // 5. Landmark Row (Add explicit style if missing in previous turns or implicit)
+    .landmark-row {
+        margin-bottom: 2px;
+        line-height: 16px; // Unified line-height
+        .landmark-text {
+             font-size: 11px;
+             color: #666;
+             line-height: 16px; // Unified line-height
+        }
+    }
+
+    // 6. Service Row
+    .service-row {
+        margin-bottom: 2px;
+        line-height: 16px; // Unified line-height
+        .service-text {
+            font-size: 11px;
+            color: #0086F6;
+            line-height: 16px; // Unified line-height
+        }
+    }
+
+    // 6. Tags Row
+    .tags-row {
+      margin-bottom: 4px; // Adjusted for breathing room
+      height: 16px; // Slightly increased height for better fit
       overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
 
-    .hotel-feature {
-      font-size: @font-size-xs;
-      color: @text-color;
-      margin-bottom: @spacing-xs;
-      line-height: 1.4;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
-    }
+      .tag-box {
+        // Override antd-mobile Tag styles
+        --background-color: transparent;
+        --border-color: #ddd;
+        --text-color: #666;
 
-    .hotel-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: @spacing-xs;
-      margin-bottom: @spacing-xs;
+        border: 1px solid #ddd !important; // Force border
+        background-color: transparent !important;
+        color: #666 !important;
 
-      .tag {
-        padding: 2px @spacing-xs;
-        background-color: #f0f0f0;
-        border-radius: @border-radius-sm;
-        font-size: @font-size-xs;
-        color: @text-secondary;
-      }
-    }
-
-    .hotel-price {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: @spacing-xs;
-
-      .price-label {
-        font-size: @font-size-xs;
-        color: @text-secondary;
-      }
-
-      .price-info {
+        border-radius: 2px;
+        padding: 0 4px; // Increased padding for less "crowded" look
+        height: 14px; // Increased height
         display: flex;
-        align-items: baseline;
+        align-items: center;
+        justify-content: center;
 
-        .price {
-          font-size: @font-size-lg;
-          font-weight: 600;
-          color: #ff4d4f;
-          margin-right: 2px;
-        }
+        font-size: 9px;
+        line-height: 1;
 
-        .price-unit {
-          font-size: @font-size-xs;
-          color: #ff4d4f;
+        // Reset antd default padding if any
+        &.adm-tag {
+            padding: 0 4px; // Consistent padding
+            vertical-align: top;
         }
       }
     }
-  }
-}
 
-@media screen and (max-width: 375px) {
-  .hotel-card {
-    margin: @spacing-xs @spacing-xs;
+    // 8. Footer (Ranking/Promo + Price)
+    .footer-row {
+      display: flex;
+      align-items: flex-start; // Changed from flex-end to align with top of price section
+      justify-content: space-between;
+      margin-top: auto;
 
-    .hotel-image {
-      width: 90px;
-      min-width: 90px;
-      height: 110px;
-      min-height: 110px;
-    }
+      .ranking-badge {
+          display: flex;
+          align-items: center;
+          background: linear-gradient(90deg, #FDF0D5 0%, #F3D7A8 100%);
+          // Increased horizontal padding for less crowded look
+          padding: 0 6px;
+          // Changed to standard rounded rectangle (pill shape) instead of asymmetric for better aesthetics
+          border-radius: 4px;
+          height: 16px; // Slightly increased height
+          margin-bottom: 0; // Align with price section bottom
+          // Recalculated top margin: PriceMain(20px) - Badge(16px) = 4px
+          margin-top: 4px;
 
-    .hotel-info {
-      padding: 6px;
-
-      .hotel-name {
-        font-size: @font-size-sm;
-        margin-bottom: 4px;
-      }
-
-      .hotel-rating {
-        margin-bottom: 4px;
-
-        .rating {
-          font-size: @font-size-xs;
-        }
-
-        .rating-label {
-          font-size: 8px;
-        }
-
-        .review-count {
-          font-size: 8px;
-        }
-
-        .favorite-count {
-          font-size: 8px;
-        }
-      }
-
-      .hotel-location {
-        font-size: 8px;
-        margin-bottom: 4px;
-      }
-
-      .hotel-feature {
-        font-size: 8px;
-        margin-bottom: 4px;
-        -webkit-line-clamp: 1;
-      }
-
-      .hotel-tags {
-        margin-bottom: 4px;
-        gap: 4px;
-
-        .tag {
-          font-size: 8px;
-          padding: 1px 4px;
-        }
-      }
-
-      .hotel-price {
-        gap: 4px;
-
-        .price-label {
-          font-size: 8px;
-        }
-
-        .price-info {
-          .price {
-            font-size: @font-size-base;
+          .ranking-icon {
+              font-size: 10px; // Slightly larger icon
+              color: #8B572A;
+              margin-right: 3px; // More space between icon and text
+              line-height: 1;
           }
 
-          .price-unit {
-            font-size: 8px;
+          .ranking-text {
+              font-size: 10px; // Slightly larger text
+              color: #8B572A;
+              font-weight: bold;
+              line-height: 1;
           }
-        }
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 320px) {
-  .hotel-card {
-    margin: 4px 6px;
-
-    .hotel-image {
-      width: 80px;
-      min-width: 80px;
-      height: 100px;
-      min-height: 100px;
-    }
-
-    .hotel-info {
-      padding: 4px;
-
-      .hotel-name {
-        font-size: @font-size-xs;
-        margin-bottom: 2px;
       }
 
-      .hotel-rating {
-        margin-bottom: 2px;
+      .price-section {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
 
-        .rating {
-          font-size: 8px;
+        .price-main {
+            display: flex;
+            align-items: baseline;
+            color: #0086F6;
+            line-height: 1;
+
+            .original-price {
+                font-size: 10px;
+                color: #999;
+                text-decoration: line-through;
+                margin-right: 2px;
+            }
+
+            .currency {
+                font-size: 11px;
+                font-weight: bold;
+                margin-right: 1px;
+            }
+
+            .price-value {
+                font-size: 20px;
+                font-weight: bold;
+            }
+
+            .price-suffix {
+                font-size: 10px;
+                color: #999;
+                margin-left: 1px;
+                font-weight: normal;
+            }
         }
 
-        .rating-label {
-          font-size: 6px;
-        }
-
-        .review-count {
-          font-size: 6px;
-        }
-
-        .favorite-count {
-          font-size: 6px;
-        }
-      }
-
-      .hotel-location {
-        font-size: 6px;
-        margin-bottom: 2px;
-      }
-
-      .hotel-feature {
-        font-size: 6px;
-        margin-bottom: 2px;
-      }
-
-      .hotel-tags {
-        margin-bottom: 2px;
-        gap: 2px;
-
-        .tag {
-          font-size: 6px;
-          padding: 1px 3px;
-        }
-      }
-
-      .hotel-price {
-        gap: 2px;
-
-        .price-label {
-          font-size: 6px;
-        }
-
-        .price-info {
-          .price {
-            font-size: @font-size-sm;
-          }
-
-          .price-unit {
-            font-size: 6px;
-          }
-        }
-      }
-    }
-  }
-}
-
-@media screen and (min-width: 481px) and (max-width: 768px) {
-  .hotel-card {
-    margin: @spacing-sm @spacing-md;
-
-    .hotel-image {
-      width: 140px;
-      min-width: 140px;
-      height: 160px;
-      min-height: 160px;
-    }
-
-    .hotel-info {
-      padding: @spacing-sm;
-
-      .hotel-name {
-        font-size: @font-size-lg;
-      }
-
-      .hotel-rating {
-        .rating {
-          font-size: @font-size-base;
-        }
-
-        .rating-label {
-          font-size: @font-size-sm;
-        }
-
-        .review-count {
-          font-size: @font-size-sm;
-        }
-
-        .favorite-count {
-          font-size: @font-size-sm;
-        }
-      }
-
-      .hotel-location {
-        font-size: @font-size-sm;
-      }
-
-      .hotel-feature {
-        font-size: @font-size-sm;
-      }
-
-      .hotel-tags {
-        .tag {
-          font-size: @font-size-sm;
-        }
-      }
-
-      .hotel-price {
-        .price-label {
-          font-size: @font-size-sm;
-        }
-
-        .price-info {
-          .price {
-            font-size: @font-size-xl;
-          }
-
-          .price-unit {
-            font-size: @font-size-sm;
-          }
-        }
-      }
-    }
-  }
-}
-
-@media screen and (min-width: 769px) and (max-width: 1023px) {
-  .hotel-card {
-    margin: @spacing-sm @spacing-md;
-
-    .hotel-image {
-      width: 160px;
-      min-width: 160px;
-      height: 180px;
-      min-height: 180px;
-    }
-
-    .hotel-info {
-      padding: @spacing-sm;
-
-      .hotel-name {
-        font-size: @font-size-lg;
-      }
-
-      .hotel-rating {
-        .rating {
-          font-size: @font-size-base;
-        }
-
-        .rating-label {
-          font-size: @font-size-sm;
-        }
-
-        .review-count {
-          font-size: @font-size-sm;
-        }
-
-        .favorite-count {
-          font-size: @font-size-sm;
-        }
-      }
-
-      .hotel-location {
-        font-size: @font-size-sm;
-      }
-
-      .hotel-feature {
-        font-size: @font-size-sm;
-      }
-
-      .hotel-tags {
-        .tag {
-          font-size: @font-size-sm;
-        }
-      }
-
-      .hotel-price {
-        .price-label {
-          font-size: @font-size-sm;
-        }
-
-        .price-info {
-          .price {
-            font-size: @font-size-xl;
-          }
-
-          .price-unit {
-            font-size: @font-size-sm;
-          }
-        }
-      }
-    }
-  }
-}
-
-@media screen and (min-width: 1024px) {
-  .hotel-card {
-    margin: @spacing-md @spacing-lg;
-
-    .hotel-image {
-      width: 180px;
-      min-width: 180px;
-      height: 200px;
-      min-height: 200px;
-    }
-
-    .hotel-info {
-      padding: @spacing-md;
-
-      .hotel-name {
-        font-size: @font-size-xl;
-      }
-
-      .hotel-rating {
-        .rating {
-          font-size: @font-size-md;
-        }
-
-        .rating-label {
-          font-size: @font-size-base;
-        }
-
-        .review-count {
-          font-size: @font-size-base;
-        }
-
-        .favorite-count {
-          font-size: @font-size-base;
-        }
-      }
-
-      .hotel-location {
-        font-size: @font-size-base;
-      }
-
-      .hotel-feature {
-        font-size: @font-size-base;
-      }
-
-      .hotel-tags {
-        .tag {
-          font-size: @font-size-base;
-        }
-      }
-
-      .hotel-price {
-        .price-label {
-          font-size: @font-size-base;
-        }
-
-        .price-info {
-          .price {
-            font-size: @font-size-xxl;
-          }
-
-          .price-unit {
-            font-size: @font-size-base;
-          }
+        .total-price {
+            font-size: 10px;
+            color: #333;
+            margin-top: 1px;
+            font-weight: bold;
         }
       }
     }
