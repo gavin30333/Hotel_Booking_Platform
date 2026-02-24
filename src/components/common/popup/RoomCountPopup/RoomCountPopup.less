@@ -1,19 +1,18 @@
 @import '../../../../styles/variables.less';
 
-.policy-popup {
+.room-count-popup {
   .adm-popup-body {
     background-color: @bg-color;
   }
 }
 
-.policy-popup-container {
+.room-count-popup-container {
   display: flex;
   flex-direction: column;
-  max-height: 70vh;
   background-color: @bg-color;
   border-radius: @border-radius-lg @border-radius-lg 0 0;
 
-  .policy-header {
+  .popup-header {
     padding: @spacing-lg;
     border-bottom: 1px solid @border-color;
     text-align: center;
@@ -24,64 +23,50 @@
       color: @text-color;
       display: block;
     }
-
-    .header-subtitle {
-      font-size: @font-size-sm;
-      color: @text-secondary;
-      margin-top: @spacing-xs;
-      display: block;
-    }
   }
 
-  .policy-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: @spacing-md @spacing-lg;
+  .popup-content {
+    padding: @spacing-lg;
 
-    .policy-item {
+    .count-options {
       display: flex;
-      align-items: flex-start;
-      padding: @spacing-md 0;
-      border-bottom: 1px solid #f0f0f0;
+      justify-content: space-between;
+      gap: @spacing-md;
 
-      &:last-child {
-        border-bottom: none;
-      }
-
-      .policy-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-color: fade(@primary-color, 10%);
+      .count-btn {
+        flex: 1;
+        height: 48px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: @spacing-md;
-        flex-shrink: 0;
-      }
+        border: 1px solid @border-color;
+        border-radius: @border-radius-md;
+        cursor: pointer;
+        transition: all 0.2s;
 
-      .policy-info {
-        flex: 1;
-
-        .policy-title {
-          font-size: @font-size-md;
-          font-weight: 600;
-          color: @text-color;
-          display: block;
-          margin-bottom: @spacing-xs;
+        &:active {
+          opacity: 0.9;
         }
 
-        .policy-value {
-          font-size: @font-size-base;
-          color: @text-secondary;
-          line-height: 1.5;
-          display: block;
+        &.selected {
+          background-color: fade(@primary-color, 10%);
+          border-color: @primary-color;
+
+          .btn-text {
+            color: @primary-color;
+            font-weight: 600;
+          }
+        }
+
+        .btn-text {
+          font-size: @font-size-lg;
+          color: @text-color;
         }
       }
     }
   }
 
-  .policy-footer {
+  .popup-footer {
     padding: @spacing-md @spacing-lg;
     border-top: 1px solid @border-color;
 

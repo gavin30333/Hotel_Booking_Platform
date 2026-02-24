@@ -1,4 +1,6 @@
 import { View, Text, ScrollView } from '@tarojs/components'
+import { Tag, Button } from 'antd-mobile'
+import { RightOutline } from 'antd-mobile-icons'
 import { getFacilityIcon } from '../../utils'
 import './ServiceTags.less'
 
@@ -25,12 +27,14 @@ export default function ServiceTags({ facilities, onPolicyClick }: ServiceTagsPr
           })}
         </View>
       </ScrollView>
-      <View
+      <Button
         className="facility-policy"
         onClick={onPolicyClick}
+        fill="none"
       >
         <Text className="policy-text">设施政策</Text>
-      </View>
+        <RightOutline className="policy-arrow" />
+      </Button>
     </View>
   )
 }
