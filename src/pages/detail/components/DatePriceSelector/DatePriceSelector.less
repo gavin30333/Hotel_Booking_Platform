@@ -22,76 +22,71 @@
       /* 日期标签和内容组合 */
       .date-combined {
         display: flex;
+        align-items: flex-end; /* Align bottom */
         justify-content: space-between;
 
-        /* 日期部分 */
-        .date-part {
+        .date-group {
           display: flex;
+          align-items: flex-end;
 
           /* 日期项 - 今天和起始日期 */
           .date-item {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            position: relative;
 
             .date-label {
-              font-size: @font-size-base;
+              font-size: @font-size-xs;
               color: @text-secondary;
-              margin-bottom: @spacing-xs;
+              margin-bottom: 2px;
               cursor: pointer;
+            }
 
-              &.today {
-                font-weight: 600;
-                color: @text-color;
+            .date-label-row {
+              display: flex;
+              align-items: center;
+              margin-bottom: 2px;
+
+              .date-label {
+                margin-bottom: 0;
+                margin-right: 4px;
               }
 
-              &.tomorrow {
-                margin-bottom: @spacing-xs;
+              /* 看低价角标 */
+              .low-price-badge {
+                background-color: #ff7a45;
+                padding: 1px 4px;
+                border-radius: 4px 4px 4px 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 14px;
+
+                .low-price-text {
+                  font-size: 10px;
+                  color: #fff;
+                  font-weight: 500;
+                  line-height: 1;
+                }
               }
             }
 
             .date-value {
-              font-size: @font-size-md;
+              font-size: 20px;
               font-weight: 600;
               color: @text-color;
-            }
-
-            /* 看低价角标 */
-            .low-price-badge {
-              position: absolute;
-              top: 26px;
-              right: -10px;
-              background-color: #ff7a45;
-              padding: 1px @spacing-xs;
-              border-radius: @border-radius-sm;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              min-width: auto;
-              transform: translate(50%, -50%);
-
-              .low-price-text {
-                font-size: @font-size-xs;
-                color: #fff;
-                font-weight: 500;
-                line-height: 1.2;
-                margin: 0;
-              }
+              line-height: 1.2;
             }
           }
 
-          /* 分隔符 - 到 */
           .date-separator {
-            display: flex;
-            align-items: flex-end;
-            margin: 0 @spacing-xs;
-            padding-bottom: @spacing-xs;
-
+            margin: 0 4px;
+            padding-bottom: 2px;
+            
             .separator-text {
-              font-size: @font-size-md;
-              font-weight: 600;
+              font-size: 20px;
               color: @text-color;
+              font-weight: 600;
             }
           }
         }
@@ -99,11 +94,14 @@
         /* 共1晚 */
         .night-count {
           display: flex;
-          align-items: flex-end;
+          align-items: center;
+          margin-left: 0;
+          margin-bottom: 4px;
 
           .night-count-text {
-            font-size: @font-size-base;
-            color: #999;
+            font-size: 11px;
+            color: @text-secondary;
+            letter-spacing: -0.5px;
           }
         }
       }
@@ -122,6 +120,7 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      margin-left: 12px;
 
       /* 人数标签和内容组合 */
       .guest-combined {
@@ -130,16 +129,38 @@
         align-items: flex-start;
 
         .guest-label {
-          font-size: @font-size-base;
+          font-size: @font-size-xs;
           color: @text-secondary;
-          margin-bottom: @spacing-xs;
+          margin-bottom: 2px;
           cursor: pointer;
         }
 
         .guest-value {
-          font-size: @font-size-md;
-          font-weight: 600;
-          color: @text-color;
+          display: flex;
+          align-items: center;
+
+          .guest-item {
+            display: flex;
+            align-items: center;
+            margin-right: 8px;
+
+            &:last-child {
+              margin-right: 0;
+            }
+
+            .val {
+              font-size: 20px;
+              font-weight: 600;
+              color: @text-color;
+              line-height: 1.2;
+            }
+
+            .icon {
+              font-size: 14px;
+              color: #666;
+              margin-left: 2px;
+            }
+          }
         }
       }
     }

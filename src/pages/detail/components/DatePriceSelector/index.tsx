@@ -38,6 +38,28 @@ export default function DatePriceSelector({
   isFixed = false,
   topOffset = 0,
 }: DatePriceSelectorProps) {
+  const getWeekDay = (dateStr: string) => {
+    const date = new Date(dateStr)
+    const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+    return days[date.getDay()]
+  }
+
+  const getDateLabel = (dateStr: string, isCheckIn: boolean) => {
+    const date = new Date(dateStr)
+    const today = new Date()
+    const tomorrow = new Date()
+    tomorrow.setDate(today.getDate() + 1)
+
+    const dStr = date.toISOString().split('T')[0]
+    const tStr = today.toISOString().split('T')[0]
+    const tmStr = tomorrow.toISOString().split('T')[0]
+
+    if (dStr === tStr) return '今天'
+    if (dStr === tmStr) return '明天'
+    
+    return getWeekDay(dateStr)
+  }
+
   return (
     <View className="date-price-section">
       {isFixed && <View className="date-price-placeholder"></View>}
@@ -47,12 +69,10 @@ export default function DatePriceSelector({
       >
         <View className="date-section" onClick={onDateClick}>
           <View className="date-combined">
-            <View className="date-part">
+            <View className="date-group">
               <View className="date-item">
-                <Text className="date-label today">
-                  {checkInDate === new Date().toISOString().split('T')[0]
-                    ? '今天'
-                    : '入住'}
+                <Text className="date-label">
+                  {getDateLabel(checkInDate, true)}
                 </Text>
                 <Text className="date-value">
                   {(() => {
@@ -65,23 +85,20 @@ export default function DatePriceSelector({
                 <Text className="separator-text">-</Text>
               </View>
               <View className="date-item">
-                <Text className="date-label tomorrow">
-                  {checkOutDate ===
-                  new Date(new Date().setDate(new Date().getDate() + 1))
-                    .toISOString()
-                    .split('T')[0]
-                    ? '明天'
-                    : '退房'}
-                </Text>
+                <View className="date-label-row">
+                  <Text className="date-label">
+                    {getDateLabel(checkOutDate, false)}
+                  </Text>
+                  <Tag className="low-price-badge" color="primary">
+                    <Text className="low-price-text">看低价</Text>
+                  </Tag>
+                </View>
                 <Text className="date-value">
                   {(() => {
                     const checkOut = new Date(checkOutDate)
                     return `${checkOut.getMonth() + 1}月${checkOut.getDate()}日`
                   })()}
                 </Text>
-                <Tag className="low-price-badge" color="primary">
-                  <Text className="low-price-text">看低价</Text>
-                </Tag>
               </View>
             </View>
             <View className="night-count">
@@ -96,30 +113,18 @@ export default function DatePriceSelector({
           <View className="guest-combined">
             <Text className="guest-label">间数人数</Text>
             <View className="guest-value">
-              <Text>{roomCount}</Text>
-              <AppstoreOutline
-                style={{
-                  marginLeft: '4px',
-                  marginRight: '4px',
-                  fontSize: '14px',
-                }}
-              />
-              <Text>{adultCount}</Text>
-              <UserOutline
-                style={{
-                  marginLeft: '4px',
-                  marginRight: '4px',
-                  fontSize: '14px',
-                }}
-              />
-              <Text>{childCount}</Text>
-              <SmileOutline
-                style={{
-                  marginLeft: '4px',
-                  marginRight: '4px',
-                  fontSize: '14px',
-                }}
-              />
+              <View className="guest-item">
+                <Text className="val">{roomCount}</Text>
+                <AppstoreOutline className="icon" />
+              </View>
+              <View className="guest-item">
+                <Text className="val">{adultCount}</Text>
+                <UserOutline className="icon" />
+              </View>
+              <View className="guest-item">
+                <Text className="val">{childCount}</Text>
+                <SmileOutline className="icon" />
+              </View>
             </View>
           </View>
         </View>
