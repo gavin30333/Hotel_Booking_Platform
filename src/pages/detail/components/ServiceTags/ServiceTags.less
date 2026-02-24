@@ -2,11 +2,13 @@
 
 .service-tags-container {
   background-color: #fff;
-  margin-bottom: @spacing-xs;
-  padding: @spacing-lg 0;
+  margin: 0 0 0 0;
+  padding:0 @spacing-lg;
   display: flex;
   align-items: center;
   position: relative;
+  border-radius: 0;
+  overflow: hidden;
 
   /* 水平滚动容器 */
   .service-tags-scroll {
@@ -45,25 +47,27 @@
     .service-tags {
       display: flex;
       align-items: center;
-      gap: 32px;
+      gap: 20px;
       padding-right: 60px;
 
       .service-tag {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: @spacing-sm;
+        gap: @spacing-xs;
         min-width: 60px;
         height: 60px;
         justify-content: center;
 
         .tag-icon {
-          font-size: 36px;
+          font-size: 24px;
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 24px;
-          height: 24px;
+          width: 40px;
+          height: 40px;
+          background-color: #f0f0f0;
+          border-radius: 50%;
         }
 
         .tag-text {

@@ -1,5 +1,11 @@
 import { View, Text, ScrollView } from '@tarojs/components'
-import { AppstoreOutline, UserOutline, SmileOutline } from 'antd-mobile-icons'
+import { Tag, Button } from 'antd-mobile'
+import {
+  AppstoreOutline,
+  UserOutline,
+  SmileOutline,
+  DownOutline,
+} from 'antd-mobile-icons'
 import { getNightsCount } from '../../utils'
 import './DatePriceSelector.less'
 
@@ -14,6 +20,8 @@ interface DatePriceSelectorProps {
   onGuestClick: () => void
   onFilterTagClick: (filterType: string) => void
   onRemoveFilter: (filterType: string) => void
+  isFixed?: boolean
+  topOffset?: number
 }
 
 export default function DatePriceSelector({
@@ -27,14 +35,17 @@ export default function DatePriceSelector({
   onGuestClick,
   onFilterTagClick,
   onRemoveFilter,
+  isFixed = false,
+  topOffset = 0,
 }: DatePriceSelectorProps) {
   return (
     <View className="date-price-section">
-      <View className="date-price-main">
-        <View
-          className="date-section"
-          onClick={onDateClick}
-        >
+      {isFixed && <View className="date-price-placeholder"></View>}
+      <View
+        className={`date-price-main${isFixed ? ' fixed' : ''}`}
+        style={isFixed ? { top: `${topOffset}px` } : undefined}
+      >
+        <View className="date-section" onClick={onDateClick}>
           <View className="date-combined">
             <View className="date-part">
               <View className="date-item">
@@ -55,7 +66,10 @@ export default function DatePriceSelector({
               </View>
               <View className="date-item">
                 <Text className="date-label tomorrow">
-                  {checkOutDate === new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]
+                  {checkOutDate ===
+                  new Date(new Date().setDate(new Date().getDate() + 1))
+                    .toISOString()
+                    .split('T')[0]
                     ? '明天'
                     : '退房'}
                 </Text>
@@ -65,9 +79,9 @@ export default function DatePriceSelector({
                     return `${checkOut.getMonth() + 1}月${checkOut.getDate()}日`
                   })()}
                 </Text>
-                <View className="low-price-badge">
+                <Tag className="low-price-badge" color="primary">
                   <Text className="low-price-text">看低价</Text>
-                </View>
+                </Tag>
               </View>
             </View>
             <View className="night-count">
@@ -78,10 +92,7 @@ export default function DatePriceSelector({
           </View>
         </View>
         <View className="divider"></View>
-        <View
-          className="guest-section"
-          onClick={onGuestClick}
-        >
+        <View className="guest-section" onClick={onGuestClick}>
           <View className="guest-combined">
             <Text className="guest-label">间数人数</Text>
             <View className="guest-value">
@@ -116,7 +127,7 @@ export default function DatePriceSelector({
 
       <View className="filter-tags-container">
         <ScrollView scrollX>
-          <View
+          <Tag
             className="filter-tag"
             onClick={(e) => {
               e.stopPropagation()
@@ -124,9 +135,9 @@ export default function DatePriceSelector({
             }}
           >
             <Text className="filter-tag-text">¥100以上</Text>
-            <Text className="filter-tag-arrow">▼</Text>
-          </View>
-          <View
+            <DownOutline className="filter-tag-arrow" />
+          </Tag>
+          <Tag
             className={`filter-tag ${selectedFilters.includes('双床房') ? 'active' : ''}`}
             onClick={(e) => {
               e.stopPropagation()
@@ -145,8 +156,8 @@ export default function DatePriceSelector({
                 ×
               </Text>
             )}
-          </View>
-          <View
+          </Tag>
+          <Tag
             className={`filter-tag ${selectedFilters.includes('大床房') ? 'active' : ''}`}
             onClick={(e) => {
               e.stopPropagation()
@@ -165,18 +176,19 @@ export default function DatePriceSelector({
                 ×
               </Text>
             )}
-          </View>
+          </Tag>
         </ScrollView>
-        <View
+        <Button
           className="filter-button"
           onClick={(e) => {
             e.stopPropagation()
             onFilterTagClick('筛选')
           }}
+          fill="none"
         >
           <Text className="filter-button-text">筛选</Text>
-          <Text className="filter-button-arrow">▼</Text>
-        </View>
+          <DownOutline className="filter-button-arrow" />
+        </Button>
       </View>
     </View>
   )

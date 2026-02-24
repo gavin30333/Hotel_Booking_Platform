@@ -3,8 +3,10 @@
 .date-price-section {
   background-color: #fff;
   padding: @spacing-lg;
-  margin-bottom: @spacing-xs;
+  margin: 0 0 0 0;
   position: relative;
+  border-radius: 0;
+  overflow: hidden;
 
   /* 日期价格主容器 */
   .date-price-main {
@@ -257,4 +259,20 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
+}
+
+.date-price-placeholder {
+  height: 80px;
+}
+
+.date-price-main.fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  background-color: #fff;
+  padding: @spacing-lg @spacing-lg @spacing-xs @spacing-lg;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }

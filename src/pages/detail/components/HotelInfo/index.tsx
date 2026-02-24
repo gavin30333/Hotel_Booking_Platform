@@ -1,10 +1,11 @@
 import { View, Text } from '@tarojs/components'
+import { Tag } from 'antd-mobile'
 import './HotelInfo.less'
 
 interface HotelInfoProps {
   name: string
   starRating: number
-  address: string
+  openingDate: string
   rating: number
   reviewCount: number
 }
@@ -12,21 +13,20 @@ interface HotelInfoProps {
 export default function HotelInfo({
   name,
   starRating,
-  address,
-  rating,
-  reviewCount,
+  openingDate,
 }: HotelInfoProps) {
   return (
     <View className="hotel-header-info">
       <View>
         <Text className="hotel-name">{name}</Text>
-        <Text className="hotel-badge">{starRating || 5}星级酒店</Text>
-        <Text className="hotel-ranking">{address}</Text>
-      </View>
-      <View className="hotel-rating">
-        <Text className="rating">{rating}</Text>
-        <Text className="rating-label">很好</Text>
-        <Text className="review-count">{reviewCount}条点评</Text>
+        <Tag className="hotel-badge" color="default">
+          <Text className="hotel-badge-text">{starRating || 5}星级酒店</Text>
+        </Tag>
+        <Tag className="hotel-badge" color="default">
+          <Text className="hotel-badge-text">
+            {openingDate ? openingDate.split('-')[0] : '2024'}年开业
+          </Text>
+        </Tag>
       </View>
     </View>
   )
