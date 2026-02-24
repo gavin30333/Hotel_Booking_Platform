@@ -1,7 +1,8 @@
 import { View, Text, ScrollView } from '@tarojs/components'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import Taro, { useRouter, showToast, usePageScroll } from '@tarojs/taro'
 import { getHotelDetail } from '@/services/hotel'
+import { getCarouselImages } from '@/mock/carousel'
 import dayjs from 'dayjs'
 import {
   FireFill,
@@ -25,7 +26,6 @@ import {
   DEFAULT_REVIEW_TAGS,
   DEFAULT_DISTANCE_TEXT,
   DEFAULT_OPENING_DATE,
-  CAROUSEL_TABS,
   HOLIDAY_DATA,
   LOWEST_PRICE_DATA,
 } from './constants'
@@ -78,6 +78,12 @@ export default function HotelDetailPage() {
   const [isDatePriceFixed, setIsDatePriceFixed] = useState(false)
   const datePriceSectionTop = useRef(0)
   const isDatePriceFixedRef = useRef(false)
+
+  // Use memo to prevent re-generating mock data on every render
+  const carouselData = useMemo(() => {
+    if (!hotel) return [];
+    return getCarouselImages(hotel.images || []);
+  }, [hotel]);
 
   const TOP_NAV_BAR_HEIGHT = 56
 
@@ -232,13 +238,13 @@ export default function HotelDetailPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       Taro.createSelectorQuery()
-        .select('.date-price-card')
-        .boundingClientRect((rect: any) => {
-          if (rect) {
-            datePriceSectionTop.current = rect.top + (window?.scrollY || 0)
-          }
-        })
-        .exec()
+      .select('.date-price-card')
+      .boundingClientRect((rect: any) => {
+        if (rect) {
+          datePriceSectionTop.current = rect.top + (window?.scrollY || 0)
+        }
+      })
+      .exec()
     }, 500)
 
     return () => clearTimeout(timer)
@@ -299,18 +305,11 @@ export default function HotelDetailPage() {
       <HotelDetailHeader onBack={handleBack} hotelName={hotelName} />
 
       <ScrollView className="detail-content" scrollY>
-        <ImageCarousel images={hotelImages} onImageClick={handleImageClick} />
-
-        <View className="carousel-tabs">
-          {CAROUSEL_TABS.map((tab, index) => (
-            <Text
-              key={tab}
-              className={`tab-item ${index === 0 ? 'active' : ''}`}
-            >
-              {tab}
-            </Text>
-          ))}
-        </View>
+        <ImageCarousel
+          images={hotelImages}
+          items={carouselData}
+          onImageClick={handleImageClick}
+        />
 
         <HotelInfo
           name={hotelName}

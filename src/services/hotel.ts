@@ -1,4 +1,5 @@
 import { HotelListParams, Hotel, hotelApi, HotelListResponse } from './api'
+import { getHotelDetail as getMockHotelDetail } from '@/mock/index'
 
 export type { HotelListParams, Hotel, SortBy } from './api'
 
@@ -35,10 +36,13 @@ export const getHotelDetail = async (id: string) => {
     if (response.success) {
       return response.data
     }
-    throw new Error('获取酒店详情失败')
+    console.warn('API returned success=false, falling back to mock data')
+    const mockRes = await getMockHotelDetail(id)
+    return mockRes.data
   } catch (error) {
-    console.error('getHotelDetail error:', error)
-    throw error
+    console.warn('getHotelDetail API error, falling back to mock:', error)
+    const mockRes = await getMockHotelDetail(id)
+    return mockRes.data
   }
 }
 

@@ -19,6 +19,45 @@
       height: 100%;
     }
   }
+
+  .carousel-tabs {
+    position: absolute;
+    bottom: 20px;
+    right: 12px;
+    left: auto;
+    width: fit-content;
+    transform: none;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    border-radius: 16px;
+    display: flex;
+    padding: 2px;
+    z-index: 10;
+    gap: 0;
+
+    .tab-item {
+      padding: 4px 10px;
+      color: #fff;
+      font-size: 12px;
+      border-radius: 14px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      white-space: nowrap;
+      background: transparent;
+      font-weight: normal;
+
+      &.active {
+        background: #fff;
+        color: #333;
+        font-weight: 500;
+        box-shadow: none;
+      }
+
+      &:active {
+        opacity: 0.8;
+      }
+    }
+  }
 }
 
 @media (min-width: 786px) {
