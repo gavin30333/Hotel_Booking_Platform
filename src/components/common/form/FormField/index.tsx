@@ -43,6 +43,7 @@ export const FormField: React.FC<FormFieldProps> = ({
             value={value as LocationData}
             keyword={formData.keyword}
             onChange={(val) => onUpdate(config.key as keyof SearchParams, val)}
+            onKeywordChange={(keyword) => onUpdate('keyword', keyword)}
             onSceneChange={onSceneChange}
           />
         )
@@ -71,14 +72,11 @@ export const FormField: React.FC<FormFieldProps> = ({
             config={config}
             value={formData.keyword}
             onChange={(val) => {
-              // Update both keyword and tags array
               onUpdate('keyword', val)
-              // Also update tags array with the single selected tag
               onUpdate('tags', val ? [val] : [])
             }}
             onSearch={(val) => {
               if (onSearch) {
-                // Pass the immediate values as overrides to avoid stale state issues
                 onSearch({
                   keyword: val,
                   tags: val ? [val] : [],

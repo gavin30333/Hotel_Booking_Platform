@@ -46,7 +46,7 @@ export const CityIndexList: React.FC<CityIndexListProps> = ({
 
       container.scrollTo({
         top: targetScrollTop,
-        behavior: 'auto'
+        behavior: 'auto',
       })
 
       setActiveIndex(index)
@@ -59,14 +59,14 @@ export const CityIndexList: React.FC<CityIndexListProps> = ({
 
       let currentActive = sidebarItems[0]
 
-      for (const item of sidebarItems) {
+      for (let i = sidebarItems.length - 1; i > 0; i--) {
+        const item = sidebarItems[i]
         const element = document.getElementById(`anchor-${item}`)
         if (element) {
           const rect = element.getBoundingClientRect()
-          // 检查元素顶部是否接近视口顶部（考虑header高度）
-          // 由于 sticky header 的存在，我们需要加上 headerHeight 的偏移量
           if (rect.top <= headerHeight + 10) {
             currentActive = item
+            break
           }
         }
       }
@@ -74,13 +74,9 @@ export const CityIndexList: React.FC<CityIndexListProps> = ({
       setActiveIndex(currentActive)
     }
 
-    // 使用 document.querySelector 可能会在组件未挂载时找不到元素
-    // 但在这个 useEffect 中，组件已经挂载。
-    // 为了更稳健，我们可以尝试通过 props 传入 container 的 ID 或 class，或者直接查找。
     const container = document.querySelector('.city-selector-body')
     if (container) {
       container.addEventListener('scroll', handleScroll)
-      // 初始化执行一次，设置正确的 activeIndex
       handleScroll()
       return () => container.removeEventListener('scroll', handleScroll)
     }
@@ -136,7 +132,7 @@ export const CityIndexList: React.FC<CityIndexListProps> = ({
       <View className="city-list-content">
         {children && (
           <View id="anchor-热门">
-            <View className="city-group-title">{'国内热门城市'}</View>
+            <View className="city-group-title">国内热门城市</View>
             {children}
           </View>
         )}
@@ -146,7 +142,11 @@ export const CityIndexList: React.FC<CityIndexListProps> = ({
             <View className="city-group-title">{group.title}</View>
             <List>
               {group.items.map((city) => (
-                <List.Item key={city} onClick={() => onSelect(city)} arrowIcon={false}>
+                <List.Item
+                  key={city}
+                  onClick={() => onSelect(city)}
+                  arrowIcon={false}
+                >
                   {city}
                 </List.Item>
               ))}

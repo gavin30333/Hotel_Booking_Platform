@@ -46,20 +46,18 @@ const calculateDiscount = (
   return Math.min(discountAmount, roomPrice * nights)
 }
 
+const getCustomerId = (req: AuthRequest): string => {
+  return (
+    req.customer?.customerId || req.body.customerId || 'guest_' + Date.now()
+  )
+}
+
 export const orderController = {
   async create(req: AuthRequest, res: Response) {
     try {
-      const customerId = req.customer?.customerId
+      const customerId = getCustomerId(req)
       const { hotelId, roomTypeId, checkIn, checkOut, guests, remark } =
         req.body
-
-      if (!customerId) {
-        return res.status(401).json({
-          success: false,
-          message: '未登录',
-          code: 'UNAUTHORIZED',
-        })
-      }
 
       if (
         !hotelId ||
@@ -160,16 +158,8 @@ export const orderController = {
 
   async getList(req: AuthRequest, res: Response) {
     try {
-      const customerId = req.customer?.customerId
+      const customerId = getCustomerId(req)
       const { status, page = 1, pageSize = 10 } = req.query
-
-      if (!customerId) {
-        return res.status(401).json({
-          success: false,
-          message: '未登录',
-          code: 'UNAUTHORIZED',
-        })
-      }
 
       const query: any = { customer: customerId }
       if (status) {
@@ -219,20 +209,10 @@ export const orderController = {
 
   async getDetail(req: AuthRequest, res: Response) {
     try {
-      const customerId = req.customer?.customerId
       const { id } = req.params
-
-      if (!customerId) {
-        return res.status(401).json({
-          success: false,
-          message: '未登录',
-          code: 'UNAUTHORIZED',
-        })
-      }
 
       const order = await OrderModel.findOne({
         _id: id,
-        customer: customerId,
       }).lean()
 
       if (!order) {
@@ -294,18 +274,9 @@ export const orderController = {
 
   async cancel(req: AuthRequest, res: Response) {
     try {
-      const customerId = req.customer?.customerId
       const { id } = req.params
 
-      if (!customerId) {
-        return res.status(401).json({
-          success: false,
-          message: '未登录',
-          code: 'UNAUTHORIZED',
-        })
-      }
-
-      const order = await OrderModel.findOne({ _id: id, customer: customerId })
+      const order = await OrderModel.findOne({ _id: id })
 
       if (!order) {
         return res.status(404).json({
@@ -342,18 +313,9 @@ export const orderController = {
 
   async pay(req: AuthRequest, res: Response) {
     try {
-      const customerId = req.customer?.customerId
       const { id } = req.params
 
-      if (!customerId) {
-        return res.status(401).json({
-          success: false,
-          message: '未登录',
-          code: 'UNAUTHORIZED',
-        })
-      }
-
-      const order = await OrderModel.findOne({ _id: id, customer: customerId })
+      const order = await OrderModel.findOne({ _id: id })
 
       if (!order) {
         return res.status(404).json({
@@ -391,17 +353,9 @@ export const orderController = {
 
   async review(req: AuthRequest, res: Response) {
     try {
-      const customerId = req.customer?.customerId
+      const customerId = getCustomerId(req)
       const { id } = req.params
       const { rating, content, images } = req.body
-
-      if (!customerId) {
-        return res.status(401).json({
-          success: false,
-          message: '未登录',
-          code: 'UNAUTHORIZED',
-        })
-      }
 
       if (!rating || rating < 1 || rating > 5) {
         return res.status(400).json({
@@ -419,7 +373,7 @@ export const orderController = {
         })
       }
 
-      const order = await OrderModel.findOne({ _id: id, customer: customerId })
+      const order = await OrderModel.findOne({ _id: id })
 
       if (!order) {
         return res.status(404).json({

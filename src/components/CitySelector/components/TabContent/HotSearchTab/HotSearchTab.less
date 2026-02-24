@@ -1,9 +1,18 @@
 .hot-search-tab {
-  // height: 100%; // Removed
   background-color: #f5f7fa;
 
   .hot-search-content {
     padding-bottom: 20px;
+  }
+
+  .hot-search-header {
+    padding: 16px 16px 12px;
+
+    .hot-search-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
   }
 
   .ranking-lists-scroll {
@@ -16,5 +25,24 @@
       display: inline-block;
       vertical-align: top;
     }
+  }
+
+  .loading-container,
+  .error-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    padding: 40px 16px;
+  }
+
+  .loading-text {
+    font-size: 14px;
+    color: #999;
+  }
+
+  .error-text {
+    font-size: 14px;
+    color: #ff4d4f;
   }
 }

@@ -1,11 +1,11 @@
 import React from 'react'
 import { View, Text, Image } from '@tarojs/components'
-import { HotSearchCategory } from '@/types/citySelector'
+import { RankingList as RankingListType } from '@/services/api'
 import './RankingList.less'
 
 interface RankingListProps {
-  ranking: HotSearchCategory
-  onSelect: (name: string) => void
+  ranking: RankingListType
+  onSelect: (name: string, hotelId?: string) => void
 }
 
 export const RankingList: React.FC<RankingListProps> = ({
@@ -20,11 +20,11 @@ export const RankingList: React.FC<RankingListProps> = ({
       </View>
 
       <View className="ranking-items">
-        {ranking.items.slice(0, 5).map((item) => (
+        {ranking.items.slice(0, 5).map((item, index) => (
           <View
-            key={item.id}
+            key={item.hotelId || index}
             className="ranking-item"
-            onClick={() => onSelect(item.name)}
+            onClick={() => onSelect(item.name, item.hotelId)}
           >
             <View className="item-image-box">
               <Image

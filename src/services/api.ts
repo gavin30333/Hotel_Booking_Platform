@@ -3,6 +3,7 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from 'axios'
+import * as Taro from '@tarojs/taro'
 
 const API_BASE_URL = 'http://localhost:3000/api'
 
@@ -25,8 +26,21 @@ const apiClient: AxiosInstance = axios.create({
 
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token =
-      typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null
+    let token: string | null = null
+    try {
+      if (typeof window !== 'undefined') {
+        token = localStorage.getItem('token')
+      }
+    } catch (e) {
+      console.warn('localStorage not available')
+    }
+    try {
+      if (!token && typeof Taro !== 'undefined' && Taro.getStorageSync) {
+        token = Taro.getStorageSync('token')
+      }
+    } catch (e) {
+      console.warn('Taro.getStorageSync not available')
+    }
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -304,4 +318,71 @@ export const orderApi = {
     orderId: string,
     data: { rating: number; content: string; images?: string[] }
   ) => apiClient.post<any, ApiResponse>(`/user/orders/${orderId}/review`, data),
+}
+
+export interface HotSearchItem {
+  hotelId?: string
+  name: string
+  rank: number
+  score?: string
+  price?: number
+  description?: string
+  imageUrl?: string
+  tags?: string[]
+}
+
+export interface RankingList {
+  title: string
+  type: string
+  items: HotSearchItem[]
+}
+
+export interface HotSearchData {
+  city: string
+  cityCode?: string
+  hotTags: string[]
+  rankingLists: RankingList[]
+}
+
+export interface CityInfo {
+  city: string
+  cityCode?: string
+  priority: number
+}
+
+export const hotSearchApi = {
+  getHotSearchByCity: (city: string) =>
+    apiClient.get<any, ApiResponse<HotSearchData>>(
+      `/hot-search/${encodeURIComponent(city)}`
+    ),
+
+  getAllActiveCities: () =>
+    apiClient.get<any, ApiResponse<CityInfo[]>>('/hot-search/cities'),
+
+  createHotSearch: (data: {
+    city: string
+    cityCode?: string
+    hotTags: string[]
+    rankingLists: RankingList[]
+    priority?: number
+  }) => apiClient.post<any, ApiResponse<HotSearchData>>('/hot-search', data),
+
+  updateHotSearch: (
+    city: string,
+    data: Partial<{
+      hotTags: string[]
+      rankingLists: RankingList[]
+      isActive: boolean
+      priority: number
+    }>
+  ) =>
+    apiClient.put<any, ApiResponse<HotSearchData>>(
+      `/hot-search/${encodeURIComponent(city)}`,
+      data
+    ),
+
+  deleteHotSearch: (city: string) =>
+    apiClient.delete<any, ApiResponse<null>>(
+      `/hot-search/${encodeURIComponent(city)}`
+    ),
 }

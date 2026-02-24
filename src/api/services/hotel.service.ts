@@ -10,6 +10,46 @@ const getMinPrice = (roomTypes: any[]): number => {
   return Math.min(...roomTypes.map((r) => r.price))
 }
 
+const isLocationKeyword = (keyword: string): boolean => {
+  const locationPatterns = [
+    /路$/,
+    /街$/,
+    /巷$/,
+    /广场$/,
+    /中心$/,
+    /商圈$/,
+    /区$/,
+    /镇$/,
+    /乡$/,
+    /村$/,
+    /机场$/,
+    /站$/,
+    /港$/,
+    /桥$/,
+    /门$/,
+    /塔$/,
+    /园$/,
+    /寺$/,
+    /庙$/,
+    /江$/,
+    /河$/,
+    /湖$/,
+    /山$/,
+    /湾$/,
+    /岛$/,
+    /大学/,
+    /学院/,
+    /医院/,
+    /公园/,
+    /景区/,
+    /景点/,
+    /商业/,
+    /购物/,
+    /地标/,
+  ]
+  return locationPatterns.some((pattern) => pattern.test(keyword))
+}
+
 export const hotelService = {
   async searchHotels(
     city: string,
@@ -26,11 +66,21 @@ export const hotelService = {
     }
 
     if (filters?.keyword) {
-      query.$or = [
-        { name: { $regex: new RegExp(filters.keyword, 'i') } },
-        { nameEn: { $regex: new RegExp(filters.keyword, 'i') } },
-        { address: { $regex: new RegExp(filters.keyword, 'i') } },
-      ]
+      const keyword = filters.keyword.trim()
+
+      if (isLocationKeyword(keyword)) {
+        query.address = {
+          ...query.address,
+          $regex: new RegExp(keyword, 'i'),
+        }
+      } else {
+        query.$or = [
+          { name: { $regex: new RegExp(keyword, 'i') } },
+          { nameEn: { $regex: new RegExp(keyword, 'i') } },
+          { address: { $regex: new RegExp(keyword, 'i') } },
+          { facilities: { $regex: new RegExp(keyword, 'i') } },
+        ]
+      }
     }
 
     if (filters?.star && filters.star.length > 0) {

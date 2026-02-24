@@ -3,7 +3,13 @@ import { View, Text } from '@tarojs/components'
 import { DownOutline, CompassOutline, SearchOutline } from 'antd-mobile-icons'
 import { FieldConfig, LocationData, TabType } from '@/types/query.types'
 import { useLocation } from '@/hooks/useLocation'
-import { CitySelector, CityTab } from '@/components/CitySelector'
+import {
+  CitySelector,
+  CityTab,
+  CitySelectResult,
+  HotSearchSelectResult,
+} from '@/components/CitySelector'
+import Taro from '@tarojs/taro'
 import './LocationField.less'
 
 interface LocationFieldProps {
@@ -11,6 +17,7 @@ interface LocationFieldProps {
   value: LocationData
   keyword?: string
   onChange: (value: LocationData) => void
+  onKeywordChange?: (keyword: string) => void
   onSceneChange?: (scene: TabType) => void
 }
 
@@ -19,6 +26,7 @@ export const LocationField: React.FC<LocationFieldProps> = ({
   value,
   keyword,
   onChange,
+  onKeywordChange,
   onSceneChange,
 }) => {
   const { props } = config
@@ -47,16 +55,33 @@ export const LocationField: React.FC<LocationFieldProps> = ({
     }
   }
 
-  const handleCitySelect = (cityName: string) => {
+  const handleCitySelect = (result: CitySelectResult) => {
+    const { city, source } = result
+
+    if (source === 'domestic') {
+      onSceneChange?.(TabType.DOMESTIC)
+    } else if (source === 'overseas') {
+      onSceneChange?.(TabType.INTERNATIONAL)
+    }
+
     onChange({
       ...value,
-      city: cityName,
-      district: '', // Reset district when city changes
-      // In a real app, we would also fetch the adcode, province, etc. for the new city
+      city: city,
+      district: '',
+      country: source === 'overseas' ? '海外' : value.country,
     })
   }
 
-  // 提取具体地址（去掉省份、城市、区、街道等前缀）
+  const handleHotSearchSelect = (result: HotSearchSelectResult) => {
+    if (result.type === 'hotel' && result.hotelId) {
+      Taro.navigateTo({
+        url: `/pages/detail/index?id=${result.hotelId}`,
+      })
+    } else if (result.type === 'keyword') {
+      onKeywordChange?.(result.value)
+    }
+  }
+
   const extractDetailedAddress = (
     formattedAddress: string,
     city: string,
@@ -65,22 +90,18 @@ export const LocationField: React.FC<LocationFieldProps> = ({
   ): string => {
     let detailedAddress = formattedAddress
 
-    // 去掉省份
     if (province && detailedAddress.startsWith(province)) {
       detailedAddress = detailedAddress.replace(province, '')
     }
 
-    // 去掉城市
     if (detailedAddress.startsWith(city)) {
       detailedAddress = detailedAddress.replace(city, '')
     }
 
-    // 去掉区县
     if (district && detailedAddress.startsWith(district)) {
       detailedAddress = detailedAddress.replace(district, '')
     }
 
-    // 去掉街道
     const streetRegex =
       /^[\u4e00-\u9fa5]+街道|[\u4e00-\u9fa5]+路|[\u4e00-\u9fa5]+道/
     const streetMatch = detailedAddress.match(streetRegex)
@@ -88,7 +109,6 @@ export const LocationField: React.FC<LocationFieldProps> = ({
       detailedAddress = detailedAddress.replace(streetMatch[0], '')
     }
 
-    // 去掉多余的标点和空格
     detailedAddress = detailedAddress.replace(/^[\s,，]+/, '')
 
     return detailedAddress
@@ -198,6 +218,7 @@ export const LocationField: React.FC<LocationFieldProps> = ({
         visible={citySelectorVisible}
         onClose={() => setCitySelectorVisible(false)}
         onSelect={handleCitySelect}
+        onHotSearchSelect={handleHotSearchSelect}
         currentCity={value.city}
         defaultTab={citySelectorTab}
         onTabChange={handleCitySelectorTabChange}

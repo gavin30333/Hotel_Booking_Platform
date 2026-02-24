@@ -1,3 +1,13 @@
+import {
+  historyCities,
+  hotCities,
+  domesticCities,
+} from '@/constants/CitySelectorConfig/cityData'
+import {
+  CityTab,
+  CitySelectResult,
+  HotSearchSelectResult,
+} from '@/types/citySelector'
 import React, { useState, useRef } from 'react'
 import { View } from '@tarojs/components'
 import { Popup, Tabs } from 'antd-mobile'
@@ -8,8 +18,6 @@ import { LocationStatus } from '@/components/common/display/LocationStatus'
 import { DomesticTab } from './components/TabContent/DomesticTab'
 import { OverseasTab } from './components/TabContent/OverseasTab'
 import { HotSearchTab } from './components/TabContent/HotSearchTab'
-import { historyCities, hotCities, domesticCities } from '@/constants/CitySelectorConfig/cityData'
-import { CityTab } from '@/types/citySelector'
 import './CitySelector.less'
 
 export * from '@/types/citySelector'
@@ -17,7 +25,8 @@ export * from '@/types/citySelector'
 interface CitySelectorProps {
   visible: boolean
   onClose: () => void
-  onSelect: (city: string) => void
+  onSelect: (result: CitySelectResult) => void
+  onHotSearchSelect?: (result: HotSearchSelectResult) => void
   currentCity?: string
   defaultTab?: CityTab
   onTabChange?: (tab: CityTab) => void
@@ -27,6 +36,7 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
   visible,
   onClose,
   onSelect,
+  onHotSearchSelect,
   currentCity,
   defaultTab = 'domestic',
   onTabChange,
@@ -44,10 +54,23 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
 
   const handleSelect = React.useCallback(
     (city: string) => {
-      onSelect(city)
+      onSelect({ city, source: activeTab })
       onClose()
     },
-    [onSelect, onClose]
+    [onSelect, onClose, activeTab]
+  )
+
+  const handleHotSearchSelect = React.useCallback(
+    (result: HotSearchSelectResult) => {
+      if (onHotSearchSelect) {
+        onHotSearchSelect(result)
+        onClose()
+      } else {
+        onSelect({ city: result.value, source: 'hot_search' })
+        onClose()
+      }
+    },
+    [onHotSearchSelect, onSelect, onClose]
   )
 
   const memoizedDomesticTab = React.useMemo(
@@ -69,9 +92,21 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
   )
 
   const memoizedHotSearchTab = React.useMemo(
-    () => <HotSearchTab onSelect={handleSelect} />,
-    [handleSelect]
+    () => (
+      <HotSearchTab
+        currentCity={currentCity}
+        onSelect={handleHotSearchSelect}
+      />
+    ),
+    [currentCity, handleHotSearchSelect]
   )
+
+  const getHotSearchTabTitle = () => {
+    if (currentCity) {
+      return `${currentCity}热搜`
+    }
+    return '热搜推荐'
+  }
 
   const { run: handleScroll } = useThrottleFn(
     (e: React.UIEvent<HTMLDivElement>) => {
@@ -79,17 +114,13 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
       const scrollTop = container.scrollTop
       const headerHeight = headerRef.current?.clientHeight || 0
 
-      // Hysteresis logic to prevent jitter at the sticky threshold
-      // Enter sticky state when scrolled past header
       if (!isSticky && scrollTop >= headerHeight) {
         setIsSticky(true)
-      }
-      // Exit sticky state when scrolled back up with a buffer
-      else if (isSticky && scrollTop < headerHeight - 5) {
+      } else if (isSticky && scrollTop < headerHeight - 5) {
         setIsSticky(false)
       }
     },
-    { wait: 16 } // ~60fps
+    { wait: 16 }
   )
 
   return (
@@ -133,7 +164,7 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
           <Tabs.Tab title="海外" key="overseas">
             {memoizedOverseasTab}
           </Tabs.Tab>
-          <Tabs.Tab title="成都热搜" key="hot_search">
+          <Tabs.Tab title={getHotSearchTabTitle()} key="hot_search">
             {memoizedHotSearchTab}
           </Tabs.Tab>
         </Tabs>

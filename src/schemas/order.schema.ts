@@ -3,7 +3,7 @@ import { Schema, Document, Model, model, Types } from 'mongoose'
 export interface IGuest {
   name: string
   phone: string
-  idCard: string
+  idCard?: string
 }
 
 export type OrderStatus =
@@ -16,7 +16,7 @@ export type OrderStatus =
 
 export interface IOrder extends Document {
   orderNo: string
-  customer: Types.ObjectId
+  customer: Types.ObjectId | string
   hotel: Types.ObjectId
   hotelName: string
   hotelAddress: string
@@ -42,7 +42,7 @@ const GuestSchema = new Schema<IGuest>(
   {
     name: { type: String, required: true },
     phone: { type: String, required: true },
-    idCard: { type: String, required: true },
+    idCard: { type: String, required: false, default: '' },
   },
   { _id: false }
 )
@@ -50,7 +50,7 @@ const GuestSchema = new Schema<IGuest>(
 const OrderSchema = new Schema<IOrder>(
   {
     orderNo: { type: String, required: true, unique: true },
-    customer: { type: Schema.Types.ObjectId, ref: 'Customer', required: true },
+    customer: { type: Schema.Types.Mixed, required: true },
     hotel: { type: Schema.Types.ObjectId, ref: 'Hotel', required: true },
     hotelName: { type: String, required: true },
     hotelAddress: { type: String, required: true },

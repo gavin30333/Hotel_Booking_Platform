@@ -36,3 +36,16 @@ export interface HotSearchCategory {
   title: string
   items: HotSearchItem[]
 }
+
+export interface CitySelectResult {
+  city: string
+  source: CityTab
+}
+
+export type HotSearchSelectType = 'keyword' | 'hotel'
+
+export interface HotSearchSelectResult {
+  type: HotSearchSelectType
+  value: string
+  hotelId?: string
+}

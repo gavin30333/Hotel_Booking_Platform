@@ -11,6 +11,7 @@ import {
   LocationOutline,
 } from 'antd-mobile-icons'
 import { CalendarPicker } from '@/components/common/form/CalendarPicker'
+import ImageCarousel from '@/components/common/display/ImageCarousel'
 import { PolicyPopup } from '@/components/common/popup/PolicyPopup'
 import { GuestSelectionPopup } from '@/components/common/popup/GuestSelectionPopup'
 import { GuestInfo } from '@/types/query.types'
@@ -18,7 +19,7 @@ import { getTransportIcon } from './utils'
 import './DetailPage.less'
 
 import HotelDetailHeader from './components/HotelDetailHeader'
-import ImageCarousel from '@/components/common/display/ImageCarousel'
+
 import HotelInfo from './components/HotelInfo'
 import ServiceTags from './components/ServiceTags'
 import DatePriceSelector from './components/DatePriceSelector'
@@ -86,27 +87,27 @@ export default function HotelDetailPage() {
       return
     }
 
-    // 检查用户是否已登录
+    const roomTypeId = selectedRoom.id || selectedRoom._id || String(roomIndex)
+
     const isLoggedIn = Taro.getStorageSync('isLoggedIn')
-    if (!isLoggedIn) {
-      // 未登录，跳转到登录页
+    const token = Taro.getStorageSync('token')
+
+    if (!isLoggedIn || !token) {
       showToast({
         title: '请先登录后操作',
         icon: 'none',
         duration: 1500,
       })
 
-      // 跳转到登录页，并传递来源页面信息
-      const fromPage = `/pages/booking/index?hotelId=${hotelId}&roomTypeId=${roomIndex}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`
+      const fromPage = `/pages/booking/index?hotelId=${hotelId}&roomTypeId=${roomTypeId}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`
       Taro.navigateTo({
         url: `/pages/login/index?fromPage=${encodeURIComponent(fromPage)}`,
       })
       return
     }
 
-    // 已登录，直接跳转到预订页面
     Taro.navigateTo({
-      url: `/pages/booking/index?hotelId=${hotelId}&roomTypeId=${roomIndex}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`,
+      url: `/pages/booking/index?hotelId=${hotelId}&roomTypeId=${roomTypeId}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`,
     })
   }
 
@@ -199,8 +200,6 @@ export default function HotelDetailPage() {
     })
   }
 
-
-
   if (loading) {
     return (
       <View className="loading-container">
@@ -262,7 +261,7 @@ export default function HotelDetailPage() {
 
       <ScrollView className="detail-content" scrollY>
         <ImageCarousel images={hotelImages} onImageClick={handleImageClick} />
-        
+
         <View className="carousel-tabs">
           <Text className="tab-item active">封面</Text>
           <Text className="tab-item">精选</Text>
