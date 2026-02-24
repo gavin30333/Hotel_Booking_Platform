@@ -1,0 +1,108 @@
+@import '../../../../styles/variables.less';
+
+.policy-popup {
+  .adm-popup-body {
+    background-color: @bg-color;
+  }
+}
+
+.policy-popup-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+  background-color: @bg-color;
+  border-radius: @border-radius-lg @border-radius-lg 0 0;
+
+  .policy-header {
+    padding: @spacing-lg;
+    border-bottom: 1px solid @border-color;
+    text-align: center;
+
+    .header-title {
+      font-size: @font-size-lg;
+      font-weight: 600;
+      color: @text-color;
+      display: block;
+    }
+
+    .header-subtitle {
+      font-size: @font-size-sm;
+      color: @text-secondary;
+      margin-top: @spacing-xs;
+      display: block;
+    }
+  }
+
+  .policy-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: @spacing-md @spacing-lg;
+
+    .policy-item {
+      display: flex;
+      align-items: flex-start;
+      padding: @spacing-md 0;
+      border-bottom: 1px solid #f0f0f0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .policy-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: fade(@primary-color, 10%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: @spacing-md;
+        flex-shrink: 0;
+      }
+
+      .policy-info {
+        flex: 1;
+
+        .policy-title {
+          font-size: @font-size-md;
+          font-weight: 600;
+          color: @text-color;
+          display: block;
+          margin-bottom: @spacing-xs;
+        }
+
+        .policy-value {
+          font-size: @font-size-base;
+          color: @text-secondary;
+          line-height: 1.5;
+          display: block;
+        }
+      }
+    }
+  }
+
+  .policy-footer {
+    padding: @spacing-md @spacing-lg;
+    border-top: 1px solid @border-color;
+
+    .btn-close {
+      width: 100%;
+      padding: @spacing-md;
+      background-color: @primary-color;
+      border-radius: @border-radius-md;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:active {
+        opacity: 0.9;
+      }
+
+      text {
+        font-size: @font-size-md;
+        color: #fff;
+        font-weight: 600;
+      }
+    }
+  }
+}

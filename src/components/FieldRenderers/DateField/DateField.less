@@ -1,0 +1,43 @@
+@import '../../../styles/variables.less';
+
+.date-field {
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+
+  .date-section {
+    display: flex;
+    align-items: center;
+
+    .date-item {
+      margin-right: @spacing-md;
+
+      .date-text {
+        font-size: @font-size-md;
+        font-weight: 600;
+        margin-right: 6px;
+        color: @text-color;
+      }
+
+      .sub-text {
+        font-size: @font-size-sm;
+        color: @text-secondary;
+        width: 100%;
+      }
+    }
+
+    .separator {
+      margin-right: 6px;
+      color: @text-placeholder;
+    }
+  }
+
+  .duration-section {
+    display: flex;
+    align-items: center;
+    .duration-text {
+      font-size: @font-size-base;
+      color: @text-color;
+    }
+  }
+}

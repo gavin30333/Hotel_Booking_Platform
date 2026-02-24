@@ -1,0 +1,53 @@
+@import '../../../styles/variables.less';
+
+.guest-field {
+  justify-content: space-between;
+  width: 100%;
+
+  .custom-text {
+    font-size: @font-size-base;
+    color: @text-color;
+    font-weight: 600;
+
+    &.placeholder {
+      color: @text-placeholder;
+      font-weight: normal;
+    }
+  }
+
+  .guest-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    .guest-info {
+      display: flex;
+      align-items: center;
+      flex: 1;
+
+      .info-text {
+        font-size: @font-size-base;
+        font-weight: 600;
+        margin-right: 4px;
+      }
+    }
+
+    .price-info {
+      display: flex;
+      align-items: center;
+      flex: 1;
+
+      .divider {
+        height: 16px;
+        width: 1px;
+        background: #eee;
+        margin: 0 @spacing-md;
+      }
+
+      .price-text {
+        font-size: @font-size-base;
+        color: @text-placeholder;
+      }
+    }
+  }
+}

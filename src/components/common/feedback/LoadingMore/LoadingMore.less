@@ -1,0 +1,22 @@
+@import '@/styles/variables.less';
+
+.loading-more {
+  text-align: center;
+  padding: @spacing-md;
+  font-size: @font-size-sm;
+  color: @text-secondary;
+}
+
+@media screen and (max-width: 375px) {
+  .loading-more {
+    padding: @spacing-sm;
+    font-size: @font-size-xs;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .loading-more {
+    padding: @spacing-xs;
+    font-size: 8px;
+  }
+}

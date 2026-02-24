@@ -1,0 +1,61 @@
+@import '../../../../../styles/variables.less';
+
+.child-age-popup-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  max-height: 80vh;
+
+  .popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+
+    .close-icon {
+      font-size: 24px;
+      color: #333;
+      padding: 0 8px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .placeholder {
+      width: 40px;
+    }
+  }
+
+  .popup-content {
+    padding: 20px 16px;
+    overflow-y: auto;
+    .age-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+
+      .age-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 40px;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #333;
+
+        &.selected {
+          background-color: #e6f7ff;
+          color: #1890ff;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}

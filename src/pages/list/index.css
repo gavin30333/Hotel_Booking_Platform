@@ -1,0 +1,206 @@
+.hotel-list {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+.hotel-list .filter-tags {
+  background-color: #ffffff;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  white-space: nowrap;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  position: relative;
+  z-index: 10;
+  font-size: 12px;
+}
+.hotel-list .filter-tags::-webkit-scrollbar {
+  display: none;
+}
+.hotel-list .filter-tags :global .taro-scroll-view__scrollbar {
+  display: none;
+}
+.hotel-list .filter-tags :global .taro-scroll-view {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hotel-list .filter-tags :global .taro-scroll-view::-webkit-scrollbar {
+  display: none;
+}
+.hotel-list .filter-tags .filter-tag {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 6px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #666666;
+  cursor: pointer;
+  background-color: #f8f8f8;
+  transition: all 0.2s ease;
+}
+.hotel-list .filter-tags .filter-tag:active {
+  background-color: #f0f0f0;
+}
+.hotel-list .filter-tags .filter-tag .arrow {
+  margin-left: 4px;
+  font-size: 10px;
+  color: #666666;
+}
+.hotel-list .filter-tags .filter-tag .filter-tag-close {
+  margin-left: 6px;
+  font-size: 10px;
+  color: #ffffff;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.hotel-list .filter-tags .filter-tag .filter-tag-close:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.hotel-list .filter-tags .filter-tag-active {
+  background-color: #0066ff;
+  color: #ffffff;
+}
+.hotel-list .filter-tags .filter-tag-active text {
+  color: #ffffff;
+}
+.hotel-list .loading-more {
+  text-align: center;
+  padding: 14px;
+  font-size: 12px;
+  color: #666666;
+}
+.hotel-list .loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+.hotel-list .loading text {
+  font-size: 12px;
+  color: #666666;
+}
+.hotel-list .no-data {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 14px;
+  color: #666666;
+}
+.hotel-list .error {
+  text-align: center;
+  padding: 14px;
+  font-size: 12px;
+  color: #ff4d4f;
+}
+@media screen and (max-width: 375px) {
+  .hotel-list .filter-tags {
+    padding: 6px 6px;
+  }
+  .hotel-list .filter-tags .filter-tag {
+    margin-right: 6px;
+    padding: 4px 6px;
+    font-size: 10px;
+  }
+  .hotel-list .filter-tags .filter-tag .arrow {
+    font-size: 8px;
+  }
+  .hotel-list .filter-tags .filter-tag .filter-tag-close {
+    width: 14px;
+    height: 14px;
+    font-size: 8px;
+  }
+  .hotel-list .loading-more {
+    padding: 10px;
+    font-size: 10px;
+  }
+  .hotel-list .loading text {
+    font-size: 10px;
+  }
+  .hotel-list .no-data {
+    font-size: 12px;
+  }
+  .hotel-list .error {
+    padding: 10px;
+    font-size: 10px;
+  }
+}
+@media screen and (max-width: 320px) {
+  .hotel-list .filter-tags {
+    padding: 4px 6px;
+  }
+  .hotel-list .filter-tags .filter-tag {
+    margin-right: 4px;
+    padding: 3px 6px;
+    font-size: 8px;
+  }
+  .hotel-list .filter-tags .filter-tag .arrow {
+    font-size: 6px;
+    margin-left: 2px;
+  }
+  .hotel-list .filter-tags .filter-tag .filter-tag-close {
+    width: 12px;
+    height: 12px;
+    font-size: 6px;
+    margin-left: 4px;
+  }
+  .hotel-list .loading-more {
+    padding: 6px;
+    font-size: 8px;
+  }
+  .hotel-list .loading {
+    height: 150px;
+  }
+  .hotel-list .loading text {
+    font-size: 8px;
+  }
+  .hotel-list .no-data {
+    height: 150px;
+    font-size: 10px;
+  }
+  .hotel-list .error {
+    padding: 6px;
+    font-size: 8px;
+  }
+}
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .hotel-list {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .hotel-list .filter-tags {
+    padding: 10px 14px;
+  }
+}
+@media screen and (min-width: 769px) and (max-width: 1023px) {
+  .hotel-list {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .hotel-list .filter-tags {
+    padding: 10px 14px;
+  }
+}
+@media screen and (min-width: 1024px) {
+  .hotel-list {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .hotel-list .filter-tags {
+    padding: 10px 20px;
+  }
+}

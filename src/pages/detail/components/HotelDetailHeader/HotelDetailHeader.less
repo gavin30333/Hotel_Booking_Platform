@@ -1,0 +1,47 @@
+@import '@/styles/variables.less';
+
+.top-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: @spacing-lg;
+  background-color: transparent;
+  color: #fff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+
+  .nav-left {
+    .back-btn {
+      font-size: @font-size-xl;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+
+    .nav-icon {
+      font-size: @font-size-xl;
+      margin-left: @spacing-sm;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}

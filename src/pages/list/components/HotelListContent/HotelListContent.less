@@ -1,0 +1,48 @@
+@import '@/styles/variables.less';
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+
+  text {
+    font-size: @font-size-sm;
+    color: @text-secondary;
+  }
+}
+
+.error {
+  text-align: center;
+  padding: @spacing-md;
+  font-size: @font-size-sm;
+  color: #ff4d4f;
+}
+
+@media screen and (max-width: 375px) {
+  .loading {
+    text {
+      font-size: @font-size-xs;
+    }
+  }
+
+  .error {
+    padding: @spacing-sm;
+    font-size: @font-size-xs;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .loading {
+    height: 150px;
+
+    text {
+      font-size: 8px;
+    }
+  }
+
+  .error {
+    padding: @spacing-xs;
+    font-size: 8px;
+  }
+}

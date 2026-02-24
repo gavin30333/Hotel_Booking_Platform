@@ -1,0 +1,44 @@
+@import '../../../../styles/variables.less';
+
+.city-location-status {
+  padding: @spacing-sm @spacing-md;
+  background: @bg-color;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid @border-color;
+
+  .status-icon {
+    margin-right: @spacing-xs;
+    display: flex;
+    align-items: center;
+  }
+
+  .status-text {
+    font-size: @font-size-base;
+    color: @text-color;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .city-location-status {
+    padding: @spacing-xs @spacing-sm;
+
+    .status-text {
+      font-size: @font-size-sm;
+    }
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .city-location-status {
+    padding: @spacing-xs;
+
+    .status-icon {
+      margin-right: 4px;
+    }
+
+    .status-text {
+      font-size: @font-size-xs;
+    }
+  }
+}
