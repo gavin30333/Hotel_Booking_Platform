@@ -1,18 +1,14 @@
 import { Toast } from 'antd-mobile'
 import { View } from '@tarojs/components'
-import Taro, {
-  useLoad,
-  useReachBottom,
-  usePullDownRefresh,
-  useRouter,
-} from '@tarojs/taro'
-import { useState, useEffect, useCallback } from 'react'
-import './ListPage.less'
 import { useHotelList } from '@/hooks/useHotelList'
 import { useHotelStore } from '@/store/hotelStore'
+import { useListPageStore } from '@/store/listPageStore'
+import Dropdown from '@/components/common/display/Dropdown'
+import Taro, { useLoad, usePullDownRefresh, useRouter } from '@tarojs/taro'
+import { useState, useEffect, useCallback } from 'react'
+import './ListPage.less'
 import HotelListHeader from './components/HotelListHeader'
 import FilterTags, { FilterTagProps } from './components/FilterTags'
-import Dropdown from '@/components/common/display/Dropdown'
 import HotelListContent from './components/HotelListContent'
 import {
   sortOptions,
@@ -27,6 +23,7 @@ export default function HotelList() {
   const { hotelList, loading, hasMore, error, refreshHotels, loadMore } =
     useHotelList()
   const { filters, setFilters, resetFilters } = useHotelStore()
+  const { resetList } = useListPageStore()
   const [showStayDurationPopover, setShowStayDurationPopover] = useState(false)
   const [showBrandPopover, setShowBrandPopover] = useState(false)
   const [showSortPopover, setShowSortPopover] = useState(false)
@@ -113,6 +110,7 @@ export default function HotelList() {
   }, [router.params, resetFilters, setFilters])
 
   useLoad(() => {
+    resetList()
     const hasParams = initFromUrl()
     setIsInitialized(true)
 
@@ -130,12 +128,6 @@ export default function HotelList() {
   usePullDownRefresh(() => {
     refreshHotels()
     Taro.stopPullDownRefresh()
-  })
-
-  useReachBottom(() => {
-    if (hasMore && !loading) {
-      loadMore()
-    }
   })
 
   const handleSearch = (params: Record<string, unknown>) => {
@@ -293,6 +285,7 @@ export default function HotelList() {
         hasMore={hasMore}
         error={error}
         isAnyDropdownOpen={isAnyDropdownOpen}
+        onLoadMore={loadMore}
       />
     </View>
   )

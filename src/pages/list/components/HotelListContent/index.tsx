@@ -1,8 +1,7 @@
-import { View, Text, ScrollView } from '@tarojs/components'
-import HotelCard from '@/components/common/display/HotelCard'
-import { Hotel } from '@/services/api'
-import LoadingMore from '@/components/common/feedback/LoadingMore'
+import { View, Text } from '@tarojs/components'
+import { Hotel } from '@/services/hotel'
 import NoData from '@/components/common/feedback/NoData'
+import VirtualHotelList from '../VirtualHotelList'
 import './HotelListContent.less'
 
 interface HotelListContentProps {
@@ -11,6 +10,7 @@ interface HotelListContentProps {
   hasMore: boolean
   error: string | null
   isAnyDropdownOpen: boolean
+  onLoadMore: () => void
 }
 
 export default function HotelListContent({
@@ -19,9 +19,10 @@ export default function HotelListContent({
   hasMore,
   error,
   isAnyDropdownOpen,
+  onLoadMore,
 }: HotelListContentProps) {
   return (
-    <View style={{ flex: 1, position: 'relative', overflow: 'auto' }}>
+    <View style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
       {isAnyDropdownOpen && (
         <View
           style={{
@@ -42,27 +43,13 @@ export default function HotelListContent({
           <Text>筛选中...</Text>
         </View>
       ) : hotelList.length > 0 ? (
-        <ScrollView
-          style={{ flex: 1, zIndex: 0 }}
-          scrollY
-          scrollWithAnimation
-        >
-          {hotelList.map((hotel) => (
-            <HotelCard key={hotel.id} hotel={hotel} />
-          ))}
-
-          <LoadingMore
-            loading={loading}
-            hasMore={hasMore}
-            allLoaded={!hasMore && hotelList.length > 0}
-          />
-
-          {error && (
-            <View className="error">
-              <Text>{error}</Text>
-            </View>
-          )}
-        </ScrollView>
+        <VirtualHotelList
+          hotelList={hotelList}
+          loading={loading}
+          hasMore={hasMore}
+          onLoadMore={onLoadMore}
+          error={error}
+        />
       ) : (
         <NoData />
       )}

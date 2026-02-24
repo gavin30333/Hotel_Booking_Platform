@@ -3,7 +3,11 @@ import { useState, useCallback, useEffect } from 'react'
 import { SearchBar, Toast } from 'antd-mobile'
 import { EnvironmentOutline, MoreOutline } from 'antd-mobile-icons'
 import AMapLoader from '@amap/amap-jsapi-loader'
-import { CitySelector } from '@/components/CitySelector'
+import {
+  CitySelector,
+  CitySelectResult,
+  HotSearchSelectResult,
+} from '@/components/CitySelector'
 import { GuestSelectionPopup } from '@/components/common/popup/GuestSelectionPopup'
 import { CalendarPicker } from '@/components/common/form/CalendarPicker'
 import { useLocation } from '@/hooks/useLocation'
@@ -465,7 +469,8 @@ export default function CoreFilterHeader({
   ])
 
   const handleCitySelect = useCallback(
-    (cityValue: string) => {
+    (result: CitySelectResult) => {
+      const cityValue = result.city
       handleParamChange('city', cityValue)
 
       const newHistory = [
@@ -509,6 +514,38 @@ export default function CoreFilterHeader({
       searchPOIs,
       activeLocationCategory,
     ]
+  )
+
+  const handleHotSearchSelect = useCallback(
+    (result: HotSearchSelectResult) => {
+      setShowCityPicker(false)
+
+      if (result.type === 'hotel' && result.hotelId) {
+        const searchParams = new URLSearchParams()
+        searchParams.append('id', result.hotelId)
+        if (params.checkInDate) {
+          searchParams.append('checkInDate', params.checkInDate)
+        }
+        if (params.checkOutDate) {
+          searchParams.append('checkOutDate', params.checkOutDate)
+        }
+        searchParams.append('roomCount', String(params.rooms || 1))
+        searchParams.append('adultCount', String(params.adults || 2))
+        searchParams.append('childCount', String(params.children || 0))
+        window.location.href = `/#/pages/detail/index?${searchParams.toString()}`
+      } else {
+        // 当没有 hotelId 时，用酒店名作为关键词搜索列表页
+        const keyword = result.value || (result as any).name || ''
+        setSearchValue(keyword)
+        setParams((prev) => ({ ...prev, keyword }))
+        onSearch({
+          ...params,
+          keyword,
+          ...advancedOptions,
+        })
+      }
+    },
+    [params, advancedOptions, onSearch]
   )
 
   const handleDateConfirm = useCallback(
@@ -1307,6 +1344,7 @@ export default function CoreFilterHeader({
         visible={showCityPicker}
         onClose={() => setShowCityPicker(false)}
         onSelect={handleCitySelect}
+        onHotSearchSelect={handleHotSearchSelect}
         currentCity={params.city}
       />
 
