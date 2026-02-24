@@ -4,18 +4,18 @@
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  background-color: #fff;
+  background-color: @bg-color;
   padding: 12px;
   margin-bottom: 8px;
   position: relative;
-  border-radius: 8px;
+  border-radius: @border-radius-md;
 
   // Card Left - Image
   .hotel-card-left {
     width: 110px;
     min-height: 168px; // Increased from 146px based on screenshot analysis (approx 1.5x aspect ratio)
     flex-shrink: 0;
-    margin-right: 10px;
+    margin-right: @spacing-sm;
     position: relative;
     border-radius: 6px;
     overflow: hidden;
@@ -72,11 +72,13 @@
       width: 100%; // Ensure Space takes full width
 
       .hotel-name {
-        font-size: 16px;
+        font-size: @font-size-md;
         font-weight: 600;
-        color: #333;
+        color: @text-color;
         flex: 1; // Allow ellipsis to work
         overflow: hidden; // Critical for ellipsis
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
 
       .diamonds {
@@ -84,8 +86,8 @@
         align-items: center;
         // Removed margin-top to rely on flexbox alignment from parent Space component
         .diamond {
-          color: #FFB400;
-          font-size: 10px;
+          color: @brand-gold;
+          font-size: @font-size-xs;
           margin-right: 1px;
           line-height: 1;
         }
@@ -98,7 +100,7 @@
         display: flex;
 
         .gold-diamond-badge {
-            background-color: #D4B180;
+            background-color: @badge-bg-gold;
             padding: 1px 3px;
             border-radius: 2px;
             height: 14px;
@@ -107,8 +109,8 @@
             justify-content: center;
 
             .badge-text {
-                color: #fff;
-                font-size: 10px;
+                color: @bg-color;
+                font-size: @font-size-xs;
                 line-height: 1;
             }
         }
@@ -122,7 +124,7 @@
       .score-box {
         background-color: #0086F6;
         // Asymmetric border-radius to match design "leaf" shape: Top-Left & Bottom-Right sharp (2px), Top-Right & Bottom-Left rounded (8px)
-        border-radius: 2px 8px 2px 8px;
+        border-radius: 2px 2px 8px 2px;
         padding: 0 4px;
         margin-right: 4px;
         height: 16px;
@@ -130,7 +132,7 @@
         align-items: center;
 
         .score-text {
-            color: #fff;
+            color: @bg-color;
             font-size: 12px;
             font-weight: bold;
             line-height: 16px;
@@ -158,8 +160,8 @@
       line-height: 16px; // Unified line-height
 
       .distance-text {
-          font-size: 11px;
-          color: #666;
+          font-size: @font-size-xs;
+          color: @text-secondary;
           line-height: 16px; // Unified line-height
           overflow: hidden;
           text-overflow: ellipsis;
@@ -172,8 +174,8 @@
         margin-bottom: 2px;
         line-height: 16px; // Unified line-height
         .landmark-text {
-             font-size: 11px;
-             color: #666;
+             font-size: @font-size-xs;
+             color: @text-secondary;
              line-height: 16px; // Unified line-height
         }
     }
@@ -199,11 +201,11 @@
         // Override antd-mobile Tag styles
         --background-color: transparent;
         --border-color: #ddd;
-        --text-color: #666;
+        --text-color: @text-secondary;
 
         border: 1px solid #ddd !important; // Force border
         background-color: transparent !important;
-        color: #666 !important;
+        color: @text-secondary !important;
 
         border-radius: 2px;
         padding: 0 4px; // Increased padding for less "crowded" look
@@ -233,26 +235,26 @@
       .ranking-badge {
           display: flex;
           align-items: center;
-          background: linear-gradient(90deg, #FDF0D5 0%, #F3D7A8 100%);
+          background: @badge-bg-gold;
           // Increased horizontal padding for less crowded look
           padding: 0 6px;
           // Changed to standard rounded rectangle (pill shape) instead of asymmetric for better aesthetics
-          border-radius: 4px;
+          border-radius: @border-radius-sm;
           height: 16px; // Slightly increased height
           margin-bottom: 0; // Align with price section bottom
           // Recalculated top margin: PriceMain(20px) - Badge(16px) = 4px
           margin-top: 4px;
 
           .ranking-icon {
-              font-size: 10px; // Slightly larger icon
-              color: #8B572A;
+              font-size: @font-size-xs; // Slightly larger icon
+              color: @text-brown;
               margin-right: 3px; // More space between icon and text
               line-height: 1;
           }
 
           .ranking-text {
-              font-size: 10px; // Slightly larger text
-              color: #8B572A;
+              font-size: @font-size-xs; // Slightly larger text
+              color: @text-brown;
               font-weight: bold;
               line-height: 1;
           }
@@ -270,34 +272,34 @@
             line-height: 1;
 
             .original-price {
-                font-size: 10px;
+                font-size: @font-size-xs;
                 color: #999;
                 text-decoration: line-through;
                 margin-right: 2px;
             }
 
             .currency {
-                font-size: 11px;
+                font-size: @font-size-xs;
                 font-weight: bold;
                 margin-right: 1px;
             }
 
             .price-value {
-                font-size: 20px;
+                font-size: @font-size-xl;
                 font-weight: bold;
             }
 
             .price-suffix {
-                font-size: 10px;
-                color: #999;
+                font-size: @font-size-xs;
+                color: @text-secondary;
                 margin-left: 1px;
                 font-weight: normal;
             }
         }
 
         .total-price {
-            font-size: 10px;
-            color: #333;
+            font-size: @font-size-xs;
+            color: @text-color;
             margin-top: 1px;
             font-weight: bold;
         }

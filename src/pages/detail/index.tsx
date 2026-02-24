@@ -342,12 +342,12 @@ export default function HotelDetailPage() {
           <View className="map-section">
             <View className="map-content">
               <View className="location-info">
-                <Text className="distance-text">{DEFAULT_DISTANCE_TEXT}</Text>
                 <Text className="address-text">{hotelAddress}</Text>
+                <Text className="distance-text">{DEFAULT_DISTANCE_TEXT}</Text>
               </View>
               <View className="map-icon-container">
                 <View className="map-icon">
-                  <EnvironmentOutline color="#666" />
+                  <EnvironmentOutline className="map-icon-svg" />
                 </View>
                 <Text className="map-text">地图</Text>
               </View>
