@@ -6,7 +6,8 @@ import './RoomList.less'
 interface RoomListProps {
   rooms: Room[]
   roomCount: number
-  onBookNow: (index: number) => void
+  onBookNow: (index: number, breakfastCount?: number) => void
+  onRoomCountChange?: (count: number) => void
   hotelImages: string[]
 }
 
@@ -14,6 +15,7 @@ export default function RoomList({
   rooms,
   roomCount,
   onBookNow,
+  onRoomCountChange,
   hotelImages,
 }: RoomListProps) {
   return (
@@ -25,6 +27,7 @@ export default function RoomList({
           index={index}
           roomCount={roomCount}
           onBookNow={onBookNow}
+          onRoomCountChange={onRoomCountChange}
           hotelImages={hotelImages}
         />
       ))}

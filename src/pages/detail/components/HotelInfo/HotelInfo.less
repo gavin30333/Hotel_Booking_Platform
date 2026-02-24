@@ -2,8 +2,12 @@
 
 .hotel-header-info {
   background-color: #fff;
-  padding: @spacing-lg;
-  margin-bottom: @spacing-xs;
+  padding: @spacing-lg @spacing-lg 0 @spacing-lg;
+  margin: -10px 0 0 0;
+  border-radius: @border-radius-md @border-radius-md 0 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 5;
 
   .hotel-name {
     font-size: @font-size-xl;
@@ -15,49 +19,45 @@
 
   .hotel-badge {
     font-size: @font-size-sm;
-    color: #fff;
+    color: #8b4513;
     margin-right: @spacing-md;
-    background: rgb(255, 145, 10);
-    padding: 2px @spacing-md;
-    border-radius: @border-radius-xl;
-    box-shadow: @shadow-card;
+    background: #fff8dc;
+    padding: 0 @spacing-sm;
+    border-radius: 2px;
     font-weight: 600;
     white-space: nowrap;
     display: inline-block;
+    margin-bottom: @spacing-sm;
+    border: none;
+
+    :global {
+      .adm-tag-text {
+        font-size: @font-size-sm;
+        color: #8b4513;
+      }
+    }
   }
 
-  .hotel-ranking {
+  .hotel-address {
     font-size: @font-size-sm;
-    color: #fff;
-    margin-top: @spacing-xs;
-    background: rgb(255, 145, 10);
-    padding: 2px @spacing-md;
-    border-radius: @border-radius-xl;
-    box-shadow: @shadow-card;
+    color: #8b4513;
+    background: #fff8dc;
+    padding: 2px @spacing-sm;
+    border-radius: 4px;
     font-weight: 600;
     white-space: nowrap;
     display: inline-block;
+    margin-bottom: @spacing-md;
   }
+}
 
-  .hotel-rating {
-    margin-top: @spacing-md;
+:global {
+  .hotel-header-info .adm-tag.hotel-badge {
+    --border-color: transparent;
+    --border-width: 0;
 
-    .rating {
-      font-size: @font-size-md;
-      font-weight: 600;
-      color: @primary-color;
-      margin-right: @spacing-md;
-    }
-
-    .rating-label {
-      font-size: @font-size-md;
-      color: @primary-color;
-      margin-right: @spacing-md;
-    }
-
-    .review-count {
-      font-size: @font-size-md;
-      color: #999;
+    &::before {
+      display: none;
     }
   }
 }
