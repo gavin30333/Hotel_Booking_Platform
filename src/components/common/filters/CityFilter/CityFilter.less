@@ -1,0 +1,24 @@
+@import '@/styles/variables.less';
+
+.city-filter {
+  display: flex;
+  padding: 0 @spacing-lg @spacing-md;
+  background-color: @bg-color;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.filter-tag {
+  padding: @spacing-xs @spacing-lg;
+  border-radius: @border-radius-xl;
+  font-size: @font-size-base;
+  color: @text-secondary;
+  background-color: @page-bg;
+  cursor: pointer;
+  margin-right: @spacing-sm;
+}
+
+.filter-tag.active {
+  background-color: @primary-color;
+  color: @bg-color;
+}

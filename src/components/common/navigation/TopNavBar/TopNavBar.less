@@ -1,0 +1,34 @@
+@import '@/styles/variables.less';
+
+.top-nav-bar {
+  display: flex;
+  align-items: center;
+  padding: @spacing-md @spacing-lg;
+  background-color: @bg-color;
+  border-bottom: 1px solid @border-color;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.back-btn {
+  padding: @spacing-sm;
+  margin-right: @spacing-lg;
+  color: @text-color;
+  cursor: pointer;
+}
+
+.back-btn :global(svg) {
+  font-size: @font-size-xl;
+}
+
+.header-title {
+  flex: 1;
+  text-align: center;
+}
+
+.header-title Text {
+  font-size: @font-size-lg;
+  font-weight: 500;
+  color: @text-color;
+}
