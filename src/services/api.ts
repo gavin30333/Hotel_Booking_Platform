@@ -5,7 +5,10 @@ import axios, {
 } from 'axios'
 import * as Taro from '@tarojs/taro'
 
-const API_BASE_URL = 'http://localhost:3000/api'
+const API_BASE_URL =
+  typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+    ? '' // 生产环境使用相对路径，通过 Vercel rewrite 代理
+    : 'http://localhost:3000/api' // 开发环境
 
 interface ApiResponse<T = any> {
   success: boolean
