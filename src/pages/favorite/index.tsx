@@ -77,7 +77,11 @@ export default function FavoritePage() {
   return (
     <>
       <View className="favorite-page">
-        <TopNavBar title="我的收藏" showBack={false} />
+        <TopNavBar
+          title="我的收藏"
+          showBack
+          onBack={() => Taro.switchTab({ url: '/search' })}
+        />
 
         <View className="date-selection">
           <View className="date-row">

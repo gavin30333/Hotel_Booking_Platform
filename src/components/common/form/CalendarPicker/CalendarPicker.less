@@ -82,6 +82,10 @@
       font-size: @font-size-sm;
       color: @text-secondary;
       padding: @spacing-xs;
+
+      &.weekend {
+        color: @error-color;
+      }
     }
   }
 
@@ -144,7 +148,8 @@
 
       &.holiday,
       &.rest,
-      &.lowest-price {
+      &.lowest-price,
+      &.weekend {
         .day-text {
           color: @error-color;
         }

@@ -356,11 +356,17 @@ export const CalendarPicker: React.FC<CalendarPickerProps> = ({
         </View>
 
         <View className="week-header">
-          {weekDays.map((day) => (
-            <View key={day} className="week-day">
-              <Text>{day}</Text>
-            </View>
-          ))}
+          {weekDays.map((day, index) => {
+            const isWeekend = index === 0 || index === 6
+            return (
+              <View
+                key={day}
+                className={`week-day ${isWeekend ? 'weekend' : ''}`}
+              >
+                <Text>{day}</Text>
+              </View>
+            )
+          })}
         </View>
 
         <View className="calendar-grid">
@@ -374,7 +380,10 @@ export const CalendarPicker: React.FC<CalendarPickerProps> = ({
             }
 
             const status = getDateStatus(item.date)
+            const dayOfWeek = item.date.day()
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
             let dayClass = 'calendar-day'
+            if (isWeekend) dayClass += ' weekend'
             if (status.isStart) dayClass += ' start'
             if (status.isEnd) dayClass += ' end'
             if (status.isBetween) dayClass += ' between'

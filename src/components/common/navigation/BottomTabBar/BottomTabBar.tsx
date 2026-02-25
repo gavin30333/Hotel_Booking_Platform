@@ -59,7 +59,7 @@ export default function BottomTabBar({ activeKey }: BottomTabBarProps) {
   return (
     <TabBar
       className="bottom-tab-bar"
-      defaultActiveKey={activeKey}
+      activeKey={activeKey}
       onChange={handleTabChange}
     >
       {tabs.map((item) => (

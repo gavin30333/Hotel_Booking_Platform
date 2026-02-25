@@ -1,8 +1,9 @@
 import { View, Text } from '@tarojs/components'
-import { Button } from 'antd-mobile'
+import { Button, Toast } from 'antd-mobile'
 import {
   LeftOutline,
   HeartOutline,
+  HeartFill,
   PhonebookOutline,
   ShopbagOutline,
   MoreOutline,
@@ -21,6 +22,7 @@ export default function HotelDetailHeader({
   hotelName,
 }: HotelDetailHeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isFavorite, setIsFavorite] = useState(false)
 
   usePageScroll((res) => {
     if (res && res.scrollTop > 100) {
@@ -29,6 +31,15 @@ export default function HotelDetailHeader({
       setIsScrolled(false)
     }
   })
+
+  const handleFavorite = () => {
+    setIsFavorite(!isFavorite)
+    Toast.show({
+      content: isFavorite ? '取消收藏成功' : '收藏成功',
+      duration: 1000,
+    })
+  }
+
   return (
     <View className={`top-nav-bar ${isScrolled ? 'scrolled' : ''}`}>
       <View className="nav-left">
@@ -42,8 +53,12 @@ export default function HotelDetailHeader({
         </View>
       )}
       <View className="nav-right">
-        <Button className="nav-icon" fill="none">
-          <HeartOutline color={isScrolled ? '#000' : '#fff'} />
+        <Button className="nav-icon" fill="none" onClick={handleFavorite}>
+          {isFavorite ? (
+            <HeartFill color={isScrolled ? '#ff4d4f' : '#ff4d4f'} />
+          ) : (
+            <HeartOutline color={isScrolled ? '#000' : '#fff'} />
+          )}
         </Button>
         <Button className="nav-icon" fill="none">
           <PhonebookOutline color={isScrolled ? '#000' : '#fff'} />
