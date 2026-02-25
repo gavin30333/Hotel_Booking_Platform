@@ -7,8 +7,6 @@ import Taro from '@tarojs/taro'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 
-dayjs.locale('zh-cn')
-
 import {
   CitySelector,
   CitySelectResult,
@@ -18,10 +16,23 @@ import {
 import { GuestSelectionPopup } from '@/components/common/popup/GuestSelectionPopup'
 import { PriceStarSelectionContent } from '@/components/common/popup/PriceStarSelectionPopup/PriceStarSelectionContent'
 import { CalendarPicker } from '@/components/common/form/CalendarPicker'
-import { LocationField, DateField, GuestField } from '@/components/FieldRenderers'
+import {
+  LocationField,
+  DateField,
+  GuestField,
+} from '@/components/FieldRenderers'
 import { useLocation } from '@/hooks/useLocation'
-import { GuestInfo, TabType, LocationData, DateRange, FieldConfig } from '@/types/query.types'
+import { useQueryStore } from '@/store/useQueryStore'
+import {
+  GuestInfo,
+  TabType,
+  LocationData,
+  DateRange,
+  FieldConfig,
+} from '@/types/query.types'
 import './CoreFilterHeader.less'
+
+dayjs.locale('zh-cn')
 
 let AMap: any = null
 
@@ -83,14 +94,21 @@ export default function CoreFilterHeader({
   onDropdownStateChange,
   initialFilters,
 }: CoreFilterHeaderProps) {
+  const getSearchParams = useQueryStore((state) => state.getSearchParams)
+  const updateDates = useQueryStore((state) => state.updateDates)
+  const updateGuests = useQueryStore((state) => state.updateGuests)
+  const updateLocation = useQueryStore((state) => state.updateLocation)
+  const storeParams = getSearchParams()
+
   const [params, setParams] = useState<SearchParams>({
-    city: initialFilters?.city || '北京',
+    city: initialFilters?.city || storeParams.city || '北京',
     keyword: initialFilters?.keyword || '',
-    checkInDate: initialFilters?.checkInDate || '',
-    checkOutDate: initialFilters?.checkOutDate || '',
-    rooms: initialFilters?.rooms || 1,
-    adults: initialFilters?.adults || 2,
-    children: initialFilters?.children || 0,
+    checkInDate: initialFilters?.checkInDate || storeParams.checkInDate || '',
+    checkOutDate:
+      initialFilters?.checkOutDate || storeParams.checkOutDate || '',
+    rooms: initialFilters?.rooms || storeParams.rooms || 1,
+    adults: initialFilters?.adults || storeParams.adults || 2,
+    children: initialFilters?.children || storeParams.children || 0,
     advancedOptions: false,
   })
 
@@ -136,6 +154,11 @@ export default function CoreFilterHeader({
 
   const handleConfirmMainSelector = () => {
     setParams(tempParams)
+    if (tempParams.checkInDate && tempParams.checkOutDate) {
+      updateDates(tempParams.checkInDate, tempParams.checkOutDate)
+    }
+    updateGuests(tempParams.rooms, tempParams.adults, tempParams.children)
+    updateLocation({ city: tempParams.city })
     onSearch({
       ...tempParams,
       keyword: searchValue || tempParams.keyword,
@@ -248,7 +271,6 @@ export default function CoreFilterHeader({
     }
   }, [])
 
-
   useEffect(() => {
     if (params.checkInDate && params.checkOutDate) {
       setSelectedDate({ start: params.checkInDate, end: params.checkOutDate })
@@ -265,8 +287,6 @@ export default function CoreFilterHeader({
   const searchPOIs = useCallback(
     async (category: string, cityOverride?: string) => {
       const apiKey = process.env.AMAP_API_KEY || 'your_amap_api_key_here'
-
-
 
       try {
         setIsSearchingPOIs(true)
@@ -474,6 +494,7 @@ export default function CoreFilterHeader({
     (result: CitySelectResult) => {
       const cityValue = result.city
       handleParamChange('city', cityValue)
+      updateLocation({ city: cityValue })
 
       const newHistory = [
         cityValue,
@@ -515,6 +536,7 @@ export default function CoreFilterHeader({
       onSearch,
       searchPOIs,
       activeLocationCategory,
+      updateLocation,
     ]
   )
 
@@ -556,28 +578,37 @@ export default function CoreFilterHeader({
         handleParamChange('checkInDate', range.start)
         handleParamChange('checkOutDate', range.end)
         setSelectedDate({ start: range.start, end: range.end })
+        updateDates(range.start, range.end)
       }
     },
-    [handleParamChange]
+    [handleParamChange, updateDates]
   )
 
-  const handleGuestChange = useCallback((guestInfo: GuestInfo) => {
-    const getNumber = (
-      val: number | number[] | undefined,
-      defaultVal: number = 0
-    ): number => {
-      if (val === undefined) return defaultVal
-      if (Array.isArray(val)) return val.length > 0 ? val[0] : defaultVal
-      return val
-    }
+  const handleGuestChange = useCallback(
+    (guestInfo: GuestInfo) => {
+      const getNumber = (
+        val: number | number[] | undefined,
+        defaultVal: number = 0
+      ): number => {
+        if (val === undefined) return defaultVal
+        if (Array.isArray(val)) return val.length > 0 ? val[0] : defaultVal
+        return val
+      }
 
-    setParams((prev) => ({
-      ...prev,
-      rooms: getNumber(guestInfo.rooms, 1),
-      adults: getNumber(guestInfo.adults, 2),
-      children: getNumber(guestInfo.children, 0),
-    }))
-  }, [])
+      const rooms = getNumber(guestInfo.rooms, 1)
+      const adults = getNumber(guestInfo.adults, 2)
+      const children = getNumber(guestInfo.children, 0)
+
+      setParams((prev) => ({
+        ...prev,
+        rooms,
+        adults,
+        children,
+      }))
+      updateGuests(rooms, adults, children)
+    },
+    [updateGuests]
+  )
 
   const handleLocationClick = async () => {
     if (locationLoading) return
@@ -644,7 +675,10 @@ export default function CoreFilterHeader({
   }
 
   const handleGuestChangePopup = (info: GuestInfo) => {
-    const getNumber = (val: number | number[] | undefined, defaultVal: number = 0): number => {
+    const getNumber = (
+      val: number | number[] | undefined,
+      defaultVal: number = 0
+    ): number => {
       if (val === undefined) return defaultVal
       if (Array.isArray(val)) return val.length > 0 ? val[0] : defaultVal
       return val
@@ -655,6 +689,39 @@ export default function CoreFilterHeader({
       adults: getNumber(info.adults, 2),
       children: getNumber(info.children, 0),
     }))
+  }
+
+  const handleDateConfirmPopup = (range: {
+    start: string | null
+    end: string | null
+  }) => {
+    if (range.start && range.end) {
+      setTempParams((prev) => ({
+        ...prev,
+        checkInDate: range.start,
+        checkOutDate: range.end,
+      }))
+      setSelectedDate({ start: range.start, end: range.end })
+    }
+    setShowDatePicker(false)
+  }
+
+  const handleGuestConfirmPopup = (info: GuestInfo) => {
+    const getNumber = (
+      val: number | number[] | undefined,
+      defaultVal: number = 0
+    ): number => {
+      if (val === undefined) return defaultVal
+      if (Array.isArray(val)) return val.length > 0 ? val[0] : defaultVal
+      return val
+    }
+    setTempParams((prev) => ({
+      ...prev,
+      rooms: getNumber(info.rooms, 1),
+      adults: getNumber(info.adults, 2),
+      children: getNumber(info.children, 0),
+    }))
+    setShowRoomPicker(false)
   }
 
   return (
@@ -673,18 +740,20 @@ export default function CoreFilterHeader({
             }}
           >
             <View className="filter-item compact">
-              <Text className="filter-value city-text">
-                {params.city}
-              </Text>
+              <Text className="filter-value city-text">{params.city}</Text>
             </View>
 
             <View className="filter-info-group">
               <View className="info-column">
                 <Text className="filter-value filter-value-xs">
-                  {params.checkInDate ? `${params.checkInDate.split('-')[1]}-${params.checkInDate.split('-')[2]}` : '入住'}
+                  {params.checkInDate
+                    ? `${params.checkInDate.split('-')[1]}-${params.checkInDate.split('-')[2]}`
+                    : '入住'}
                 </Text>
                 <Text className="filter-value filter-value-xs">
-                  {params.checkOutDate ? `${params.checkOutDate.split('-')[1]}-${params.checkOutDate.split('-')[2]}` : '离店'}
+                  {params.checkOutDate
+                    ? `${params.checkOutDate.split('-')[1]}-${params.checkOutDate.split('-')[2]}`
+                    : '离店'}
                 </Text>
               </View>
               <View className="info-column">
@@ -692,7 +761,7 @@ export default function CoreFilterHeader({
                   {params.rooms}间
                 </Text>
                 <Text className="filter-value filter-value-xs">
-                  {params.adults}人
+                  {params.adults + params.children}人
                 </Text>
               </View>
             </View>
@@ -724,10 +793,13 @@ export default function CoreFilterHeader({
           </View>
         </View>
 
-        <View className="map-icon" onClick={() => {
+        <View
+          className="map-icon"
+          onClick={() => {
             // Handle map click if needed, currently just UI
-             Taro.showToast({ title: '地图模式开发中', icon: 'none' })
-        }}>
+            Taro.showToast({ title: '地图模式开发中', icon: 'none' })
+          }}
+        >
           <EnvironmentOutline fontSize={20} color="#333" />
           <Text className="icon-text">地图</Text>
         </View>
@@ -739,7 +811,10 @@ export default function CoreFilterHeader({
       </View>
 
       {showMainSelector && (
-        <View className="main-selector-popup" onClick={(e) => e.stopPropagation()}>
+        <View
+          className="main-selector-popup"
+          onClick={(e) => e.stopPropagation()}
+        >
           <View className="popup-content">
             {/* City Row */}
             <View
@@ -752,10 +827,13 @@ export default function CoreFilterHeader({
               <View className="row-left">
                 <Text className="city-name">{tempParams.city}</Text>
               </View>
-              <View className="row-right" onClick={(e) => {
-                e.stopPropagation()
-                handleLocationClick()
-              }}>
+              <View
+                className="row-right"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleLocationClick()
+                }}
+              >
                 <View className="location-icon-wrapper">
                   <EnvironmentOutline fontSize={20} color="#0086F6" />
                   <Text className="location-text">我的位置</Text>
@@ -773,25 +851,47 @@ export default function CoreFilterHeader({
               <View className="row-left date-row-content">
                 <View className="date-group">
                   <Text className="date-value">
-                    {tempParams.checkInDate ? dayjs(tempParams.checkInDate).format('M月D日') : '入住日期'}
+                    {tempParams.checkInDate
+                      ? dayjs(tempParams.checkInDate).format('M月D日')
+                      : '入住日期'}
                   </Text>
                   <Text className="date-tag">
-                    {tempParams.checkInDate ? (dayjs(tempParams.checkInDate).isSame(dayjs(), 'day') ? '今天' : dayjs(tempParams.checkInDate).format('ddd')) : ''}
+                    {tempParams.checkInDate
+                      ? dayjs(tempParams.checkInDate).isSame(dayjs(), 'day')
+                        ? '今天'
+                        : dayjs(tempParams.checkInDate).format('ddd')
+                      : ''}
                   </Text>
                 </View>
                 <Text className="date-separator">-</Text>
                 <View className="date-group">
                   <Text className="date-value">
-                    {tempParams.checkOutDate ? dayjs(tempParams.checkOutDate).format('M月D日') : '离店日期'}
+                    {tempParams.checkOutDate
+                      ? dayjs(tempParams.checkOutDate).format('M月D日')
+                      : '离店日期'}
                   </Text>
                   <Text className="date-tag">
-                    {tempParams.checkOutDate ? (dayjs(tempParams.checkOutDate).isSame(dayjs().add(2, 'day'), 'day') ? '后天' : dayjs(tempParams.checkOutDate).format('ddd')) : ''}
+                    {tempParams.checkOutDate
+                      ? dayjs(tempParams.checkOutDate).isSame(
+                          dayjs().add(2, 'day'),
+                          'day'
+                        )
+                        ? '后天'
+                        : dayjs(tempParams.checkOutDate).format('ddd')
+                      : ''}
                   </Text>
                 </View>
               </View>
               <View className="row-right">
                 <Text className="nights-count">
-                  共{tempParams.checkOutDate && tempParams.checkInDate ? dayjs(tempParams.checkOutDate).diff(dayjs(tempParams.checkInDate), 'day') : 1}晚
+                  共
+                  {tempParams.checkOutDate && tempParams.checkInDate
+                    ? dayjs(tempParams.checkOutDate).diff(
+                        dayjs(tempParams.checkInDate),
+                        'day'
+                      )
+                    : 1}
+                  晚
                 </Text>
               </View>
             </View>
@@ -805,17 +905,19 @@ export default function CoreFilterHeader({
             >
               <View className="row-left">
                 <Text className="guest-value">
-                  {tempParams.rooms}间房 {tempParams.adults}成人 {tempParams.children}儿童
+                  {tempParams.rooms}间房 {tempParams.adults}成人{' '}
+                  {tempParams.children}儿童
                 </Text>
               </View>
-              <View className="row-right">
-                {/* Arrow or empty */}
-              </View>
+              <View className="row-right">{/* Arrow or empty */}</View>
             </View>
           </View>
 
           <View className="popup-footer">
-            <View className="action-btn primary full-width" onClick={handleConfirmMainSelector}>
+            <View
+              className="action-btn primary full-width"
+              onClick={handleConfirmMainSelector}
+            >
               <Text className="action-text">确定</Text>
             </View>
           </View>
@@ -940,14 +1042,23 @@ export default function CoreFilterHeader({
           </Dropdown.Item>
 
           <Dropdown.Item key="price" title="价格/星级">
-            <View className="dropdown-panel-content price-dropdown price-popup-container" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '60vh' }}>
+            <View
+              className="dropdown-panel-content price-dropdown price-popup-container"
+              style={{
+                padding: 0,
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                height: '60vh',
+              }}
+            >
               <PriceStarSelectionContent
-      min={priceRange.min}
-      max={priceRange.max}
-      stars={selectedStarRating.map(String)}
-      visible={activeSortTab === 'price'}
-      enableSpecialStars={false}
-      onChange={(val) => {
+                min={priceRange.min}
+                max={priceRange.max}
+                stars={selectedStarRating.map(String)}
+                visible={activeSortTab === 'price'}
+                enableSpecialStars={false}
+                onChange={(val) => {
                   setPriceRange({ min: val.min, max: val.max })
                   // Convert strings back to numbers, filtering out non-numeric values
                   const newStars = val.stars
@@ -959,7 +1070,10 @@ export default function CoreFilterHeader({
                   setSelectedStarRating(newStars)
                 }}
               />
-              <View className="dropdown-actions" style={{ padding: '16px', borderTop: '1px solid #eee' }}>
+              <View
+                className="dropdown-actions"
+                style={{ padding: '16px', borderTop: '1px solid #eee' }}
+              >
                 <View
                   className="action-btn secondary"
                   onClick={() => {
@@ -1240,17 +1354,22 @@ export default function CoreFilterHeader({
       <CalendarPicker
         visible={showDatePicker}
         onClose={() => setShowDatePicker(false)}
-        onConfirm={handleDateConfirm}
-        defaultStartDate={params.checkInDate}
-        defaultEndDate={params.checkOutDate}
+        onConfirm={handleDateConfirmPopup}
+        defaultStartDate={tempParams.checkInDate}
+        defaultEndDate={tempParams.checkOutDate}
         title="选择入住和离店日期"
       />
 
       <GuestSelectionPopup
         visible={showRoomPicker}
         onClose={() => setShowRoomPicker(false)}
-        value={guestInfo}
-        onChange={handleGuestChange}
+        value={{
+          rooms: tempParams.rooms,
+          adults: tempParams.adults,
+          children: tempParams.children,
+          childAges: [],
+        }}
+        onChange={handleGuestConfirmPopup}
       />
 
       {Object.keys(validationErrors).length > 0 && (

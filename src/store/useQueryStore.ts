@@ -8,7 +8,6 @@ import {
 } from '@/types/query.types'
 import dayjs from 'dayjs'
 
-// Define initial states for each scene
 const DEFAULT_DATE_RANGE: DateRange = {
   startDate: dayjs().format('YYYY-MM-DD'),
   endDate: dayjs().add(1, 'day').format('YYYY-MM-DD'),
@@ -17,7 +16,7 @@ const DEFAULT_DATE_RANGE: DateRange = {
 
 const DEFAULT_GUESTS: GuestInfo = {
   rooms: 1,
-  adults: 1,
+  adults: 2,
   children: 0,
 }
 
@@ -43,9 +42,24 @@ interface QueryState {
   setActiveScene: (scene: TabType) => void
   updateSceneParams: (scene: TabType, params: Partial<SearchParams>) => void
   updateActiveSceneParams: (params: Partial<SearchParams>) => void
+  updateDates: (startDate: string, endDate: string) => void
+  updateGuests: (rooms: number, adults: number, children: number) => void
+  updateLocation: (location: LocationData) => void
+  getDates: () => DateRange
+  getGuests: () => GuestInfo
+  getLocation: () => LocationData
+  getSearchParams: () => {
+    city: string
+    checkInDate: string
+    checkOutDate: string
+    rooms: number
+    adults: number
+    children: number
+    nights: number
+  }
 }
 
-export const useQueryStore = create<QueryState>((set) => ({
+export const useQueryStore = create<QueryState>((set, get) => ({
   activeScene: TabType.DOMESTIC,
   scenes: {
     [TabType.DOMESTIC]: { ...DEFAULT_PARAMS, scene: TabType.DOMESTIC },
@@ -57,7 +71,7 @@ export const useQueryStore = create<QueryState>((set) => ({
     [TabType.HOMESTAY]: {
       ...DEFAULT_PARAMS,
       scene: TabType.HOMESTAY,
-      guests: { rooms: [], adults: [], children: [] }, // Initialize with empty arrays for homestay
+      guests: { rooms: [], adults: [], children: [] },
     },
     [TabType.HOURLY]: {
       ...DEFAULT_PARAMS,
@@ -83,4 +97,85 @@ export const useQueryStore = create<QueryState>((set) => ({
         [state.activeScene]: { ...state.scenes[state.activeScene], ...params },
       },
     })),
+
+  updateDates: (startDate, endDate) => {
+    const start = dayjs(startDate)
+    const end = dayjs(endDate)
+    const nights = end.diff(start, 'day')
+    set((state) => ({
+      scenes: {
+        ...state.scenes,
+        [state.activeScene]: {
+          ...state.scenes[state.activeScene],
+          dates: { startDate, endDate, nights: Math.max(1, nights) },
+        },
+      },
+    }))
+  },
+
+  updateGuests: (rooms, adults, children) => {
+    set((state) => ({
+      scenes: {
+        ...state.scenes,
+        [state.activeScene]: {
+          ...state.scenes[state.activeScene],
+          guests: { rooms, adults, children },
+        },
+      },
+    }))
+  },
+
+  updateLocation: (location) => {
+    set((state) => ({
+      scenes: {
+        ...state.scenes,
+        [state.activeScene]: {
+          ...state.scenes[state.activeScene],
+          location,
+        },
+      },
+    }))
+  },
+
+  getDates: () => {
+    const state = get()
+    return state.scenes[state.activeScene].dates
+  },
+
+  getGuests: () => {
+    const state = get()
+    return state.scenes[state.activeScene].guests || DEFAULT_GUESTS
+  },
+
+  getLocation: () => {
+    const state = get()
+    return state.scenes[state.activeScene].location
+  },
+
+  getSearchParams: () => {
+    const state = get()
+    const scene = state.scenes[state.activeScene]
+    const dates = scene.dates
+    const guests = scene.guests || DEFAULT_GUESTS
+    const location = scene.location
+
+    const getNumber = (
+      val: number | number[] | undefined,
+      defaultVal: number
+    ): number => {
+      if (val === undefined) return defaultVal
+      if (Array.isArray(val)) return val.length > 0 ? val[0] : defaultVal
+      return val
+    }
+
+    return {
+      city: location.city,
+      checkInDate: dates.startDate,
+      checkOutDate: dates.endDate,
+      rooms: getNumber(guests.rooms, 1),
+      adults: getNumber(guests.adults, 2),
+      children: getNumber(guests.children, 0),
+      nights: dates.nights,
+    }
+  },
 }))

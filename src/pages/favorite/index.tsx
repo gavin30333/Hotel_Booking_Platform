@@ -1,11 +1,13 @@
 import { View, Text } from '@tarojs/components'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Taro, { showToast } from '@tarojs/taro'
 import HotelCard from '@/components/common/display/HotelCard'
 import BottomTabBar from '@/components/common/navigation/BottomTabBar/BottomTabBar'
 import TopNavBar from '@/components/common/navigation/TopNavBar/TopNavBar'
 import CityFilter from '@/components/common/filters/CityFilter/CityFilter'
+import { useQueryStore } from '@/store/useQueryStore'
 import { Hotel } from '@/services/hotel'
+import dayjs from 'dayjs'
 import './index.less'
 
 interface FavoriteHotel extends Hotel {
@@ -42,6 +44,26 @@ export default function FavoritePage() {
   const [activeCity, setActiveCity] = useState('all')
   const cities = ['上海']
 
+  const getDates = useQueryStore((state) => state.getDates)
+  const dates = getDates()
+
+  const formatDateDisplay = (dateStr: string) => {
+    const date = dayjs(dateStr)
+    const dayOfWeek = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][
+      date.day()
+    ]
+    return `${date.format('MM月DD日')} ${dayOfWeek}`
+  }
+
+  const dateDisplay = useMemo(
+    () => ({
+      checkIn: formatDateDisplay(dates.startDate),
+      checkOut: formatDateDisplay(dates.endDate),
+      nights: dates.nights,
+    }),
+    [dates]
+  )
+
   const handleCityChange = (city: string) => {
     setActiveCity(city)
   }
@@ -59,11 +81,11 @@ export default function FavoritePage() {
 
         <View className="date-selection">
           <View className="date-row">
-            <Text className="date-item">02月24日 周二</Text>
+            <Text className="date-item">{dateDisplay.checkIn}</Text>
             <Text className="date-separator">-</Text>
-            <Text className="date-item">02月26日 周四</Text>
+            <Text className="date-item">{dateDisplay.checkOut}</Text>
           </View>
-          <Text className="night-count">共2晚</Text>
+          <Text className="night-count">共{dateDisplay.nights}晚</Text>
         </View>
 
         <CityFilter

@@ -2,7 +2,7 @@ import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { Image, Tag, Ellipsis, Space } from 'antd-mobile'
 import { Hotel } from '@/services/hotel'
-import { useHotelStore } from '@/store/hotelStore'
+import { useQueryStore } from '@/store/useQueryStore'
 import dayjs from 'dayjs'
 import './HotelCard.less'
 
@@ -11,20 +11,17 @@ interface HotelCardProps {
 }
 
 export default function HotelCard({ hotel }: HotelCardProps) {
-  const { filters } = useHotelStore()
+  const getSearchParams = useQueryStore((state) => state.getSearchParams)
+  const searchParams = getSearchParams()
 
   const handleCardClick = () => {
     const params = new URLSearchParams()
     params.append('id', hotel.id)
-    if (filters.checkInDate) {
-      params.append('checkInDate', filters.checkInDate)
-    }
-    if (filters.checkOutDate) {
-      params.append('checkOutDate', filters.checkOutDate)
-    }
-    params.append('roomCount', String(filters.rooms || 1))
-    params.append('adultCount', String(filters.adults || 2))
-    params.append('childCount', String(filters.children || 0))
+    params.append('checkInDate', searchParams.checkInDate)
+    params.append('checkOutDate', searchParams.checkOutDate)
+    params.append('roomCount', String(searchParams.rooms))
+    params.append('adultCount', String(searchParams.adults))
+    params.append('childCount', String(searchParams.children))
 
     Taro.navigateTo({
       url: `/pages/detail/index?${params.toString()}`,
@@ -32,9 +29,9 @@ export default function HotelCard({ hotel }: HotelCardProps) {
   }
 
   const calculateNights = () => {
-    if (filters.checkInDate && filters.checkOutDate) {
-      const start = dayjs(filters.checkInDate)
-      const end = dayjs(filters.checkOutDate)
+    if (searchParams.checkInDate && searchParams.checkOutDate) {
+      const start = dayjs(searchParams.checkInDate)
+      const end = dayjs(searchParams.checkOutDate)
       const nights = end.diff(start, 'day')
       return nights > 0 ? nights : 0
     }

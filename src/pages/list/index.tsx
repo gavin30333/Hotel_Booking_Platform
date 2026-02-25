@@ -3,6 +3,7 @@ import { View } from '@tarojs/components'
 import { useHotelList } from '@/hooks/useHotelList'
 import { useHotelStore } from '@/store/hotelStore'
 import { useListPageStore } from '@/store/listPageStore'
+import { useQueryStore } from '@/store/useQueryStore'
 import Taro, { useLoad, usePullDownRefresh, useRouter } from '@tarojs/taro'
 import { useState, useEffect, useCallback } from 'react'
 import './ListPage.less'
@@ -23,7 +24,12 @@ export default function HotelList() {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
 
-  const initFromUrl = useCallback(() => {
+  const updateDates = useQueryStore((state) => state.updateDates)
+  const updateGuests = useQueryStore((state) => state.updateGuests)
+  const updateLocation = useQueryStore((state) => state.updateLocation)
+  const getSearchParams = useQueryStore((state) => state.getSearchParams)
+
+  const initFromUrlAndStore = useCallback(() => {
     const {
       city,
       keyword,
@@ -45,22 +51,18 @@ export default function HotelList() {
       newFilters.keyword = decodeURIComponent(keyword)
       hasParams = true
     }
-    if (checkInDate) {
-      newFilters.checkInDate = decodeURIComponent(checkInDate)
-      hasParams = true
+    if (checkInDate && checkOutDate) {
+      updateDates(
+        decodeURIComponent(checkInDate),
+        decodeURIComponent(checkOutDate)
+      )
     }
-    if (checkOutDate) {
-      newFilters.checkOutDate = decodeURIComponent(checkOutDate)
-      hasParams = true
-    }
-    if (rooms) {
-      newFilters.rooms = Number(rooms)
-    }
-    if (adults) {
-      newFilters.adults = Number(adults)
-    }
-    if (children) {
-      newFilters.children = Number(children)
+    if (rooms || adults || children) {
+      updateGuests(
+        rooms ? Number(rooms) : 1,
+        adults ? Number(adults) : 2,
+        children ? Number(children) : 0
+      )
     }
 
     if (hasParams) {
@@ -69,11 +71,11 @@ export default function HotelList() {
     }
 
     return hasParams
-  }, [router.params, resetFilters, setFilters])
+  }, [router.params, resetFilters, setFilters, updateDates, updateGuests])
 
   useLoad(() => {
     resetList()
-    const hasParams = initFromUrl()
+    const hasParams = initFromUrlAndStore()
     setIsInitialized(true)
 
     if (!hasParams) {

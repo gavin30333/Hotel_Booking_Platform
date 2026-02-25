@@ -1,13 +1,14 @@
 import React from 'react'
+import { FormField } from '@/components/common/form/FormField'
+import { SearchButton } from '@/components/common/form/SearchButton'
 import { useQueryForm } from '@/hooks/useQueryForm'
 import { SCENE_CONFIGS } from '@/constants/QueryConfig'
+import { useQueryStore } from '@/store/useQueryStore'
 import { TabType, SpecialFeature } from '@/types/query.types'
 import { SoundOutline, SmileOutline } from 'antd-mobile-icons'
 import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { TabBar } from './TabBar'
-import { FormField } from '@/components/common/form/FormField'
-import { SearchButton } from '@/components/common/form/SearchButton'
 
 import './QueryCard.less'
 
@@ -23,18 +24,51 @@ export const QueryCard: React.FC<QueryCardProps> = ({
   const { activeTab, formData, handleTabChange, updateField } =
     useQueryForm(defaultTab)
 
+  const updateDates = useQueryStore((state) => state.updateDates)
+  const updateGuests = useQueryStore((state) => state.updateGuests)
+  const updateLocation = useQueryStore((state) => state.updateLocation)
+  const getSearchParams = useQueryStore((state) => state.getSearchParams)
+
   const currentConfig = SCENE_CONFIGS[activeTab]
 
   const handleSearch = async (overrides?: any) => {
     const searchData = { ...formData, ...(overrides || {}), scene: activeTab }
 
-    const city = searchData.location?.city || ''
-    const keyword = searchData.location?.keyword || ''
-    const checkInDate = searchData.dates?.startDate || ''
-    const checkOutDate = searchData.dates?.endDate || ''
+    const dates = searchData.dates
+    const guests = searchData.guests
+    const location = searchData.location
+
+    if (dates?.startDate && dates?.endDate) {
+      updateDates(dates.startDate, dates.endDate)
+    }
+
+    if (guests) {
+      const getNumber = (
+        val: number | number[] | undefined,
+        defaultVal: number
+      ): number => {
+        if (val === undefined) return defaultVal
+        if (Array.isArray(val)) return val.length > 0 ? val[0] : defaultVal
+        return val
+      }
+      updateGuests(
+        getNumber(guests.rooms, 1),
+        getNumber(guests.adults, 2),
+        getNumber(guests.children, 0)
+      )
+    }
+
+    if (location) {
+      updateLocation(location)
+    }
+
+    const params = getSearchParams()
+    const city = params.city || ''
+    const checkInDate = params.checkInDate
+    const checkOutDate = params.checkOutDate
 
     Taro.navigateTo({
-      url: `/pages/list/index?city=${encodeURIComponent(city)}&keyword=${encodeURIComponent(keyword)}&checkInDate=${encodeURIComponent(checkInDate)}&checkOutDate=${encodeURIComponent(checkOutDate)}`,
+      url: `/pages/list/index?city=${encodeURIComponent(city)}&checkInDate=${encodeURIComponent(checkInDate)}&checkOutDate=${encodeURIComponent(checkOutDate)}&rooms=${params.rooms}&adults=${params.adults}&children=${params.children}`,
     })
 
     if (onSearch) {
