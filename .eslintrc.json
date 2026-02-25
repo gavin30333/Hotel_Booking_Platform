@@ -1,0 +1,53 @@
+{
+  "extends": ["taro/react", "plugin:prettier/recommended"],
+  "plugins": ["prettier"],
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "globals": {
+    "defineAppConfig": "readonly",
+    "definePageConfig": "readonly"
+  },
+  "rules": {
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "prettier/prettier": [
+      "error",
+      {
+        "semi": false,
+        "singleQuote": true,
+        "trailingComma": "es5",
+        "tabWidth": 2,
+        "useTabs": false,
+        "endOfLine": "auto"
+      }
+    ],
+    "arrow-spacing": "off",
+    "semi": "off",
+    "no-console": 0,
+    "no-debugger": 0,
+    "no-var": 0,
+    "no-undef": 2,
+    "prefer-const": "off",
+    "no-use-before-define": "off",
+    "arrow-body-style": "off",
+    "prefer-arrow-callback": "off",
+    "no-case-declarations": "off",
+    "@typescript-eslint/no-use-before-define": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-unused-expression": "off",
+    "@typescript-eslint/no-throw-literal": "off",
+    "@typescript-eslint/no-this-alias": "off",
+    "@typescript-eslint/no-shadow": "off",
+    "@typescript-eslint/triple-slash-reference": "off",
+    "react/no-array-index-key": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "react-hooks/rules-of-hooks": "off",
+    "no-extra-parens": "off",
+    "no-extra-semi": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "import/no-commonjs": "off",
+    "no-restricted-globals": "off"
+  }
+}

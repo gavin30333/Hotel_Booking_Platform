@@ -1,0 +1,327 @@
+@import "../../styles/variables.less";
+
+/* 酒店信息头部 */
+.hotel-header {
+  background-color: @bg-color;
+  padding: @spacing-lg;
+  margin-bottom: @spacing-md;
+}
+
+.date-and-room {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: @spacing-xs;
+}
+
+.booking-date {
+  font-size: @font-size-base;
+  font-weight: bold;
+  color: @text-color;
+}
+
+.room-detail-tag {
+  font-size: @font-size-base;
+  font-weight: bold;
+  color: @text-color;
+}
+
+.check-time {
+  font-size: @font-size-sm;
+  color: @text-placeholder;
+  margin-bottom: @spacing-xs;
+  display: block;
+}
+
+.room-info {
+  font-size: @font-size-base;
+  font-weight: bold;
+  color: @text-color;
+  margin-bottom: @spacing-xs;
+  display: block;
+}
+
+.booking-tag {
+  font-size: @font-size-sm;
+  color: @text-secondary;
+}
+
+/* 预订信息表单 */
+.booking-form {
+  background-color: @bg-color;
+  margin-bottom: @spacing-md;
+}
+
+.form-section {
+  padding: @spacing-lg;
+  border-bottom: 1px solid @border-color;
+}
+
+.room-count-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: @spacing-lg;
+}
+
+.section-title {
+  font-size: @font-size-md;
+  font-weight: 600;
+  color: @text-color;
+  padding-bottom: 10px;
+}
+
+.room-count-control {
+  display: flex;
+  align-items: center;
+}
+
+.counter-btn {
+  width: 20px;
+  height: 20px;
+  border: 1px solid @primary-color;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: @font-size-sm;
+  color: @primary-color;
+  line-height: 1;
+  background-color: @bg-color;
+  transition: all 0.3s ease;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.counter-btn:hover:not(:disabled) {
+  background-color: @primary-color;
+  color: @bg-color;
+}
+
+.counter-btn:disabled {
+  color: #d9d9d9;
+  border-color: #d9d9d9;
+  background-color: #f5f5f5;
+}
+
+.counter-value {
+  margin: 0 @spacing-sm;
+  font-size: @font-size-base;
+  color: @text-color;
+  min-width: 20px;
+  text-align: center;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+}
+
+.form-label {
+  width: 80px;
+  font-size: @font-size-base;
+  color: @text-secondary;
+}
+
+.form-control {
+  flex: 1;
+  min-width: 0;
+}
+
+.form-control input {
+  width: 100%;
+  padding: 0 0 4px 0;
+  font-size: @font-size-base;
+  line-height: 1.2 !important;
+  color: @text-color;
+  border: none;
+  border-bottom: 1px solid @border-color;
+  outline: none;
+}
+
+.form-control text {
+  display: block;
+  margin-top: 4px;
+}
+
+.form-control input::placeholder {
+  color: @text-placeholder;
+}
+
+.required {
+  color: #ff4d4f;
+  margin-left: @spacing-xs;
+}
+
+/* 可享优惠 */
+.discount-section {
+  background-color: @bg-color;
+  padding: @spacing-lg;
+  margin-bottom: @spacing-md;
+}
+
+.discount-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: @spacing-xs;
+}
+
+.discount-name {
+  font-size: @font-size-base;
+  color: @text-secondary;
+}
+
+.discount-value-gray {
+  font-size: @font-size-base;
+  color: @text-placeholder;
+}
+
+/* 特殊要求 */
+.special-requests-section {
+  background-color: @bg-color;
+  padding: @spacing-lg;
+  margin-bottom: @spacing-md;
+}
+
+.request-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: @spacing-xs;
+  margin-bottom: @spacing-md;
+}
+
+.request-tag {
+  padding: @spacing-xs @spacing-md;
+  border: 1px solid #d9d9d9;
+  border-radius: @border-radius-lg;
+  font-size: @font-size-sm;
+  color: @text-secondary;
+  background-color: #f9f9f9;
+}
+
+.request-tag.active {
+  border-color: @primary-color;
+  color: @primary-color;
+  background-color: #e6f7ff;
+}
+
+.more-requests {
+  font-size: @font-size-base;
+  color: @primary-color;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 发票信息 */
+.invoice-section {
+  background-color: @bg-color;
+  padding: @spacing-lg;
+}
+
+.invoice-info {
+  font-size: @font-size-base;
+  color: @text-secondary;
+  line-height: 1.5;
+}
+
+/* 底部价格和支付区域 */
+.booking-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: @bg-color;
+  border-top: 1px solid @border-color;
+  padding: @spacing-lg;
+  display: flex;
+  align-items: center;
+}
+
+.price-info {
+  flex: 1;
+}
+
+.price-label {
+  font-size: @font-size-sm;
+  color: @text-secondary;
+  margin-bottom: @spacing-xs;
+}
+
+.price-value-blue {
+  font-size: @font-size-xl;
+  font-weight: 600;
+  color: @primary-color;
+}
+
+.price-note {
+  font-size: @font-size-sm;
+  color: @text-placeholder;
+}
+
+.pay-btn-blue {
+  width: 120px;
+  height: 40px;
+  background-color: @primary-color;
+  color: @bg-color;
+  border: none;
+  border-radius: @border-radius-xl;
+  font-size: @font-size-md;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: @spacing-lg;
+}
+
+/* 顶部导航栏 */
+.top-nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  background-color: @bg-color;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 @spacing-xs;
+  z-index: 100;
+  border-bottom: 1px solid @border-color;
+}
+
+.nav-left {
+  width: 24px;
+}
+
+.back-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-title {
+  color: @text-color;
+  font-size: @font-size-md;
+  font-weight: 600;
+}
+
+.nav-right {
+  width: 24px;
+}
+
+/* 内容区域 */
+.booking-content {
+  padding-top: 44px;
+  padding-bottom: 100px;
+}
+
+.booking-page {
+  min-height: 100vh;
+  background-color: @page-bg;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}

@@ -1,0 +1,118 @@
+@import '@/styles/variables.less';
+
+.service-tags-container {
+  background-color: @bg-color;
+  margin: 0;
+  padding: 0 @spacing-lg;
+  display: flex;
+  align-items: center;
+  position: relative;
+  border-radius: 0;
+  overflow: hidden;
+
+  /* 水平滚动容器 */
+  .service-tags-scroll {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: @spacing-xs 0; // Reduced padding
+    overflow-x: auto;
+    white-space: nowrap;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    z-index: 1;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    :global {
+      .taro-scroll-view__scrollbar {
+        display: none;
+      }
+      .taro-scroll-view {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
+      }
+    }
+
+    /* 服务标签 */
+    .service-tags {
+      display: flex;
+      align-items: center;
+      gap: @spacing-xs; // Reduced gap to fit 5 items
+      padding-right: 70px;
+
+      .service-tag {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px; // Tighter spacing
+        min-width: 48px; // Narrower item width
+        justify-content: center;
+
+        .tag-icon {
+          font-size: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px; // Smaller icon container
+          height: 32px;
+          background-color: @page-bg;
+          border-radius: 50%;
+          color: @primary-color;
+        }
+
+        .tag-text {
+          font-size: @font-size-xs;
+          transform: scale(0.9); // Slightly smaller text
+          color: @text-secondary;
+          text-align: center;
+          line-height: 1.2;
+          white-space: nowrap; // Prevent wrapping if possible
+        }
+      }
+    }
+  }
+
+  /* 设施政策 - 固定在右侧 */
+  .facility-policy {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    min-width: 70px; // Slightly reduced width
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: -4px 0 8px rgba(255, 255, 255, 1);
+    padding-left: 4px;
+
+    .policy-text {
+      font-size: 10px; // Smaller text
+      color: @text-secondary;
+      margin-right: 2px;
+    }
+    
+    .policy-arrow {
+      font-size: 10px; // Smaller arrow
+      color: @text-secondary;
+    }
+  }
+}
+
+@media (min-width: 786px) {
+  .service-tags-container {
+    border-radius: @border-radius-md;
+    box-shadow: @shadow-card;
+  }
+}

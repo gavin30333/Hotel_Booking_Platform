@@ -1,0 +1,89 @@
+.policy-popup .adm-popup-body {
+  background-color: #ffffff;
+}
+.policy-popup-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+  background-color: #ffffff;
+  border-radius: 12px 12px 0 0;
+}
+.policy-popup-container .policy-header {
+  padding: 20px;
+  border-bottom: 1px solid #eeeeee;
+  text-align: center;
+}
+.policy-popup-container .policy-header .header-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333333;
+  display: block;
+}
+.policy-popup-container .policy-header .header-subtitle {
+  font-size: 12px;
+  color: #666666;
+  margin-top: 6px;
+  display: block;
+}
+.policy-popup-container .policy-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 20px;
+}
+.policy-popup-container .policy-content .policy-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.policy-popup-container .policy-content .policy-item:last-child {
+  border-bottom: none;
+}
+.policy-popup-container .policy-content .policy-item .policy-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(0, 102, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+.policy-popup-container .policy-content .policy-item .policy-info {
+  flex: 1;
+}
+.policy-popup-container .policy-content .policy-item .policy-info .policy-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333333;
+  display: block;
+  margin-bottom: 6px;
+}
+.policy-popup-container .policy-content .policy-item .policy-info .policy-value {
+  font-size: 14px;
+  color: #666666;
+  line-height: 1.5;
+  display: block;
+}
+.policy-popup-container .policy-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #eeeeee;
+}
+.policy-popup-container .policy-footer .btn-close {
+  width: 100%;
+  padding: 14px;
+  background-color: #0066ff;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.policy-popup-container .policy-footer .btn-close:active {
+  opacity: 0.9;
+}
+.policy-popup-container .policy-footer .btn-close text {
+  font-size: 16px;
+  color: #fff;
+  font-weight: 600;
+}

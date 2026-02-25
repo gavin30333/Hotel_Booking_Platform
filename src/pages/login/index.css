@@ -1,0 +1,238 @@
+/* 登录页面容器 */
+.login-page {
+  min-height: 100vh;
+  background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  position: relative;
+}
+/* 背景图片覆盖层 */
+.login-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+/* 内容区域 */
+.login-content {
+  padding-top: 44px;
+  padding-bottom: 40px;
+  position: relative;
+  z-index: 2;
+}
+/* 顶部导航栏 */
+.top-nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 100;
+  position: relative;
+}
+.nav-left {
+  width: 24px;
+}
+.back-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-right {
+  width: auto;
+}
+.register-btn {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+}
+/* 内容区域 */
+.login-content {
+  padding-top: 44px;
+  padding-bottom: 40px;
+}
+.login-container {
+  padding: 24px;
+  padding-top: 28px;
+}
+/* 登录头部 */
+.login-header {
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.login-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #fff;
+  display: block;
+}
+.login-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  display: block;
+  margin-bottom: 24px;
+}
+/* 手机号输入容器 */
+.phone-input-container {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 0 14px;
+  margin-bottom: 20px;
+}
+.country-code {
+  color: #333333;
+  font-size: 14px;
+  padding-right: 14px;
+  border-right: 1px solid #eeeeee;
+}
+.phone-input {
+  flex: 1;
+  padding: 14px;
+  font-size: 14px;
+  color: #333333;
+  background-color: transparent;
+  border: none;
+}
+.phone-input::placeholder {
+  color: #cccccc;
+}
+/* 验证码输入容器 */
+.code-input-container {
+  margin-bottom: 20px;
+}
+/* 验证码输入框容器 */
+.code-inputs-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.code-input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  font-size: 14px;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-bottom: 14px;
+  box-sizing: border-box;
+}
+.code-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+.code-btn {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.code-btn.disabled {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+/* 其他登录方式 */
+.other-login-methods {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.login-method-text {
+  color: #fff;
+  font-size: 12px;
+  text-decoration: underline;
+}
+/* 第三方登录 */
+.third-party-login {
+  display: flex;
+  justify-content: flex-start;
+  gap: 20px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+.third-party-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon {
+  font-size: 18px;
+}
+/* 服务协议 */
+.service-agreement {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.checkbox {
+  margin-top: 2px;
+}
+.agreement-text {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  line-height: 1.4;
+}
+/* 登录遇到问题 */
+.login-help {
+  text-align: center;
+}
+.help-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+}
+/* 响应式调整 */
+@media (max-width: 375px) {
+  .login-container {
+    padding: 20px;
+    padding-top: 24px;
+  }
+  .phone-input-container {
+    padding: 0 10px;
+  }
+  .country-code {
+    padding-right: 10px;
+  }
+  .phone-input {
+    padding: 10px;
+  }
+}
+/* 输入框样式覆盖 */
+:global(.taro-input__control) {
+  background-color: transparent !important;
+  border: none !important;
+}
+:global(.taro-input) {
+  background-color: transparent !important;
+  border: none !important;
+}

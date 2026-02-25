@@ -1,0 +1,299 @@
+@import '@/styles/variables.less';
+
+.date-price-section {
+  background-color: #fff;
+  padding: @spacing-lg;
+  margin: 0 0 0 0;
+  position: relative;
+  border-radius: 0;
+  overflow: hidden;
+
+  /* 日期价格主容器 */
+  .date-price-main {
+    display: flex;
+    margin-bottom: @spacing-md;
+    position: relative;
+
+    /* 左侧日期部分 */
+    .date-section {
+      flex: 1;
+      position: relative;
+
+      /* 日期标签和内容组合 */
+      .date-combined {
+        display: flex;
+        align-items: flex-end; /* Align bottom */
+        justify-content: space-between;
+
+        .date-group {
+          display: flex;
+          align-items: flex-end;
+
+          /* 日期项 - 今天和起始日期 */
+          .date-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+
+            .date-label {
+              font-size: @font-size-xs;
+              color: @text-secondary;
+              margin-bottom: 2px;
+              cursor: pointer;
+            }
+
+            .date-label-row {
+              display: flex;
+              align-items: center;
+              margin-bottom: 2px;
+
+              .date-label {
+                margin-bottom: 0;
+                margin-right: 4px;
+              }
+
+              /* 看低价角标 */
+              .low-price-badge {
+                background-color: #ff7a45;
+                padding: 1px 4px;
+                border-radius: 4px 4px 4px 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 14px;
+
+                .low-price-text {
+                  font-size: 10px;
+                  color: #fff;
+                  font-weight: 500;
+                  line-height: 1;
+                }
+              }
+            }
+
+            .date-value {
+              font-size: 20px;
+              font-weight: 600;
+              color: @text-color;
+              line-height: 1.2;
+            }
+          }
+
+          .date-separator {
+            margin: 0 4px;
+            padding-bottom: 2px;
+            
+            .separator-text {
+              font-size: 20px;
+              color: @text-color;
+              font-weight: 600;
+            }
+          }
+        }
+
+        /* 共1晚 */
+        .night-count {
+          display: flex;
+          align-items: center;
+          margin-left: 0;
+          margin-bottom: 4px;
+
+          .night-count-text {
+            font-size: 11px;
+            color: @text-secondary;
+            letter-spacing: -0.5px;
+          }
+        }
+      }
+    }
+
+    /* 分隔线 */
+    .divider {
+      width: 1px;
+      height: 60px;
+      background-color: #e0e0e0;
+      margin: 0 @spacing-md;
+    }
+
+    /* 右侧人数部分 */
+    .guest-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-left: 12px;
+
+      /* 人数标签和内容组合 */
+      .guest-combined {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        .guest-label {
+          font-size: @font-size-xs;
+          color: @text-secondary;
+          margin-bottom: 2px;
+          cursor: pointer;
+        }
+
+        .guest-value {
+          display: flex;
+          align-items: center;
+
+          .guest-item {
+            display: flex;
+            align-items: center;
+            margin-right: 8px;
+
+            &:last-child {
+              margin-right: 0;
+            }
+
+            .val {
+              font-size: 20px;
+              font-weight: 600;
+              color: @text-color;
+              line-height: 1.2;
+            }
+
+            .icon {
+              font-size: 14px;
+              color: #666;
+              margin-left: 2px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* 筛选标签容器 */
+  .filter-tags-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow-x: auto;
+    white-space: nowrap;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    :global {
+      .taro-scroll-view__scrollbar {
+        display: none;
+      }
+      .taro-scroll-view {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
+      }
+    }
+
+    .filter-tag {
+      display: inline-flex;
+      align-items: center;
+      margin-right: @spacing-lg;
+      padding: @spacing-xs @spacing-md;
+      border-radius: @border-radius-sm;
+      font-size: @font-size-base;
+      color: @text-secondary;
+      cursor: pointer;
+      background-color: #f8f8f8;
+      transition: all 0.2s ease;
+
+      &:active {
+        background-color: #f0f0f0;
+      }
+
+      &.active {
+        background-color: #e6f7ff;
+        color: @primary-color;
+      }
+
+      .filter-tag-text {
+        margin-right: @spacing-xs;
+      }
+
+      .filter-tag-arrow {
+        font-size: @font-size-sm;
+        color: #999;
+      }
+
+      .filter-tag-close {
+        margin-left: @spacing-xs;
+        font-size: @font-size-sm;
+        color: #fff;
+        cursor: pointer;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #999;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+
+        &:active {
+          background-color: #666;
+        }
+      }
+    }
+
+    /* 右侧筛选按钮 */
+    .filter-button {
+      position: sticky;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      padding: @spacing-xs @spacing-md;
+      background-color: @bg-color;
+      box-shadow: -4px 0 8px rgba(255, 255, 255, 0.8);
+      z-index: 2;
+      white-space: nowrap;
+
+      .filter-button-text {
+        font-size: @font-size-base;
+        color: @text-secondary;
+        margin-right: @spacing-xs;
+      }
+
+      .filter-button-arrow {
+        font-size: @font-size-sm;
+        color: #999;
+      }
+    }
+  }
+}
+
+@media (min-width: 786px) {
+  .date-price-section {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.date-price-placeholder {
+  height: 80px;
+}
+
+.date-price-main.fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  background-color: #fff;
+  padding: @spacing-lg @spacing-lg @spacing-xs @spacing-lg;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}

@@ -1,0 +1,280 @@
+@import '../../styles/variables.less';
+
+/* 登录页面容器 */
+.login-page {
+  min-height: 100vh;
+  background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  position: relative;
+}
+
+/* 背景图片覆盖层 */
+.login-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+/* 内容区域 */
+.login-content {
+  padding-top: 44px;
+  padding-bottom: 40px;
+  position: relative;
+  z-index: 2;
+}
+
+/* 顶部导航栏 */
+.top-nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 @spacing-lg;
+  z-index: 100;
+  position: relative;
+}
+
+.nav-left {
+  width: 24px;
+}
+
+.back-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-right {
+  width: auto;
+}
+
+.register-btn {
+  color: #fff;
+  font-size: @font-size-base;
+  font-weight: 500;
+}
+
+/* 内容区域 */
+.login-content {
+  padding-top: 44px;
+  padding-bottom: 40px;
+}
+
+.login-container {
+  padding: @spacing-xl;
+  padding-top: @spacing-xxl;
+}
+
+/* 登录头部 */
+.login-header {
+  margin-bottom: @spacing-xxl;
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-xs;
+}
+
+.login-title {
+  font-size: @font-size-xxl;
+  font-weight: 600;
+  color: #fff;
+  display: block;
+}
+
+.login-subtitle {
+  font-size: @font-size-base;
+  color: rgba(255, 255, 255, 0.8);
+  display: block;
+  margin-bottom: @spacing-xl;
+}
+
+/* 手机号输入容器 */
+.phone-input-container {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: @border-radius-md;
+  padding: 0 @spacing-md;
+  margin-bottom: @spacing-lg;
+}
+
+.country-code {
+  color: @text-color;
+  font-size: @font-size-base;
+  padding-right: @spacing-md;
+  border-right: 1px solid @border-color;
+}
+
+.phone-input {
+  flex: 1;
+  padding: @spacing-md;
+  font-size: @font-size-base;
+  color: @text-color;
+  background-color: transparent;
+  border: none;
+}
+
+.phone-input::placeholder {
+  color: @text-placeholder;
+}
+
+/* 验证码输入容器 */
+.code-input-container {
+  margin-bottom: @spacing-lg;
+}
+
+/* 验证码输入框容器 */
+.code-inputs-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: @spacing-md;
+}
+
+.code-input {
+  width: 100%;
+  padding: @spacing-md;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: @border-radius-md;
+  font-size: @font-size-base;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-bottom: @spacing-md;
+  box-sizing: border-box;
+}
+
+.code-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.code-btn {
+  width: 100%;
+  height: 44px;
+  padding: 0 @spacing-md;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: @border-radius-md;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: @font-size-base;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.code-btn.disabled {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 其他登录方式 */
+.other-login-methods {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: @spacing-xl;
+}
+
+.login-method-text {
+  color: #fff;
+  font-size: @font-size-sm;
+  text-decoration: underline;
+}
+
+/* 第三方登录 */
+.third-party-login {
+  display: flex;
+  justify-content: flex-start;
+  gap: @spacing-lg;
+  margin-top: @spacing-xl;
+  margin-bottom: @spacing-xl;
+}
+
+.third-party-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  font-size: @font-size-lg;
+}
+
+/* 服务协议 */
+.service-agreement {
+  display: flex;
+  align-items: flex-start;
+  gap: @spacing-xs;
+  margin-bottom: @spacing-lg;
+}
+
+.checkbox {
+  margin-top: 2px;
+}
+
+.agreement-text {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: @font-size-sm;
+  line-height: 1.4;
+}
+
+/* 登录遇到问题 */
+.login-help {
+  text-align: center;
+}
+
+.help-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: @font-size-sm;
+}
+
+/* 响应式调整 */
+@media (max-width: 375px) {
+  .login-container {
+    padding: @spacing-lg;
+    padding-top: @spacing-xl;
+  }
+
+  .phone-input-container {
+    padding: 0 @spacing-sm;
+  }
+
+  .country-code {
+    padding-right: @spacing-sm;
+  }
+
+  .phone-input {
+    padding: @spacing-sm;
+  }
+}
+
+/* 输入框样式覆盖 */
+:global(.taro-input__control) {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+:global(.taro-input) {
+  background-color: transparent !important;
+  border: none !important;
+}

@@ -1,0 +1,582 @@
+@import '@/styles/variables.less';
+
+.hotel-detail-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: @page-bg;
+
+    /* 详情内容 */
+  .detail-content {
+    width: 100%;
+    overflow-y: auto;
+    position: relative;
+
+    /* 轮播图 Tabs */
+    .carousel-tabs {
+      position: absolute;
+      top: 250px;
+      left: @spacing-sm;
+      display: flex;
+      gap: @spacing-xs;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: @spacing-xs;
+      border-radius: @border-radius-xl;
+      z-index: 10;
+
+      .tab-item {
+        font-size: @font-size-xs;
+        color: #fff;
+        padding: 0 @spacing-xs;
+        border-radius: @border-radius-lg;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &.active {
+          background-color: #fff;
+          color: #333;
+        }
+      }
+    }
+
+    /* 评价和地图容器 */
+      .review-map-container {
+        display: flex;
+        background-color: @bg-color;
+        margin: 0;
+        padding: 0 @spacing-lg @spacing-md @spacing-lg;
+        height: auto;
+        min-height: 80px;
+        gap: @spacing-sm;
+        border-radius: 0;
+        overflow: hidden;
+        font-size: @font-size-xs;
+
+      /* 评价区域 */
+      .review-section {
+        flex: 1;
+        padding: @spacing-sm @spacing-md;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: @tab-bg;
+        border-radius: @border-radius-md;
+
+        .review-header {
+          display: flex;
+          align-items: center;
+          margin-bottom: @spacing-xs;
+
+          .rating-badge {
+            background-color: #0086F6;
+            // Asymmetric border-radius to match design "leaf" shape: Top-Left & Bottom-Right sharp (2px), Top-Right & Bottom-Left rounded (8px)
+            border-radius: 2px 2px 8px 2px;
+            padding: 0 4px;
+            margin-right: 4px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: none;
+
+            .rating-value {
+              color: @bg-color;
+              font-size: 12px;
+              font-weight: bold;
+              line-height: 16px;
+            }
+          }
+
+          .rating-label {
+            color: #0086F6;
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 16px;
+          }
+
+          .review-count {
+            color: @text-secondary;
+            margin-left: auto;
+            font-size: @font-size-xs;
+          }
+        }
+
+        .review-content {
+          .review-tags {
+            font-weight: normal;
+            color: @text-color;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: @font-size-xs;
+          }
+        }
+      }
+
+      /* 地图区域 */
+      .map-section {
+        flex: 1;
+        padding: @spacing-sm @spacing-md;
+        display: flex;
+        align-items: center;
+        background-color: @map-section-bg;
+        position: relative;
+        overflow: hidden;
+        border-radius: @border-radius-md;
+
+        &::before, &::after {
+          display: none;
+        }
+
+        .map-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+          height: 100%;
+
+          .location-info {
+            flex: 1;
+            margin-right: @spacing-sm;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2px;
+
+            .address-text {
+              font-weight: 600;
+              color: @text-color;
+              line-height: 1.3;
+              width: 100%;
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+              font-size: @font-size-xs;
+            }
+
+            .distance-text {
+              color: @text-secondary;
+              width: 100%;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              font-size: @font-size-xs;
+            }
+          }
+
+          .map-icon-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            flex-shrink: 0;
+
+            .map-icon {
+              width: 24px;
+              height: 24px;
+              border-radius: 50%;
+              background-color: @bg-color;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+              :global {
+                .map-icon-svg {
+                  font-size: 14px;
+                  color: @text-secondary;
+                }
+              }
+            }
+
+            .map-text {
+              color: @text-secondary;
+              text-align: center;
+              transform: scale(0.9);
+            }
+          }
+        }
+      }
+    }
+
+    /* 泡泡动画 */
+    @keyframes bubble {
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+      }
+    }
+
+    /* 优惠信息 */
+    .promotion-section {
+      background-color: #fff;
+      padding: 0 @spacing-md;
+
+      .promotion-item {
+        display: flex;
+        align-items: center;
+
+        .promotion-icon {
+          font-size: @font-size-sm;
+          margin-right: @spacing-sm;
+        }
+
+        .promotion-text {
+          font-size: @font-size-sm;
+          color: #ff4d4f;
+        }
+      }
+    }
+
+    /* 日期价格卡片 */
+    .date-price-card {
+      background-color: #fff;
+      margin: 0 0 @spacing-md 0;
+      border-radius: @border-radius-md;
+      overflow: hidden;
+
+      /* 优惠信息区域 */
+      .promotion-section {
+        display: flex;
+        align-items: center;
+        padding: @spacing-md;
+        border-bottom: 1px solid #f0f0f0;
+        position: relative;
+
+        /* 横向滚动容器 */
+        .promotion-scroll {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          overflow-x: auto;
+          white-space: nowrap;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+          z-index: 1;
+
+          :global {
+            .taro-scroll-view__scrollbar {
+              display: none;
+            }
+            .taro-scroll-view {
+              flex: 1;
+              display: inline-flex;
+              align-items: center;
+              -ms-overflow-style: none;
+              scrollbar-width: none;
+
+              &::-webkit-scrollbar {
+                display: none;
+              }
+            }
+          }
+
+          /* 优惠标签容器 */
+          .promotion-tags {
+            display: flex;
+            align-items: center;
+            gap: @spacing-sm;
+            padding-right: 80px;
+
+            /* 优惠标签 */
+            .promotion-tag {
+              display: inline-flex;
+              align-items: center;
+              padding: 0 @spacing-xs;
+
+              border: 1px solid #ff7a45;
+              border-radius: @border-radius-sm;
+              white-space: nowrap;
+
+              .promotion-icon {
+                font-size: @font-size-sm;
+              }
+
+              .promotion-text {
+                font-size: @font-size-sm;
+                color: #ff7a45;
+                font-weight: 500;
+              }
+            }
+          }
+        }
+
+        /* 更多优惠按钮 */
+        .promotion-more {
+          position: absolute;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          min-width: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          z-index: 2;
+          background-color: #fff;
+          padding: 0 @spacing-sm;
+          box-shadow: -4px 0 8px rgba(255, 255, 255, 0.8);
+
+          .more-text {
+            font-size: @font-size-sm;
+            color: #ff7a45;
+            display: flex;
+            align-items: center;
+
+            &::after {
+              content: '>';
+              margin-left: @spacing-xs;
+              font-size: @font-size-sm;
+              color: #ff7a45;
+            }
+          }
+        }
+      }
+    }
+
+    /* 日期价格吸顶容器 */
+    .date-price-sticky-wrapper {
+      position: sticky;
+      top: 56px;
+      z-index: 90;
+      background-color: #fff;
+      will-change: transform;
+      transform: translateZ(0);
+    }
+
+    /* 周边信息 */
+    .nearby-section {
+      background-color: #fff;
+      padding: @spacing-lg;
+      margin: 0 0 @spacing-md 0;
+      border-radius: @border-radius-md;
+      overflow: hidden;
+
+      .section-title {
+        font-size: @font-size-md;
+        font-weight: 600;
+        color: @text-color;
+        margin-bottom: @spacing-md;
+        display: block;
+      }
+
+      .nearby-group {
+        margin-bottom: @spacing-md;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .nearby-header {
+          display: flex;
+          align-items: center;
+          gap: @spacing-xs;
+          margin-bottom: @spacing-sm;
+
+          .nearby-title {
+            font-size: @font-size-base;
+            font-weight: 500;
+            color: @text-color;
+          }
+        }
+
+        .nearby-list {
+          .nearby-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: @spacing-xs 0;
+            border-bottom: 1px solid #f5f5f5;
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            .transport-item {
+              display: flex;
+              align-items: center;
+              gap: @spacing-xs;
+            }
+
+            .nearby-name {
+              font-size: @font-size-base;
+              color: @text-color;
+            }
+
+            .nearby-distance {
+              font-size: @font-size-sm;
+              color: @text-secondary;
+            }
+          }
+        }
+      }
+    }
+
+    /* 筛选下拉框 */
+    .filter-dropdown {
+      background-color: #fff;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: -@spacing-xs;
+      padding: @spacing-lg;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      max-height: 45vh;
+      overflow-y: auto;
+      z-index: 100;
+      border-radius: 0 0 @border-radius-md @border-radius-md;
+
+      .filter-category {
+        margin-bottom: @spacing-xl;
+
+        .filter-category-header {
+          margin-bottom: @spacing-lg;
+
+          .filter-category-title {
+            font-size: @font-size-md;
+            font-weight: 600;
+            color: @text-color;
+          }
+        }
+
+        /* 筛选选项网格，一行放三个 */
+        .filter-options-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: @spacing-xs;
+
+          .filter-option {
+            padding: @spacing-xs @spacing-sm;
+            border-radius: @border-radius-sm;
+            border: 1px solid #e0e0e0;
+            background-color: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+
+            &:active {
+              background-color: #e6f7ff;
+              border-color: @primary-color;
+            }
+
+            .filter-option-text {
+              font-size: @font-size-base;
+              color: @text-secondary;
+            }
+          }
+        }
+      }
+
+      /* 底部按钮 */
+      .filter-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: @spacing-xl;
+        padding-top: @spacing-lg;
+        border-top: 1px solid #f0f0f0;
+
+        .filter-button-clear {
+          flex: 1;
+          margin-right: @spacing-sm;
+          padding: @spacing-sm;
+          border: 1px solid #e0e0e0;
+          border-radius: @border-radius-sm;
+          background-color: @bg-color;
+          text-align: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:active {
+            background-color: #f5f5f5;
+          }
+
+          .filter-button-text {
+            font-size: @font-size-base;
+            color: @text-secondary;
+          }
+        }
+
+        .filter-button-confirm {
+          flex: 1;
+          margin-left: @spacing-sm;
+          padding: @spacing-sm;
+          border: 1px solid @primary-color;
+          border-radius: @border-radius-sm;
+          background-color: @primary-color;
+          text-align: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:active {
+            background-color: #40a9ff;
+          }
+
+          .filter-button-text {
+            font-size: @font-size-base;
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    /* 筛选遮罩层 */
+    .filter-overlay {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 99;
+    }
+  }
+
+  /* 加载和错误容器 */
+  .loading-container,
+  .error-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+
+    text {
+      font-size: @font-size-lg;
+      color: #999;
+    }
+  }
+}
+
+/* 响应式设计 */
+@media (min-width: 786px) {
+  .hotel-detail-page {
+    .detail-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+
+      .hotel-location,
+      .promotion-section {
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+    }
+
+    .booking-bar {
+      max-width: 1200px;
+      margin: 0 auto;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 8px 8px 0 0;
+    }
+  }
+}

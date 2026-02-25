@@ -1,0 +1,29 @@
+@import '@/styles/variables.less';
+
+.hotel-list {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: @page-bg;
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .hotel-list {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (min-width: 769px) and (max-width: 1023px) {
+  .hotel-list {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .hotel-list {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+}

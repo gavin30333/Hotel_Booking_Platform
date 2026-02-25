@@ -1,0 +1,20 @@
+.region-sidebar {
+  height: 100%;
+  --width: 90px;
+  background-color: #f5f7fa;
+
+  .adm-side-bar-item {
+    padding: 12px 8px;
+    font-size: 13px;
+
+    &.adm-side-bar-item-active {
+      background-color: #fff;
+      color: #0086f6; // Ctrip blue
+      font-weight: 500;
+
+      &::before {
+        background-color: #0086f6;
+      }
+    }
+  }
+}
