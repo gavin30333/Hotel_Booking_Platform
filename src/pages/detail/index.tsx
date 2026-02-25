@@ -1,8 +1,8 @@
 import { View, Text, ScrollView } from '@tarojs/components'
-import { useState, useEffect } from 'react'
-import Taro, { useRouter, showToast } from '@tarojs/taro'
+import { useState, useEffect, useRef, useMemo } from 'react'
+import Taro, { useRouter, showToast, usePageScroll } from '@tarojs/taro'
 import { getHotelDetail } from '@/services/hotel'
-import ImageCarousel from '@/components/common/display/ImageCarousel'
+import { getCarouselImages } from '@/mock/carousel'
 import dayjs from 'dayjs'
 import {
   FireFill,
@@ -12,6 +12,7 @@ import {
   LocationOutline,
 } from 'antd-mobile-icons'
 import { CalendarPicker } from '@/components/common/form/CalendarPicker'
+import ImageCarousel from '@/components/common/display/ImageCarousel'
 import {
   PolicyPopup,
   GuestSelectionPopup,
@@ -25,7 +26,6 @@ import {
   DEFAULT_REVIEW_TAGS,
   DEFAULT_DISTANCE_TEXT,
   DEFAULT_OPENING_DATE,
-  CAROUSEL_TABS,
   HOLIDAY_DATA,
   LOWEST_PRICE_DATA,
 } from './constants'
@@ -74,6 +74,18 @@ export default function HotelDetailPage() {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
   const [showFilterDropdown, setShowFilterDropdown] = useState(false)
   const [filterArrowUp, setFilterArrowUp] = useState(false)
+
+  const [isDatePriceFixed, setIsDatePriceFixed] = useState(false)
+  const datePriceSectionTop = useRef(0)
+  const isDatePriceFixedRef = useRef(false)
+
+  // Use memo to prevent re-generating mock data on every render
+  const carouselData = useMemo(() => {
+    if (!hotel) return [];
+    return getCarouselImages(hotel.images || []);
+  }, [hotel]);
+
+  const TOP_NAV_BAR_HEIGHT = 56
 
   useEffect(() => {
     fetchHotelDetail()
@@ -210,6 +222,34 @@ export default function HotelDetailPage() {
     })
   }
 
+  usePageScroll((res) => {
+    const scrollTop = res.scrollTop
+    const datePriceThreshold = datePriceSectionTop.current - TOP_NAV_BAR_HEIGHT
+
+    if (scrollTop > datePriceThreshold && !isDatePriceFixedRef.current) {
+      setIsDatePriceFixed(true)
+      isDatePriceFixedRef.current = true
+    } else if (scrollTop <= datePriceThreshold && isDatePriceFixedRef.current) {
+      setIsDatePriceFixed(false)
+      isDatePriceFixedRef.current = false
+    }
+  })
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      Taro.createSelectorQuery()
+      .select('.date-price-card')
+      .boundingClientRect((rect: any) => {
+        if (rect) {
+          datePriceSectionTop.current = rect.top + (window?.scrollY || 0)
+        }
+      })
+      .exec()
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [hotel])
+
   if (loading) {
     return (
       <View className="loading-container">
@@ -265,18 +305,11 @@ export default function HotelDetailPage() {
       <HotelDetailHeader onBack={handleBack} hotelName={hotelName} />
 
       <ScrollView className="detail-content" scrollY>
-        <ImageCarousel images={hotelImages} onImageClick={handleImageClick} />
-
-        <View className="carousel-tabs">
-          {CAROUSEL_TABS.map((tab, index) => (
-            <Text
-              key={tab}
-              className={`tab-item ${index === 0 ? 'active' : ''}`}
-            >
-              {tab}
-            </Text>
-          ))}
-        </View>
+        <ImageCarousel
+          images={hotelImages}
+          items={carouselData}
+          onImageClick={handleImageClick}
+        />
 
         <HotelInfo
           name={hotelName}
@@ -308,12 +341,12 @@ export default function HotelDetailPage() {
           <View className="map-section">
             <View className="map-content">
               <View className="location-info">
-                <Text className="distance-text">{DEFAULT_DISTANCE_TEXT}</Text>
                 <Text className="address-text">{hotelAddress}</Text>
+                <Text className="distance-text">{DEFAULT_DISTANCE_TEXT}</Text>
               </View>
               <View className="map-icon-container">
                 <View className="map-icon">
-                  <EnvironmentOutline color="#666" />
+                  <EnvironmentOutline className="map-icon-svg" />
                 </View>
                 <Text className="map-text">地图</Text>
               </View>
@@ -358,6 +391,8 @@ export default function HotelDetailPage() {
             onGuestClick={() => setShowGuestPicker(true)}
             onFilterTagClick={handleFilterTagClick}
             onRemoveFilter={handleRemoveFilter}
+            isFixed={isDatePriceFixed}
+            topOffset={TOP_NAV_BAR_HEIGHT}
           />
         </View>
 

@@ -11,25 +11,52 @@
   flex-direction: column;
   max-height: 70vh;
   background-color: @bg-color;
-  border-radius: @border-radius-lg @border-radius-lg 0 0;
+  border-radius: 12px 12px 0 0; // Explicit 12px as per requirement
 
   .policy-header {
-    padding: @spacing-lg;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px; // Using px to match reference style more closely if needed, or stick to variables
     border-bottom: 1px solid @border-color;
-    text-align: center;
+    position: relative;
 
-    .header-title {
-      font-size: @font-size-lg;
-      font-weight: 600;
-      color: @text-color;
-      display: block;
+    .header-left {
+      width: 40px; // Consistent click area
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      cursor: pointer;
+      z-index: 1;
     }
 
-    .header-subtitle {
-      font-size: @font-size-sm;
-      color: @text-secondary;
-      margin-top: @spacing-xs;
-      display: block;
+    .header-center {
+      flex: 1;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      .header-title {
+        font-size: 18px; // Requirement: 18px
+        font-weight: 600;
+        color: @text-color;
+        display: block;
+        line-height: 1.2;
+      }
+
+      .header-subtitle {
+        font-size: 12px; // Requirement: 12px
+        color: @text-secondary;
+        margin-top: 4px;
+        display: block;
+        line-height: 1.2;
+      }
+    }
+
+    .header-right {
+      width: 40px; // Balance the left side
     }
   }
 
@@ -49,8 +76,8 @@
       }
 
       .policy-icon {
-        width: 40px;
-        height: 40px;
+        width: 32px; // Requirement: 32px container
+        height: 32px;
         border-radius: 50%;
         background-color: fade(@primary-color, 10%);
         display: flex;
@@ -64,15 +91,15 @@
         flex: 1;
 
         .policy-title {
-          font-size: @font-size-md;
+          font-size: 16px; // Requirement: 16px
           font-weight: 600;
           color: @text-color;
           display: block;
-          margin-bottom: @spacing-xs;
+          margin-bottom: 4px;
         }
 
         .policy-value {
-          font-size: @font-size-base;
+          font-size: 14px; // Requirement: 14px
           color: @text-secondary;
           line-height: 1.5;
           display: block;
@@ -82,28 +109,8 @@
   }
 
   .policy-footer {
-    padding: @spacing-md @spacing-lg;
+    padding: 16px; // Match reference spacing
     border-top: 1px solid @border-color;
-
-    .btn-close {
-      width: 100%;
-      padding: @spacing-md;
-      background-color: @primary-color;
-      border-radius: @border-radius-md;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      box-sizing: border-box;
-
-      &:active {
-        opacity: 0.9;
-      }
-
-      text {
-        font-size: @font-size-md;
-        color: #fff;
-        font-weight: 600;
-      }
-    }
+    background-color: #fff;
   }
 }

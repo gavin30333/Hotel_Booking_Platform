@@ -19,14 +19,16 @@ export default function HotelInfo({
     <View className="hotel-header-info">
       <View>
         <Text className="hotel-name">{name}</Text>
-        <Tag className="hotel-badge" color="default">
-          <Text className="hotel-badge-text">{starRating || 5}星级酒店</Text>
-        </Tag>
-        <Tag className="hotel-badge" color="default">
-          <Text className="hotel-badge-text">
-            {openingDate ? openingDate.split('-')[0] : '2024'}年开业
-          </Text>
-        </Tag>
+        <View className="hotel-badges">
+          <Tag className="hotel-badge" color="default">
+            <Text className="hotel-badge-text">{starRating || 5}星级酒店</Text>
+          </Tag>
+          <Tag className="hotel-badge" color="default">
+            <Text className="hotel-badge-text">
+              {openingDate ? openingDate.split('-')[0] : '2024'}年开业
+            </Text>
+          </Tag>
+        </View>
       </View>
     </View>
   )

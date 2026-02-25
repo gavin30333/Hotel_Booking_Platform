@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text } from '@tarojs/components'
-import { Popup } from 'antd-mobile'
+import { Popup, Button } from 'antd-mobile'
 import {
   ClockCircleOutline,
   CloseCircleOutline,
@@ -77,8 +77,14 @@ export const PolicyPopup: React.FC<PolicyPopupProps> = ({
     >
       <View className="policy-popup-container">
         <View className="policy-header">
-          <Text className="header-title">酒店政策</Text>
-          {hotelName && <Text className="header-subtitle">{hotelName}</Text>}
+          <View className="header-left" onClick={onClose}>
+            <CloseOutline fontSize={24} />
+          </View>
+          <View className="header-center">
+            <Text className="header-title">酒店政策</Text>
+            {hotelName && <Text className="header-subtitle">{hotelName}</Text>}
+          </View>
+          <View className="header-right" />
         </View>
 
         <View className="policy-content">
@@ -89,7 +95,7 @@ export const PolicyPopup: React.FC<PolicyPopupProps> = ({
             return (
               <View key={config.key} className="policy-item">
                 <View className="policy-icon">
-                  <IconComponent color="#1890ff" fontSize={20} />
+                  <IconComponent color="#1890ff" fontSize={18} />
                 </View>
                 <View className="policy-info">
                   <Text className="policy-title">{config.title}</Text>
@@ -103,9 +109,9 @@ export const PolicyPopup: React.FC<PolicyPopupProps> = ({
         </View>
 
         <View className="policy-footer">
-          <View className="btn-close" onClick={onClose}>
-            <Text>关闭</Text>
-          </View>
+          <Button block color="primary" size="large" onClick={onClose}>
+            关闭
+          </Button>
         </View>
       </View>
     </Popup>
