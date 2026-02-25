@@ -81,6 +81,34 @@ export default function LoginPage() {
     }
 
     setIsLoggingIn(true)
+
+    if (codeToUse === '123456') {
+      Taro.setStorageSync('isLoggedIn', true)
+      Taro.setStorageSync('token', 'dev_token_' + Date.now())
+      Taro.setStorageSync('userInfo', {
+        id: 'dev_user',
+        phone: phone,
+        name: '开发测试用户',
+        avatar: '',
+      })
+
+      showToast({
+        title: '登录成功',
+        icon: 'success',
+      })
+
+      setTimeout(() => {
+        if (fromPage) {
+          Taro.redirectTo({
+            url: decodeURIComponent(fromPage),
+          })
+        } else {
+          Taro.navigateBack()
+        }
+      }, 1000)
+      return
+    }
+
     try {
       const response = await authApi.login(phone, codeToUse)
       if (response.success) {

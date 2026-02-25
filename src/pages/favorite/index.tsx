@@ -5,6 +5,7 @@ import HotelCard from '@/components/common/display/HotelCard'
 import BottomTabBar from '@/components/common/navigation/BottomTabBar/BottomTabBar'
 import TopNavBar from '@/components/common/navigation/TopNavBar/TopNavBar'
 import CityFilter from '@/components/common/filters/CityFilter/CityFilter'
+import { DateField } from '@/components/FieldRenderers/DateField'
 import { useQueryStore } from '@/store/useQueryStore'
 import { Hotel } from '@/services/hotel'
 import dayjs from 'dayjs'
@@ -45,24 +46,8 @@ export default function FavoritePage() {
   const cities = ['上海']
 
   const getDates = useQueryStore((state) => state.getDates)
+  const updateDates = useQueryStore((state) => state.updateDates)
   const dates = getDates()
-
-  const formatDateDisplay = (dateStr: string) => {
-    const date = dayjs(dateStr)
-    const dayOfWeek = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][
-      date.day()
-    ]
-    return `${date.format('MM月DD日')} ${dayOfWeek}`
-  }
-
-  const dateDisplay = useMemo(
-    () => ({
-      checkIn: formatDateDisplay(dates.startDate),
-      checkOut: formatDateDisplay(dates.endDate),
-      nights: dates.nights,
-    }),
-    [dates]
-  )
 
   const handleCityChange = (city: string) => {
     setActiveCity(city)
@@ -83,13 +68,14 @@ export default function FavoritePage() {
           onBack={() => Taro.switchTab({ url: '/search' })}
         />
 
-        <View className="date-selection">
-          <View className="date-row">
-            <Text className="date-item">{dateDisplay.checkIn}</Text>
-            <Text className="date-separator">-</Text>
-            <Text className="date-item">{dateDisplay.checkOut}</Text>
-          </View>
-          <Text className="night-count">共{dateDisplay.nights}晚</Text>
+        <View className="date-selection-wrapper">
+          <DateField
+            config={{ props: { singleDay: false } }}
+            value={dates}
+            onChange={(dateRange) =>
+              updateDates(dateRange.startDate, dateRange.endDate)
+            }
+          />
         </View>
 
         <CityFilter

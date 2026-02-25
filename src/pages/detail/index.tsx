@@ -149,7 +149,7 @@ export default function HotelDetailPage() {
   }
 
   const handleBack = () => {
-    Taro.navigateBack()
+    Taro.redirectTo({ url: '/pages/list/index' })
   }
 
   const handleDateConfirm = (range: {

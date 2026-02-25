@@ -9,25 +9,36 @@
 .top-actions {
   display: flex;
   justify-content: flex-end;
-  padding: @spacing-md @spacing-lg;
-  background-color: @bg-color;
-  border-bottom: 1px solid @border-color;
+  padding: @spacing-md @spacing-lg 0;
+  background: linear-gradient(135deg, @tab-bg 0%, @tab-bg 100%);
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
-.action-icon {
+.action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-left: @spacing-xl;
   color: @text-secondary;
+}
+
+.action-icon {
   font-size: @font-size-xl;
+  margin-bottom: @spacing-xs;
+}
+
+.action-text {
+  font-size: @font-size-xs;
+  color: @text-secondary;
 }
 
 /* 用户信息区域 */
 .user-info-section {
-  background: linear-gradient(135deg, @primary-color 0%, #096dd9 100%);
-  padding: @spacing-lg @spacing-lg;
-  color: @bg-color;
+  background: linear-gradient(135deg, @tab-bg 0%, @tab-bg 100%);
+  padding: 0 @spacing-lg 2 * @spacing-xxl;
+  color: @text-color;
   position: relative;
   display: flex;
   align-items: center;
@@ -37,15 +48,16 @@
   width: 80px;
   height: 80px;
   border-radius: 40px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: @bg-color;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid #e6f7ff;
   font-size: 24px;
   font-weight: bold;
   margin-right: @spacing-lg;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   .avatar-img {
     width: 100%;
@@ -60,21 +72,27 @@
   flex-direction: column;
 }
 
+.user-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: @spacing-sm;
+}
+
 .user-name {
   font-size: @font-size-lg;
   font-weight: bold;
-  margin-bottom: @spacing-sm;
+  color: @text-color;
 }
 
 .user-stats {
   font-size: @font-size-sm;
-  opacity: 0.8;
+  color: @text-secondary;
 }
 
 .home-link {
-  color: @bg-color;
+  color: @text-secondary;
   font-size: @font-size-base;
-  opacity: 0.8;
 }
 
 .auth-buttons {
@@ -83,28 +101,31 @@
 
 /* 会员等级区域 */
 .membership-section {
-  background-color: @bg-color;
-  margin: @spacing-md @spacing-lg;
+  background: linear-gradient(90deg, #e6f7ff 0%, #ffffff 50%, #e6f7ff 100%);
+  margin: -2 * @spacing-lg @spacing-lg 0;
   border-radius: @border-radius-md;
-  padding: @spacing-lg;
+  padding: @spacing-md @spacing-lg;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 1;
+  color: @text-color;
 }
 
 .membership-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: @spacing-md;
+  margin-bottom: @spacing-sm;
 }
 
 .membership-badge {
-  background: linear-gradient(135deg, @brand-gold 0%, #ff8c00 100%);
+  background-color: @primary-color;
   color: @bg-color;
   padding: @spacing-xs @spacing-lg;
   border-radius: @border-radius-xl;
   font-size: @font-size-base;
   font-weight: 500;
-  box-shadow: 0 2px 8px rgba(255, 180, 0, 0.3);
+  box-shadow: @shadow-btn;
 }
 
 .membership-center {
@@ -116,12 +137,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-left:@spacing-sm;
   color: @text-secondary;
   font-size: @font-size-base;
 }
 
 .points-value {
-  color: @error-color;
+  color: @text-secondary;
   font-weight: 500;
 }
 
@@ -130,7 +152,7 @@
   background-color: @bg-color;
   margin: @spacing-md @spacing-lg;
   border-radius: @border-radius-md;
-  padding: @spacing-lg;
+  padding: @spacing-md @spacing-lg;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   display: flex;
   justify-content: space-between;
@@ -165,7 +187,7 @@
   background-color: @bg-color;
   margin: @spacing-md @spacing-lg;
   border-radius: @border-radius-md;
-  padding: @spacing-lg 0;
+  padding: @spacing-md 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   display: flex;
   justify-content: space-around;
@@ -175,10 +197,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 @spacing-md;
 }
 
 .stat-value {
-  font-size: @font-size-lg;
+  font-size: @font-size-xl;
   font-weight: bold;
   color: @text-color;
   margin-bottom: @spacing-xs;
@@ -194,7 +217,7 @@
   background-color: @bg-color;
   margin: @spacing-md @spacing-lg;
   border-radius: @border-radius-md;
-  padding: @spacing-lg 0;
+  padding: @spacing-md 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   display: flex;
   justify-content: space-around;
@@ -206,15 +229,19 @@
   align-items: center;
   color: @text-secondary;
   font-size: @font-size-sm;
+  padding: 0 @spacing-sm;
 }
 
 .order-entry :global(svg) {
   margin-bottom: @spacing-sm;
   font-size: @font-size-xl;
+  color: @text-secondary;
 }
 
 .auth-buttons {
-  margin: @spacing-lg @spacing-lg 80px;
+  margin: @spacing-md @spacing-lg 10px;
+  position: relative;
+  z-index: 1;
 }
 
 .login-btn {
@@ -229,26 +256,28 @@
   line-height: 44px;
   font-size: 15px;
   transition: all 0.3s ease;
+  box-shadow: @shadow-btn;
 }
 
 .login-btn:hover {
-  background-color: #40a9ff;
+  background-color: #0052cc;
 }
 
 .logout-btn {
   display: block;
   width: 100%;
   height: 44px;
-  background-color: @bg-color;
-  border: 1px solid @error-color;
+  background-color: @primary-color;
+  border: none;
   border-radius: @border-radius-xl;
-  color: @error-color;
+  color: @bg-color;
   text-align: center;
   line-height: 44px;
   font-size: 15px;
   transition: all 0.3s ease;
+  box-shadow: @shadow-btn;
 }
 
 .logout-btn:hover {
-  background-color: #fff2f0;
+  background-color: #0052cc;
 }
