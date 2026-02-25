@@ -7,4 +7,5 @@ node_modules/
 .swc
 *.local
 .trae/specs/
+.venv/
 

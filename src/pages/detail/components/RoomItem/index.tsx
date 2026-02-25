@@ -42,6 +42,9 @@ export default function RoomItem({
     onRoomCountChange?.(count)
   }
 
+  const basePrice = room.price || room.currentPrice || 300
+  const breakfastPricePerPerson = 30
+
   const breakfastOptions = [
     {
       count: 0,
@@ -53,11 +56,11 @@ export default function RoomItem({
       ],
       tags: ['在线付', '立即确认'],
       discount: '4.0折',
-      originalPrice: 499,
-      currentPrice: 199,
+      originalPrice: Math.round(basePrice * 2.5),
+      currentPrice: basePrice,
       promotions: ['会员特惠', '浦东消费券'],
       discountCount: 4,
-      discountAmount: 300,
+      discountAmount: Math.round(basePrice * 1.5),
     },
     {
       count: 1,
@@ -69,11 +72,11 @@ export default function RoomItem({
       ],
       tags: ['在线付', '立即确认'],
       discount: '4.1折',
-      originalPrice: 528,
-      currentPrice: 216,
+      originalPrice: Math.round((basePrice + breakfastPricePerPerson) * 2.5),
+      currentPrice: basePrice + breakfastPricePerPerson,
       promotions: ['会员特惠', '浦东消费券'],
       discountCount: 4,
-      discountAmount: 312,
+      discountAmount: Math.round((basePrice + breakfastPricePerPerson) * 1.5),
     },
     {
       count: 2,
@@ -85,11 +88,11 @@ export default function RoomItem({
       ],
       tags: ['在线付', '立即确认'],
       discount: '4.3折',
-      originalPrice: 568,
-      currentPrice: 241,
+      originalPrice: Math.round((basePrice + breakfastPricePerPerson * 2) * 2.5),
+      currentPrice: basePrice + breakfastPricePerPerson * 2,
       promotions: ['会员特惠', '浦东消费券'],
       discountCount: 4,
-      discountAmount: 327,
+      discountAmount: Math.round((basePrice + breakfastPricePerPerson * 2) * 1.5),
     },
   ]
 

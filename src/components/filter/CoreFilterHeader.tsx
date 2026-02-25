@@ -738,7 +738,10 @@ export default function CoreFilterHeader({
   return (
     <View className="core-filter-header">
       <View className="top-filter-bar">
-        <View className="back-button" onClick={() => Taro.navigateBack()}>
+        <View
+          className="back-button"
+          onClick={() => Taro.redirectTo({ url: '/pages/search/index' })}
+        >
           <Text className="back-icon">‹</Text>
         </View>
 

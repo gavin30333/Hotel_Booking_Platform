@@ -6,7 +6,7 @@
   min-height: 100vh;
   background-color: @page-bg;
 
-    /* 详情内容 */
+  /* 详情内容 */
   .detail-content {
     width: 100%;
     overflow-y: auto;
@@ -40,17 +40,17 @@
     }
 
     /* 评价和地图容器 */
-      .review-map-container {
-        display: flex;
-        background-color: @bg-color;
-        margin: 0;
-        padding: 0 @spacing-lg @spacing-md @spacing-lg;
-        height: auto;
-        min-height: 80px;
-        gap: @spacing-sm;
-        border-radius: 0;
-        overflow: hidden;
-        font-size: @font-size-xs;
+    .review-map-container {
+      display: flex;
+      background-color: @bg-color;
+      margin: 0;
+      padding: 0 @spacing-lg @spacing-md @spacing-lg;
+      height: auto;
+      min-height: 80px;
+      gap: @spacing-sm;
+      border-radius: 0;
+      overflow: hidden;
+      font-size: @font-size-xs;
 
       /* 评价区域 */
       .review-section {
@@ -68,7 +68,7 @@
           margin-bottom: @spacing-xs;
 
           .rating-badge {
-            background-color: #0086F6;
+            background-color: #0086f6;
             // Asymmetric border-radius to match design "leaf" shape: Top-Left & Bottom-Right sharp (2px), Top-Right & Bottom-Left rounded (8px)
             border-radius: 2px 2px 8px 2px;
             padding: 0 4px;
@@ -88,7 +88,7 @@
           }
 
           .rating-label {
-            color: #0086F6;
+            color: #0086f6;
             font-size: 11px;
             font-weight: bold;
             line-height: 16px;
@@ -126,7 +126,8 @@
         overflow: hidden;
         border-radius: @border-radius-md;
 
-        &::before, &::after {
+        &::before,
+        &::after {
           display: none;
         }
 
