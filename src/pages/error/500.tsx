@@ -1,16 +1,16 @@
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { Button } from 'antd-mobile'
 import './error.less'
 
 export default function ServerErrorPage() {
   const handleGoHome = () => {
-    Taro.switchTab({ url: '/pages/search/index' })
+    Taro.reLaunch({ url: '/pages/search/index' })
   }
 
   const handleRefresh = () => {
     Taro.reLaunch({
-      url: Taro.getCurrentPages()[0]?.route || '/pages/search/index'
+      url: '/' + (Taro.getCurrentPages()[0]?.route || 'pages/search/index'),
     })
   }
 

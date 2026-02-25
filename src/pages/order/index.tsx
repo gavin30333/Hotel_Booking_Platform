@@ -143,7 +143,7 @@ export default function OrderPage() {
         <View className="search-bar">
           <View
             className="back-btn"
-            onClick={() => Taro.switchTab({ url: '/search' })}
+            onClick={() => Taro.reLaunch({ url: '/pages/search/index' })}
           >
             <LeftOutline />
           </View>

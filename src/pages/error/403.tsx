@@ -1,11 +1,11 @@
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { Button } from 'antd-mobile'
 import './error.less'
 
 export default function ForbiddenPage() {
   const handleGoHome = () => {
-    Taro.switchTab({ url: '/pages/search/index' })
+    Taro.reLaunch({ url: '/pages/search/index' })
   }
 
   const handleLogin = () => {

@@ -283,7 +283,7 @@ export default function BookingPage() {
                 url: `/pages/detail/index?id=${hotelId}`,
               })
             } else {
-              Taro.switchTab({
+              Taro.reLaunch({
                 url: '/pages/search/index',
               })
             }

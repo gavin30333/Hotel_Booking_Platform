@@ -111,7 +111,7 @@ export default function ProfilePage() {
           </View>
           <View
             className="home-link"
-            onClick={() => Taro.switchTab({ url: '/pages/search/index' })}
+            onClick={() => Taro.reLaunch({ url: '/pages/search/index' })}
           >
             <Text>主页 ＞</Text>
           </View>
@@ -194,7 +194,7 @@ export default function ProfilePage() {
           </View>
           <View
             className="order-entry"
-            onClick={() => Taro.switchTab({ url: '/order' })}
+            onClick={() => Taro.redirectTo({ url: '/pages/order/index' })}
           >
             <FileOutlineIcon />
             <Text>全部订单</Text>

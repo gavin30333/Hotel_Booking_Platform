@@ -20,38 +20,6 @@ export default defineAppConfig({
     navigationBarTextStyle: 'black',
     backgroundColor: '#f5f5f5',
   },
-  tabBar: {
-    color: '#999999',
-    selectedColor: '#0066ff',
-    backgroundColor: '#ffffff',
-    borderStyle: 'black',
-    list: [
-      {
-        pagePath: 'pages/search/index',
-        text: '首页',
-        iconPath: 'assets/icons/home.png',
-        selectedIconPath: 'assets/icons/home-active.png',
-      },
-      {
-        pagePath: 'pages/favorite/index',
-        text: '收藏',
-        iconPath: 'assets/icons/favorite.png',
-        selectedIconPath: 'assets/icons/favorite-active.png',
-      },
-      {
-        pagePath: 'pages/order/index',
-        text: '订单',
-        iconPath: 'assets/icons/order.png',
-        selectedIconPath: 'assets/icons/order-active.png',
-      },
-      {
-        pagePath: 'pages/profile/index',
-        text: '我的',
-        iconPath: 'assets/icons/profile.png',
-        selectedIconPath: 'assets/icons/profile-active.png',
-      },
-    ],
-  },
   networkTimeout: {
     request: 15000,
     downloadFile: 30000,
