@@ -1,0 +1,152 @@
+@import '@/styles/variables.less';
+
+@skeleton-color: #f2f2f2;
+@skeleton-highlight: #e6e6e6;
+
+.skeleton {
+  background: @skeleton-color;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+
+  &.animated {
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        @skeleton-highlight,
+        transparent
+      );
+      animation: skeleton-loading 1.5s infinite;
+    }
+  }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-hotel-card {
+  display: flex;
+  padding: @spacing-md;
+  background: #fff;
+  border-radius: 8px;
+  margin-bottom: @spacing-sm;
+
+  .skeleton-image {
+    width: 120px;
+    height: 90px;
+    flex-shrink: 0;
+    border-radius: 4px;
+  }
+
+  .skeleton-content {
+    flex: 1;
+    margin-left: @spacing-md;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .skeleton-title {
+    height: 20px;
+    width: 70%;
+    margin-bottom: @spacing-xs;
+  }
+
+  .skeleton-text {
+    height: 14px;
+    width: 100%;
+    margin-bottom: @spacing-xs;
+
+    &.short {
+      width: 60%;
+    }
+  }
+
+  .skeleton-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: @spacing-sm;
+  }
+
+  .skeleton-price {
+    height: 24px;
+    width: 80px;
+  }
+
+  .skeleton-tag {
+    height: 20px;
+    width: 60px;
+  }
+}
+
+.skeleton-room-card {
+  display: flex;
+  padding: @spacing-md;
+  background: #fff;
+  border-radius: 8px;
+  margin-bottom: @spacing-sm;
+
+  .skeleton-room-image {
+    width: 100px;
+    height: 80px;
+    flex-shrink: 0;
+    border-radius: 4px;
+  }
+
+  .skeleton-room-content {
+    flex: 1;
+    margin-left: @spacing-md;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .skeleton-room-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .skeleton-button {
+    height: 32px;
+    width: 50px;
+    border-radius: 16px;
+  }
+}
+
+.skeleton-image-full {
+  width: 100%;
+  height: 200px;
+  border-radius: 8px;
+}
+
+.skeleton-text-block {
+  display: flex;
+  padding: @spacing-md;
+
+  .skeleton-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .skeleton-lines {
+    flex: 1;
+    margin-left: @spacing-md;
+  }
+}

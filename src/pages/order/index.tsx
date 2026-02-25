@@ -217,7 +217,9 @@ export default function OrderPage() {
                   <Text className="hotel-address">{order.hotelAddress}</Text>
                   <View className="order-date-info">
                     <Text className="order-date">
-                      {formatDate(order.checkInDate)} - {formatDate(order.checkOutDate)} · 共{calculateNights(order.checkInDate, order.checkOutDate)}晚
+                      {formatDate(order.checkInDate)} -{' '}
+                      {formatDate(order.checkOutDate)} · 共
+                      {calculateNights(order.checkInDate, order.checkOutDate)}晚
                     </Text>
                     <OrderStatus status={order.status} />
                   </View>
@@ -234,13 +236,16 @@ export default function OrderPage() {
                   <View className="room-detail">
                     <Text className="room-name">{order.room.name}</Text>
                     <Text className="room-desc">
-                      {order.room.bedType} · {order.room.area}㎡ · {order.room.maxOccupancy}人入住
+                      {order.room.bedType} · {order.room.area}㎡ ·{' '}
+                      {order.room.maxOccupancy}人入住
                     </Text>
                     <Text className="room-breakfast">
                       {order.room.breakfast ? '含早餐' : '无早餐'}
                     </Text>
                     <View className="room-price-row">
-                      <Text className="room-price">¥{order.room.currentPrice}</Text>
+                      <Text className="room-price">
+                        ¥{order.room.currentPrice}
+                      </Text>
                       {order.room.originalPrice > order.room.currentPrice && (
                         <Text className="room-original-price">
                           ¥{order.room.originalPrice}
@@ -250,13 +255,14 @@ export default function OrderPage() {
                   </View>
                 </View>
 
-                {order.status !== 'completed' && order.status !== 'cancelled' && (
-                  <View className="order-actions">
-                    <View className="action-btn-secondary">
-                      <Text>再次预订</Text>
+                {order.status !== 'completed' &&
+                  order.status !== 'cancelled' && (
+                    <View className="order-actions">
+                      <View className="action-btn-secondary">
+                        <Text>再次预订</Text>
+                      </View>
                     </View>
-                  </View>
-                )}
+                  )}
               </View>
             ))
           )}
