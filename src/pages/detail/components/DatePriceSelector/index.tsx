@@ -52,7 +52,7 @@ export default function DatePriceSelector({
 
     if (dStr === tStr) return '今天'
     if (dStr === tmStr) return '明天'
-    
+
     return getWeekDay(dateStr)
   }
 
