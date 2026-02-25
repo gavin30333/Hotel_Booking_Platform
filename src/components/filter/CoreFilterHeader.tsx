@@ -1,17 +1,25 @@
-import { View, Text, ScrollView } from '@tarojs/components'
-import { useState, useCallback, useEffect } from 'react'
-import { SearchBar, Toast } from 'antd-mobile'
-import { EnvironmentOutline, MoreOutline } from 'antd-mobile-icons'
+import { View, Text } from '@tarojs/components'
+import { useState, useCallback, useEffect, useRef } from 'react'
+import { SearchBar, Toast, Dropdown, DropdownRef } from 'antd-mobile'
+import { MoreOutline, EnvironmentOutline, DownOutline } from 'antd-mobile-icons'
 import AMapLoader from '@amap/amap-jsapi-loader'
+import Taro from '@tarojs/taro'
+import dayjs from 'dayjs'
+import 'dayjs/locale/zh-cn'
+
+dayjs.locale('zh-cn')
+
 import {
   CitySelector,
   CitySelectResult,
   HotSearchSelectResult,
+  CityTab,
 } from '@/components/CitySelector'
 import { GuestSelectionPopup } from '@/components/common/popup/GuestSelectionPopup'
 import { CalendarPicker } from '@/components/common/form/CalendarPicker'
+import { LocationField, DateField, GuestField } from '@/components/FieldRenderers'
 import { useLocation } from '@/hooks/useLocation'
-import { GuestInfo } from '@/types/query.types'
+import { GuestInfo, TabType, LocationData, DateRange, FieldConfig } from '@/types/query.types'
 import './CoreFilterHeader.less'
 
 let AMap: any = null
@@ -69,13 +77,6 @@ interface SearchParams {
   advancedOptions: boolean
 }
 
-const sortOptions = [
-  { label: '欢迎度', value: 'welcome' },
-  { label: '位置', value: 'distance' },
-  { label: '价格', value: 'price' },
-  { label: '筛选', value: 'filter' },
-]
-
 export default function CoreFilterHeader({
   onSearch,
   onDropdownStateChange,
@@ -95,16 +96,8 @@ export default function CoreFilterHeader({
   const [showCityPicker, setShowCityPicker] = useState(false)
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [showRoomPicker, setShowRoomPicker] = useState(false)
-  const [showWelcomeDropdown, setShowWelcomeDropdown] = useState(false)
-  const [showDistanceDropdown, setShowDistanceDropdown] = useState(false)
-  const [showPriceDropdown, setShowPriceDropdown] = useState(false)
-  const [showFilterDropdown, setShowFilterDropdown] = useState(false)
-  const [welcomeArrowUp, setWelcomeArrowUp] = useState(false)
-  const [distanceArrowUp, setDistanceArrowUp] = useState(false)
-  const [priceArrowUp, setPriceArrowUp] = useState(false)
-  const [filterArrowUp, setFilterArrowUp] = useState(false)
   const [showMainSelector, setShowMainSelector] = useState(false)
-  const [activeSortTab, setActiveSortTab] = useState('welcome')
+  const [activeSortTab, setActiveSortTab] = useState<string | null>(null)
   const [searchValue, setSearchValue] = useState('')
   const [selectedSortOption, setSelectedSortOption] = useState('')
   const [selectedDistanceOption, setSelectedDistanceOption] = useState('')
@@ -115,17 +108,6 @@ export default function CoreFilterHeader({
   const [activeLocationCategory, setActiveLocationCategory] =
     useState('热门地标')
   const [activeFilterCategory, setActiveFilterCategory] = useState('品牌')
-  const [expandedCategories, setExpandedCategories] = useState({
-    热门筛选: false,
-    品牌: false,
-    类型特色: false,
-    设施: false,
-    床型: false,
-    房间面积: false,
-    点评: false,
-    '服务/支付': false,
-    适用人群: false,
-  })
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [locationPOIs, setLocationPOIs] = useState<{
     [key: string]: Array<{ name: string; lat: number; lng: number }>
@@ -140,6 +122,33 @@ export default function CoreFilterHeader({
     lat: number
     lng: number
   } | null>(null)
+
+  // Temp params for the filter popup
+  const [tempParams, setTempParams] = useState<SearchParams>(params)
+  const [citySelectorTab, setCitySelectorTab] = useState<CityTab>('domestic')
+
+  const dropdownRef = useRef<DropdownRef>(null)
+
+  useEffect(() => {
+    if (showMainSelector) {
+      setTempParams(params)
+    }
+  }, [showMainSelector, params])
+
+  const handleConfirmMainSelector = () => {
+    setParams(tempParams)
+    onSearch({
+      ...tempParams,
+      keyword: searchValue || tempParams.keyword,
+      ...advancedOptions,
+    })
+    setShowMainSelector(false)
+  }
+
+  const handleCancelMainSelector = () => {
+    setTempParams(params)
+    setShowMainSelector(false)
+  }
 
   const [advancedOptions, setAdvancedOptions] = useState({
     starRating: [] as number[],
@@ -225,14 +234,9 @@ export default function CoreFilterHeader({
         return
       }
 
-      setShowWelcomeDropdown(false)
-      setWelcomeArrowUp(false)
-      setShowDistanceDropdown(false)
-      setDistanceArrowUp(false)
-      setShowPriceDropdown(false)
-      setPriceArrowUp(false)
-      setShowFilterDropdown(false)
-      setFilterArrowUp(false)
+      // Close Dropdown if click outside
+      // Note: antd-mobile Dropdown handles click outside internally for its overlay,
+      // but if we have other popups we might want to close them.
       setShowMainSelector(false)
       setShowCityPicker(false)
       setShowDatePicker(false)
@@ -244,6 +248,7 @@ export default function CoreFilterHeader({
       document.removeEventListener('click', handleClickOutside)
     }
   }, [])
+
 
   useEffect(() => {
     if (params.checkInDate && params.checkOutDate) {
@@ -369,10 +374,7 @@ export default function CoreFilterHeader({
       showCityPicker ||
       showDatePicker ||
       showRoomPicker ||
-      showWelcomeDropdown ||
-      showDistanceDropdown ||
-      showPriceDropdown ||
-      showFilterDropdown ||
+      activeSortTab !== null ||
       showMainSelector
     if (onDropdownStateChange) {
       onDropdownStateChange(isAnyDropdownOpen)
@@ -381,13 +383,19 @@ export default function CoreFilterHeader({
     showCityPicker,
     showDatePicker,
     showRoomPicker,
-    showWelcomeDropdown,
-    showDistanceDropdown,
-    showPriceDropdown,
-    showFilterDropdown,
+    activeSortTab,
     showMainSelector,
     onDropdownStateChange,
   ])
+
+  useEffect(() => {
+    if (
+      activeSortTab === 'distance' &&
+      locationPOIs[activeLocationCategory].length === 0
+    ) {
+      searchPOIs(activeLocationCategory)
+    }
+  }, [activeSortTab, activeLocationCategory, searchPOIs, locationPOIs])
 
   const handleParamChange = useCallback(
     (key: keyof SearchParams, value: any) => {
@@ -599,40 +607,43 @@ export default function CoreFilterHeader({
     setDraggedHandle(handle)
   }
 
-  const handlePriceSliderMove = (e: any) => {
-    if (!isDragging || !draggedHandle) return
+  const handlePriceSliderMove = useCallback(
+    (e: any) => {
+      if (!isDragging || !draggedHandle) return
 
-    const slider = document.querySelector('.price-slider')
-    if (!slider) return
+      const slider = document.querySelector('.price-slider')
+      if (!slider) return
 
-    const rect = slider.getBoundingClientRect()
-    let x: number
+      const rect = slider.getBoundingClientRect()
+      let x: number
 
-    if (e.touches) {
-      x = Math.max(0, Math.min(e.touches[0].clientX - rect.left, rect.width))
-    } else if (e.clientX) {
-      x = Math.max(0, Math.min(e.clientX - rect.left, rect.width))
-    } else {
-      return
-    }
-
-    const percentage = x / rect.width
-    const price = Math.round(percentage * 10000)
-    const roundedPrice = Math.round(price / 100) * 100
-
-    setPriceRange((prev) => {
-      if (draggedHandle === 'min') {
-        return { min: Math.min(roundedPrice, prev.max - 100), max: prev.max }
+      if (e.touches) {
+        x = Math.max(0, Math.min(e.touches[0].clientX - rect.left, rect.width))
+      } else if (e.clientX) {
+        x = Math.max(0, Math.min(e.clientX - rect.left, rect.width))
       } else {
-        return { min: prev.min, max: Math.max(roundedPrice, prev.min + 100) }
+        return
       }
-    })
-  }
 
-  const handlePriceSliderEnd = () => {
+      const percentage = x / rect.width
+      const price = Math.round(percentage * 10000)
+      const roundedPrice = Math.round(price / 100) * 100
+
+      setPriceRange((prev) => {
+        if (draggedHandle === 'min') {
+          return { min: Math.min(roundedPrice, prev.max - 100), max: prev.max }
+        } else {
+          return { min: prev.min, max: Math.max(roundedPrice, prev.min + 100) }
+        }
+      })
+    },
+    [isDragging, draggedHandle]
+  )
+
+  const handlePriceSliderEnd = useCallback(() => {
     setIsDragging(false)
     setDraggedHandle(null)
-  }
+  }, [])
 
   useEffect(() => {
     if (isDragging) {
@@ -657,10 +668,65 @@ export default function CoreFilterHeader({
     childAges: [],
   }
 
+  const locationConfig: FieldConfig = {
+    type: 'location',
+    key: 'location',
+    props: {
+      placeholder: '我的附近',
+      isInternational: false,
+    },
+  }
+
+  const dateConfig: FieldConfig = {
+    type: 'date',
+    key: 'date',
+    props: {
+      singleDay: false,
+    },
+  }
+
+  const guestConfig: FieldConfig = {
+    type: 'guest',
+    key: 'guest',
+    props: {
+      customText: '',
+      isHomestay: false,
+    },
+  }
+
+  const handleLocationChange = (locationData: LocationData) => {
+    setTempParams((prev) => ({
+      ...prev,
+      city: locationData.city,
+    }))
+  }
+
+  const handleDateChange = (dateRange: DateRange) => {
+    setTempParams((prev) => ({
+      ...prev,
+      checkInDate: dateRange.startDate,
+      checkOutDate: dateRange.endDate,
+    }))
+  }
+
+  const handleGuestChangePopup = (info: GuestInfo) => {
+    const getNumber = (val: number | number[] | undefined, defaultVal: number = 0): number => {
+      if (val === undefined) return defaultVal
+      if (Array.isArray(val)) return val.length > 0 ? val[0] : defaultVal
+      return val
+    }
+    setTempParams((prev) => ({
+      ...prev,
+      rooms: getNumber(info.rooms, 1),
+      adults: getNumber(info.adults, 2),
+      children: getNumber(info.children, 0),
+    }))
+  }
+
   return (
     <View className="core-filter-header">
       <View className="top-filter-bar">
-        <View className="back-button" onClick={() => window.history.back()}>
+        <View className="back-button" onClick={() => Taro.navigateBack()}>
           <Text className="back-icon">‹</Text>
         </View>
 
@@ -672,49 +738,42 @@ export default function CoreFilterHeader({
               setShowMainSelector(true)
             }}
           >
-            <View
-              className="filter-item compact"
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowCityPicker(true)
-              }}
-            >
-              <Text className="filter-value filter-value-xs">
+            <View className="filter-item compact">
+              <Text className="filter-value city-text">
                 {params.city}
               </Text>
             </View>
 
-            <View
-              className="filter-item compact"
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowDatePicker(true)
-              }}
-            >
-              <Text className="filter-value filter-value-xs">
-                {params.checkInDate && params.checkOutDate
-                  ? `${params.checkInDate.split('-')[1]}-${params.checkInDate.split('-')[2]} 至 ${params.checkOutDate.split('-')[1]}-${params.checkOutDate.split('-')[2]}`
-                  : '选择日期'}
-              </Text>
+            <View className="filter-info-group">
+              <View className="info-column">
+                <Text className="filter-value filter-value-xs">
+                  {params.checkInDate ? `${params.checkInDate.split('-')[1]}-${params.checkInDate.split('-')[2]}` : '入住'}
+                </Text>
+                <Text className="filter-value filter-value-xs">
+                  {params.checkOutDate ? `${params.checkOutDate.split('-')[1]}-${params.checkOutDate.split('-')[2]}` : '离店'}
+                </Text>
+              </View>
+              <View className="info-column">
+                <Text className="filter-value filter-value-xs">
+                  {params.rooms}间
+                </Text>
+                <Text className="filter-value filter-value-xs">
+                  {params.adults}人
+                </Text>
+              </View>
             </View>
-
-            <View
-              className="filter-item compact"
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowRoomPicker(true)
-              }}
-            >
-              <Text className="filter-value filter-value-xs">
-                {params.rooms}间
-              </Text>
-              <Text className="filter-value filter-value-xs">
-                {params.adults}人
-              </Text>
-            </View>
+            <DownOutline fontSize={10} color="#333" style={{ marginLeft: 4 }} />
           </View>
 
-          <View className="search-item">
+          <View className="vertical-divider" />
+
+          <View
+            className="search-item"
+            onClick={() => {
+              setCitySelectorTab('hot_search')
+              setShowCityPicker(true)
+            }}
+          >
             <SearchBar
               placeholder="位置/品牌/酒店"
               value={searchValue || params.keyword}
@@ -726,618 +785,579 @@ export default function CoreFilterHeader({
                 handleSearch()
               }}
               className="search-bar-compact"
+              style={{ pointerEvents: 'none' }}
             />
           </View>
         </View>
 
-        {/* <View className="map-icon">
-          <EnvironmentOutline fontSize={20} color="#666" />
+        <View className="map-icon" onClick={() => {
+            // Handle map click if needed, currently just UI
+             Taro.showToast({ title: '地图模式开发中', icon: 'none' })
+        }}>
+          <EnvironmentOutline fontSize={20} color="#333" />
           <Text className="icon-text">地图</Text>
-        </View> */}
+        </View>
 
         <View className="more-options">
-          <MoreOutline fontSize={20} color="#666" />
+          <MoreOutline fontSize={20} color="#333" />
           <Text className="icon-text">更多</Text>
         </View>
       </View>
 
       {showMainSelector && (
-        <View className="main-selector" onClick={(e) => e.stopPropagation()}>
-          <View
-            className="selector-row"
-            onClick={(e) => {
-              e.stopPropagation()
-              setShowCityPicker(true)
-            }}
-          >
-            <Text className="selector-value">{params.city}</Text>
-            <Text className="location-icon">📍</Text>
+        <View className="main-selector-popup" onClick={(e) => e.stopPropagation()}>
+          <View className="popup-content">
+            {/* City Row */}
+            <View
+              className="selector-row"
+              onClick={() => {
+                setCitySelectorTab('domestic')
+                setShowCityPicker(true)
+              }}
+            >
+              <View className="row-left">
+                <Text className="city-name">{tempParams.city}</Text>
+              </View>
+              <View className="row-right" onClick={(e) => {
+                e.stopPropagation()
+                handleLocationClick()
+              }}>
+                <View className="location-icon-wrapper">
+                  <EnvironmentOutline fontSize={20} color="#0086F6" />
+                  <Text className="location-text">我的位置</Text>
+                </View>
+              </View>
+            </View>
+
+            <View className="popup-divider" />
+
+            {/* Date Row */}
+            <View
+              className="selector-row"
+              onClick={() => setShowDatePicker(true)}
+            >
+              <View className="row-left date-row-content">
+                <View className="date-group">
+                  <Text className="date-value">
+                    {tempParams.checkInDate ? dayjs(tempParams.checkInDate).format('M月D日') : '入住日期'}
+                  </Text>
+                  <Text className="date-tag">
+                    {tempParams.checkInDate ? (dayjs(tempParams.checkInDate).isSame(dayjs(), 'day') ? '今天' : dayjs(tempParams.checkInDate).format('ddd')) : ''}
+                  </Text>
+                </View>
+                <Text className="date-separator">-</Text>
+                <View className="date-group">
+                  <Text className="date-value">
+                    {tempParams.checkOutDate ? dayjs(tempParams.checkOutDate).format('M月D日') : '离店日期'}
+                  </Text>
+                  <Text className="date-tag">
+                    {tempParams.checkOutDate ? (dayjs(tempParams.checkOutDate).isSame(dayjs().add(2, 'day'), 'day') ? '后天' : dayjs(tempParams.checkOutDate).format('ddd')) : ''}
+                  </Text>
+                </View>
+              </View>
+              <View className="row-right">
+                <Text className="nights-count">
+                  共{tempParams.checkOutDate && tempParams.checkInDate ? dayjs(tempParams.checkOutDate).diff(dayjs(tempParams.checkInDate), 'day') : 1}晚
+                </Text>
+              </View>
+            </View>
+
+            <View className="popup-divider" />
+
+            {/* Guest Row */}
+            <View
+              className="selector-row"
+              onClick={() => setShowRoomPicker(true)}
+            >
+              <View className="row-left">
+                <Text className="guest-value">
+                  {tempParams.rooms}间房 {tempParams.adults}成人 {tempParams.children}儿童
+                </Text>
+              </View>
+              <View className="row-right">
+                {/* Arrow or empty */}
+              </View>
+            </View>
           </View>
 
-          <View
-            className="selector-row"
-            onClick={(e) => {
-              e.stopPropagation()
-              setShowDatePicker(true)
-            }}
-          >
-            <Text className="selector-value">
-              {params.checkInDate && params.checkOutDate
-                ? `${params.checkInDate.split('-')[1]}月${params.checkInDate.split('-')[2]}日 至 ${params.checkOutDate.split('-')[1]}月${params.checkOutDate.split('-')[2]}日`
-                : '选择日期'}
-            </Text>
-          </View>
-
-          <View
-            className="selector-row"
-            onClick={(e) => {
-              e.stopPropagation()
-              setShowRoomPicker(true)
-            }}
-          >
-            <Text className="selector-value">
-              {params.rooms}间房 {params.adults}成人 {params.children}儿童
-            </Text>
-          </View>
-
-          <View
-            className="confirm-button"
-            onClick={() => setShowMainSelector(false)}
-          >
-            <Text className="confirm-text">确定</Text>
+          <View className="popup-footer">
+            <View className="action-btn primary full-width" onClick={handleConfirmMainSelector}>
+              <Text className="action-text">确定</Text>
+            </View>
           </View>
         </View>
       )}
 
-      <View className="sort-bar">
-        <View
-          className="sort-option"
-          onClick={(e) => {
-            e.stopPropagation()
-            setActiveSortTab('welcome')
-            setShowWelcomeDropdown(!showWelcomeDropdown)
-            setWelcomeArrowUp(!showWelcomeDropdown)
-            setShowDistanceDropdown(false)
-            setDistanceArrowUp(false)
-            setShowPriceDropdown(false)
-            setPriceArrowUp(false)
-            setShowFilterDropdown(false)
-            setFilterArrowUp(false)
-          }}
+      <View className="sort-bar-container">
+        <Dropdown
+          activeKey={activeSortTab}
+          onChange={(key) => setActiveSortTab(key)}
+          className="core-filter-dropdown"
         >
-          <Text>欢迎度排序</Text>
-          <Text className="arrow">{welcomeArrowUp ? '▲' : '▼'}</Text>
-        </View>
-
-        <View
-          className="sort-option"
-          onClick={(e) => {
-            e.stopPropagation()
-            setActiveSortTab('distance')
-            setShowWelcomeDropdown(false)
-            setWelcomeArrowUp(false)
-            const willOpen = !showDistanceDropdown
-            setShowDistanceDropdown(willOpen)
-            setDistanceArrowUp(willOpen)
-            setShowPriceDropdown(false)
-            setPriceArrowUp(false)
-            setShowFilterDropdown(false)
-            setFilterArrowUp(false)
-            if (willOpen && locationPOIs[activeLocationCategory].length === 0) {
-              searchPOIs(activeLocationCategory)
-            }
-          }}
-        >
-          <Text>位置距离</Text>
-          <Text className="arrow">{distanceArrowUp ? '▲' : '▼'}</Text>
-        </View>
-
-        <View
-          className="sort-option"
-          onClick={(e) => {
-            e.stopPropagation()
-            setActiveSortTab('price')
-            setShowWelcomeDropdown(false)
-            setWelcomeArrowUp(false)
-            setShowDistanceDropdown(false)
-            setDistanceArrowUp(false)
-            setShowPriceDropdown(!showPriceDropdown)
-            setPriceArrowUp(!showPriceDropdown)
-            setShowFilterDropdown(false)
-            setFilterArrowUp(false)
-          }}
-        >
-          <Text>价格/星级</Text>
-          <Text className="arrow">{priceArrowUp ? '▲' : '▼'}</Text>
-        </View>
-
-        <View
-          className="sort-option"
-          onClick={(e) => {
-            e.stopPropagation()
-            setActiveSortTab('filter')
-            setShowWelcomeDropdown(false)
-            setWelcomeArrowUp(false)
-            setShowDistanceDropdown(false)
-            setDistanceArrowUp(false)
-            setShowPriceDropdown(false)
-            setPriceArrowUp(false)
-            setShowFilterDropdown(!showFilterDropdown)
-            setFilterArrowUp(!showFilterDropdown)
-          }}
-        >
-          <Text>筛选</Text>
-          <Text className="arrow">{filterArrowUp ? '▲' : '▼'}</Text>
-        </View>
-
-        {showWelcomeDropdown && (
-          <View className="dropdown-panel" onClick={(e) => e.stopPropagation()}>
-            {[
-              '价格从低到高',
-              '价格从高到低',
-              '评分从高到低',
-              '距离从近到远',
-            ].map((option) => (
-              <View
-                key={option}
-                className={`dropdown-item ${selectedSortOption === option ? 'selected' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setSelectedSortOption(option)
-                  const sortBy =
-                    option === '价格从低到高'
-                      ? 'price_asc'
-                      : option === '价格从高到低'
-                        ? 'price_desc'
-                        : option === '评分从高到低'
-                          ? 'rating_desc'
-                          : 'distance_asc'
-                  onSearch({
-                    ...params,
-                    keyword: searchValue || params.keyword,
-                    ...advancedOptions,
-                    minPrice: priceRange.min,
-                    maxPrice: priceRange.max,
-                    starRating: selectedStarRating,
-                    facilities: selectedTags,
-                    sortBy,
-                  })
-                  setShowWelcomeDropdown(false)
-                }}
-              >
-                <Text className="dropdown-text">{option}</Text>
-                {selectedSortOption === option && (
-                  <Text className="check-icon">✓</Text>
-                )}
-              </View>
-            ))}
-          </View>
-        )}
-
-        {showDistanceDropdown && (
-          <View
-            className="dropdown-panel location-dropdown"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <View className="location-content">
-              <View className="location-sidebar">
-                {['热门地标', '地铁站', '景点'].map((category) => (
-                  <View
-                    key={category}
-                    className={`sidebar-item ${activeLocationCategory === category ? 'active' : ''}`}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setActiveLocationCategory(category)
-                      searchPOIs(category)
-                    }}
-                  >
-                    <Text className="sidebar-text">{category}</Text>
-                  </View>
-                ))}
-              </View>
-              <View className="location-options">
-                {isSearchingPOIs ? (
-                  <View className="loading-container">
-                    <Text className="loading-text">搜索中...</Text>
-                  </View>
-                ) : locationPOIs[activeLocationCategory]?.length > 0 ? (
-                  <View className="poi-list">
-                    {locationPOIs[activeLocationCategory].map((item, index) => (
-                      <View
-                        key={index}
-                        className={`poi-tag ${selectedLocation?.name === item.name ? 'selected' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setSelectedLocation({
-                            name: item.name,
-                            lat: item.lat,
-                            lng: item.lng,
-                          })
-                          setSelectedDistanceOption(item.name)
-                          onSearch({
-                            ...params,
-                            keyword: item.name,
-                            ...advancedOptions,
-                            minPrice: priceRange.min,
-                            maxPrice: priceRange.max,
-                            starRating: selectedStarRating,
-                            facilities: selectedTags,
-                          })
-                          setShowDistanceDropdown(false)
-                        }}
-                      >
-                        <Text className="poi-text">{item.name}</Text>
-                      </View>
-                    ))}
-                  </View>
-                ) : (
-                  <View className="empty-container">
-                    <Text className="empty-text">点击左侧分类搜索位置</Text>
-                  </View>
-                )}
-              </View>
-            </View>
-          </View>
-        )}
-
-        {showPriceDropdown && (
-          <View
-            className="dropdown-panel price-dropdown"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <View className="price-section">
-              <Text className="section-title">价格区间</Text>
-              <View className="price-slider-container">
-                <View className="price-slider">
-                  <View
-                    className="slider-track"
-                    style={{
-                      left: `${(priceRange.min / 10000) * 100}%`,
-                      width: `${((priceRange.max - priceRange.min) / 10000) * 100}%`,
-                    }}
-                  />
-                  <View
-                    className="slider-handle"
-                    style={{ left: `${(priceRange.min / 10000) * 100}%` }}
-                    onMouseDown={handlePriceSliderStart('min')}
-                    onTouchStart={handlePriceSliderStart('min')}
-                  />
-                  <View
-                    className="slider-handle"
-                    style={{ left: `${(priceRange.max / 10000) * 100}%` }}
-                    onMouseDown={handlePriceSliderStart('max')}
-                    onTouchStart={handlePriceSliderStart('max')}
-                  />
+          <Dropdown.Item key="welcome" title="欢迎度排序">
+            <View className="dropdown-panel-content">
+              {[
+                '价格从低到高',
+                '价格从高到低',
+                '评分从高到低',
+                '距离从近到远',
+              ].map((option) => (
+                <View
+                  key={option}
+                  className={`dropdown-item ${selectedSortOption === option ? 'selected' : ''}`}
+                  onClick={() => {
+                    setSelectedSortOption(option)
+                    const sortBy =
+                      option === '价格从低到高'
+                        ? 'price_asc'
+                        : option === '价格从高到低'
+                          ? 'price_desc'
+                          : option === '评分从高到低'
+                            ? 'rating_desc'
+                            : 'distance_asc'
+                    onSearch({
+                      ...params,
+                      keyword: searchValue || params.keyword,
+                      ...advancedOptions,
+                      minPrice: priceRange.min,
+                      maxPrice: priceRange.max,
+                      starRating: selectedStarRating,
+                      facilities: selectedTags,
+                      sortBy,
+                    })
+                    setActiveSortTab(null)
+                  }}
+                >
+                  <Text className="dropdown-text">{option}</Text>
+                  {selectedSortOption === option && (
+                    <Text className="check-icon">✓</Text>
+                  )}
                 </View>
-                <View className="price-labels">
-                  <Text className="price-label">¥0</Text>
-                  <Text className="price-current">
-                    ¥{priceRange.min}-¥{priceRange.max}
-                  </Text>
-                  <Text className="price-label">¥10000以上</Text>
-                </View>
-              </View>
-              <View className="price-presets">
-                {['¥200以下', '¥200-500', '¥500-1000', '¥1000以上'].map(
-                  (item) => (
-                    <View
-                      key={item}
-                      className="preset-tag"
-                      onClick={() => {
-                        if (item === '¥200以下')
-                          setPriceRange({ min: 0, max: 200 })
-                        else if (item === '¥200-500')
-                          setPriceRange({ min: 200, max: 500 })
-                        else if (item === '¥500-1000')
-                          setPriceRange({ min: 500, max: 1000 })
-                        else setPriceRange({ min: 1000, max: 10000 })
-                      }}
-                    >
-                      <Text className="preset-text">{item}</Text>
-                    </View>
-                  )
-                )}
-              </View>
+              ))}
             </View>
-            <View className="star-section">
-              <Text className="section-title">星级/档次</Text>
-              <View className="star-options">
-                {[
-                  { label: '2星及以下', value: 2 },
-                  { label: '3星/舒适', value: 3 },
-                  { label: '4星/高档', value: 4 },
-                  { label: '5星/豪华', value: 5 },
-                ].map((item) => (
-                  <View
-                    key={item.label}
-                    className={`star-tag ${selectedStarRating.includes(item.value) ? 'selected' : ''}`}
-                    onClick={() => {
-                      if (selectedStarRating.includes(item.value)) {
-                        setSelectedStarRating(
-                          selectedStarRating.filter((s) => s !== item.value)
-                        )
-                      } else {
-                        setSelectedStarRating([
-                          ...selectedStarRating,
-                          item.value,
-                        ])
-                      }
-                    }}
-                  >
-                    <Text className="star-text">{item.label}</Text>
-                  </View>
-                ))}
-              </View>
-            </View>
-            <View className="dropdown-actions">
-              <View
-                className="action-btn secondary"
-                onClick={() => {
-                  setPriceRange({ min: 0, max: 10000 })
-                  setSelectedStarRating([])
-                }}
-              >
-                <Text className="action-text">清除</Text>
-              </View>
-              <View
-                className="action-btn primary"
-                onClick={() => {
-                  onSearch({
-                    ...params,
-                    keyword: searchValue || params.keyword,
-                    ...advancedOptions,
-                    minPrice: priceRange.min,
-                    maxPrice: priceRange.max,
-                    starRating: selectedStarRating,
-                    facilities: selectedTags,
-                  })
-                  setShowPriceDropdown(false)
-                }}
-              >
-                <Text className="action-text primary">确定</Text>
-              </View>
-            </View>
-          </View>
-        )}
+          </Dropdown.Item>
 
-        {showFilterDropdown && (
-          <View
-            className="dropdown-panel filter-dropdown"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <View className="filter-content">
-              <View className="filter-sidebar">
-                {['热门筛选', '品牌', '类型特色', '设施', '床型', '点评'].map(
-                  (category) => (
+          <Dropdown.Item key="distance" title="位置距离">
+            <View className="dropdown-panel-content location-dropdown">
+              <View className="location-content">
+                <View className="location-sidebar">
+                  {['热门地标', '地铁站', '景点'].map((category) => (
                     <View
                       key={category}
-                      className={`sidebar-item ${activeFilterCategory === category ? 'active' : ''}`}
+                      className={`sidebar-item ${activeLocationCategory === category ? 'active' : ''}`}
                       onClick={(e) => {
                         e.stopPropagation()
-                        setActiveFilterCategory(category)
+                        setActiveLocationCategory(category)
+                        // searchPOIs will be triggered by useEffect when category changes if needed
+                        // or we can call it directly here to be safe/faster response
+                        if (locationPOIs[category].length === 0) {
+                          searchPOIs(category)
+                        }
                       }}
                     >
                       <Text className="sidebar-text">{category}</Text>
                     </View>
-                  )
-                )}
+                  ))}
+                </View>
+                <View className="location-options">
+                  {isSearchingPOIs ? (
+                    <View className="loading-container">
+                      <Text className="loading-text">搜索中...</Text>
+                    </View>
+                  ) : locationPOIs[activeLocationCategory]?.length > 0 ? (
+                    <View className="poi-list">
+                      {locationPOIs[activeLocationCategory].map(
+                        (item, index) => (
+                          <View
+                            key={index}
+                            className={`poi-tag ${selectedLocation?.name === item.name ? 'selected' : ''}`}
+                            onClick={() => {
+                              setSelectedLocation({
+                                name: item.name,
+                                lat: item.lat,
+                                lng: item.lng,
+                              })
+                              setSelectedDistanceOption(item.name)
+                              onSearch({
+                                ...params,
+                                keyword: item.name,
+                                ...advancedOptions,
+                                minPrice: priceRange.min,
+                                maxPrice: priceRange.max,
+                                starRating: selectedStarRating,
+                                facilities: selectedTags,
+                              })
+                              setActiveSortTab(null)
+                            }}
+                          >
+                            <Text className="poi-text">{item.name}</Text>
+                          </View>
+                        )
+                      )}
+                    </View>
+                  ) : (
+                    <View className="empty-container">
+                      <Text className="empty-text">点击左侧分类搜索位置</Text>
+                    </View>
+                  )}
+                </View>
               </View>
-              <View className="filter-options">
-                {activeFilterCategory === '热门筛选' && (
-                  <>
-                    {[
-                      { label: '免费WiFi', value: '免费WiFi' },
-                      { label: '停车场', value: '停车场' },
-                      { label: '含早餐', value: '含早餐' },
-                      { label: '游泳池', value: '游泳池' },
-                      { label: '健身房', value: '健身房' },
-                      { label: '无烟房', value: '无烟房' },
-                    ].map((item) => (
-                      <View
-                        key={item.value}
-                        className={`filter-tag ${selectedTags.includes(item.value) ? 'selected' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (selectedTags.includes(item.value)) {
-                            setSelectedTags(
-                              selectedTags.filter((tag) => tag !== item.value)
-                            )
-                          } else {
-                            setSelectedTags([...selectedTags, item.value])
-                          }
-                        }}
-                      >
-                        <Text className="filter-tag-text">{item.label}</Text>
-                      </View>
-                    ))}
-                  </>
-                )}
-                {activeFilterCategory === '品牌' && (
-                  <>
-                    {[
-                      { label: '希尔顿', value: '希尔顿' },
-                      { label: '万豪', value: '万豪' },
-                      { label: '洲际', value: '洲际' },
-                      { label: '凯悦', value: '凯悦' },
-                      { label: '雅高', value: '雅高' },
-                      { label: '锦江', value: '锦江' },
-                      { label: '如家', value: '如家' },
-                      { label: '汉庭', value: '汉庭' },
-                    ].map((item) => (
-                      <View
-                        key={item.value}
-                        className={`filter-tag ${advancedOptions.brand === item.value ? 'selected' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setAdvancedOptions((prev) => ({
-                            ...prev,
-                            brand:
-                              prev.brand === item.value
-                                ? undefined
-                                : item.value,
-                          }))
-                        }}
-                      >
-                        <Text className="filter-tag-text">{item.label}</Text>
-                      </View>
-                    ))}
-                  </>
-                )}
-                {activeFilterCategory === '类型特色' && (
-                  <>
-                    {[
-                      { label: '亲子酒店', value: '亲子酒店' },
-                      { label: '情侣酒店', value: '情侣酒店' },
-                      { label: '商务酒店', value: '商务酒店' },
-                      { label: '度假酒店', value: '度假酒店' },
-                      { label: '民宿', value: '民宿' },
-                      { label: '公寓', value: '公寓' },
-                    ].map((item) => (
-                      <View
-                        key={item.value}
-                        className={`filter-tag ${selectedTags.includes(item.value) ? 'selected' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (selectedTags.includes(item.value)) {
-                            setSelectedTags(
-                              selectedTags.filter((tag) => tag !== item.value)
-                            )
-                          } else {
-                            setSelectedTags([...selectedTags, item.value])
-                          }
-                        }}
-                      >
-                        <Text className="filter-tag-text">{item.label}</Text>
-                      </View>
-                    ))}
-                  </>
-                )}
-                {activeFilterCategory === '设施' && (
-                  <>
-                    {[
-                      '免费WiFi',
-                      '停车场',
-                      '游泳池',
-                      '健身房',
-                      '餐厅',
-                      'SPA',
-                      '商务中心',
-                      '会议室',
-                      '24小时前台',
-                      '行李寄存',
-                      '洗衣服务',
-                      '接机服务',
-                    ].map((item) => (
+            </View>
+          </Dropdown.Item>
+
+          <Dropdown.Item key="price" title="价格/星级">
+            <View className="dropdown-panel-content price-dropdown">
+              <View className="price-section">
+                <Text className="section-title">价格区间</Text>
+                <View className="price-slider-container">
+                  <View className="price-slider">
+                    <View
+                      className="slider-track"
+                      style={{
+                        left: `${(priceRange.min / 10000) * 100}%`,
+                        width: `${((priceRange.max - priceRange.min) / 10000) * 100}%`,
+                      }}
+                    />
+                    <View
+                      className="slider-handle"
+                      style={{ left: `${(priceRange.min / 10000) * 100}%` }}
+                      onMouseDown={handlePriceSliderStart('min')}
+                      onTouchStart={handlePriceSliderStart('min')}
+                    />
+                    <View
+                      className="slider-handle"
+                      style={{ left: `${(priceRange.max / 10000) * 100}%` }}
+                      onMouseDown={handlePriceSliderStart('max')}
+                      onTouchStart={handlePriceSliderStart('max')}
+                    />
+                  </View>
+                  <View className="price-labels">
+                    <Text className="price-label">¥0</Text>
+                    <Text className="price-current">
+                      ¥{priceRange.min}-¥{priceRange.max}
+                    </Text>
+                    <Text className="price-label">¥10000以上</Text>
+                  </View>
+                </View>
+                <View className="price-presets">
+                  {['¥200以下', '¥200-500', '¥500-1000', '¥1000以上'].map(
+                    (item) => (
                       <View
                         key={item}
-                        className={`filter-tag ${selectedTags.includes(item) ? 'selected' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          if (selectedTags.includes(item)) {
-                            setSelectedTags(
-                              selectedTags.filter((tag) => tag !== item)
-                            )
-                          } else {
-                            setSelectedTags([...selectedTags, item])
-                          }
+                        className="preset-tag"
+                        onClick={() => {
+                          if (item === '¥200以下')
+                            setPriceRange({ min: 0, max: 200 })
+                          else if (item === '¥200-500')
+                            setPriceRange({ min: 200, max: 500 })
+                          else if (item === '¥500-1000')
+                            setPriceRange({ min: 500, max: 1000 })
+                          else setPriceRange({ min: 1000, max: 10000 })
                         }}
                       >
-                        <Text className="filter-tag-text">{item}</Text>
+                        <Text className="preset-text">{item}</Text>
                       </View>
-                    ))}
-                  </>
-                )}
-                {activeFilterCategory === '床型' && (
-                  <>
-                    {[
-                      { label: '大床房', value: '大床房' },
-                      { label: '双床房', value: '双床房' },
-                      { label: '套房', value: '套房' },
-                      { label: '家庭房', value: '家庭房' },
-                      { label: '亲子房', value: '亲子房' },
-                    ].map((item) => (
-                      <View
-                        key={item.value}
-                        className={`filter-tag ${advancedOptions.roomType === item.value ? 'selected' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setAdvancedOptions((prev) => ({
-                            ...prev,
-                            roomType:
-                              prev.roomType === item.value
-                                ? undefined
-                                : item.value,
-                          }))
-                        }}
-                      >
-                        <Text className="filter-tag-text">{item.label}</Text>
-                      </View>
-                    ))}
-                  </>
-                )}
-                {activeFilterCategory === '点评' && (
-                  <>
-                    {[
-                      { label: '4.5分以上', value: 4.5 },
-                      { label: '4.0分以上', value: 4.0 },
-                      { label: '3.5分以上', value: 3.5 },
-                      { label: '3.0分以上', value: 3.0 },
-                    ].map((item) => (
-                      <View
-                        key={item.value}
-                        className={`filter-tag ${advancedOptions.minRating === item.value ? 'selected' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setAdvancedOptions((prev) => ({
-                            ...prev,
-                            minRating:
-                              prev.minRating === item.value
-                                ? undefined
-                                : item.value,
-                          }))
-                        }}
-                      >
-                        <Text className="filter-tag-text">{item.label}</Text>
-                      </View>
-                    ))}
-                  </>
-                )}
+                    )
+                  )}
+                </View>
+              </View>
+              <View className="star-section">
+                <Text className="section-title">星级/档次</Text>
+                <View className="star-options">
+                  {[
+                    { label: '2星及以下', value: 2 },
+                    { label: '3星/舒适', value: 3 },
+                    { label: '4星/高档', value: 4 },
+                    { label: '5星/豪华', value: 5 },
+                  ].map((item) => (
+                    <View
+                      key={item.label}
+                      className={`star-tag ${selectedStarRating.includes(item.value) ? 'selected' : ''}`}
+                      onClick={() => {
+                        if (selectedStarRating.includes(item.value)) {
+                          setSelectedStarRating(
+                            selectedStarRating.filter((s) => s !== item.value)
+                          )
+                        } else {
+                          setSelectedStarRating([
+                            ...selectedStarRating,
+                            item.value,
+                          ])
+                        }
+                      }}
+                    >
+                      <Text className="star-text">{item.label}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+              <View className="dropdown-actions">
+                <View
+                  className="action-btn secondary"
+                  onClick={() => {
+                    setPriceRange({ min: 0, max: 10000 })
+                    setSelectedStarRating([])
+                  }}
+                >
+                  <Text className="action-text">清除</Text>
+                </View>
+                <View
+                  className="action-btn primary"
+                  onClick={() => {
+                    onSearch({
+                      ...params,
+                      keyword: searchValue || params.keyword,
+                      ...advancedOptions,
+                      minPrice: priceRange.min,
+                      maxPrice: priceRange.max,
+                      starRating: selectedStarRating,
+                      facilities: selectedTags,
+                    })
+                    setActiveSortTab(null)
+                  }}
+                >
+                  <Text className="action-text primary">确定</Text>
+                </View>
               </View>
             </View>
-            <View className="dropdown-actions">
-              <View
-                className="action-btn secondary"
-                onClick={() => {
-                  setSelectedTags([])
-                  setAdvancedOptions({
-                    starRating: [],
-                    facilities: [],
-                    priceRange: { min: 0, max: 10000 },
-                  })
-                }}
-              >
-                <Text className="action-text">清除</Text>
+          </Dropdown.Item>
+
+          <Dropdown.Item key="filter" title="筛选">
+            <View className="dropdown-panel-content filter-dropdown">
+              <View className="filter-content">
+                <View className="filter-sidebar">
+                  {['热门筛选', '品牌', '类型特色', '设施', '床型', '点评'].map(
+                    (category) => (
+                      <View
+                        key={category}
+                        className={`sidebar-item ${activeFilterCategory === category ? 'active' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setActiveFilterCategory(category)
+                        }}
+                      >
+                        <Text className="sidebar-text">{category}</Text>
+                      </View>
+                    )
+                  )}
+                </View>
+                <View className="filter-options">
+                  {activeFilterCategory === '热门筛选' && (
+                    <>
+                      {[
+                        { label: '免费WiFi', value: '免费WiFi' },
+                        { label: '停车场', value: '停车场' },
+                        { label: '含早餐', value: '含早餐' },
+                        { label: '游泳池', value: '游泳池' },
+                        { label: '健身房', value: '健身房' },
+                        { label: '无烟房', value: '无烟房' },
+                      ].map((item) => (
+                        <View
+                          key={item.value}
+                          className={`filter-tag ${selectedTags.includes(item.value) ? 'selected' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (selectedTags.includes(item.value)) {
+                              setSelectedTags(
+                                selectedTags.filter((tag) => tag !== item.value)
+                              )
+                            } else {
+                              setSelectedTags([...selectedTags, item.value])
+                            }
+                          }}
+                        >
+                          <Text className="filter-tag-text">{item.label}</Text>
+                        </View>
+                      ))}
+                    </>
+                  )}
+                  {activeFilterCategory === '品牌' && (
+                    <>
+                      {[
+                        { label: '希尔顿', value: '希尔顿' },
+                        { label: '万豪', value: '万豪' },
+                        { label: '洲际', value: '洲际' },
+                        { label: '凯悦', value: '凯悦' },
+                        { label: '雅高', value: '雅高' },
+                        { label: '锦江', value: '锦江' },
+                        { label: '如家', value: '如家' },
+                        { label: '汉庭', value: '汉庭' },
+                      ].map((item) => (
+                        <View
+                          key={item.value}
+                          className={`filter-tag ${advancedOptions.brand === item.value ? 'selected' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setAdvancedOptions((prev) => ({
+                              ...prev,
+                              brand:
+                                prev.brand === item.value
+                                  ? undefined
+                                  : item.value,
+                            }))
+                          }}
+                        >
+                          <Text className="filter-tag-text">{item.label}</Text>
+                        </View>
+                      ))}
+                    </>
+                  )}
+                  {activeFilterCategory === '类型特色' && (
+                    <>
+                      {[
+                        { label: '亲子酒店', value: '亲子酒店' },
+                        { label: '情侣酒店', value: '情侣酒店' },
+                        { label: '商务酒店', value: '商务酒店' },
+                        { label: '度假酒店', value: '度假酒店' },
+                        { label: '民宿', value: '民宿' },
+                        { label: '公寓', value: '公寓' },
+                      ].map((item) => (
+                        <View
+                          key={item.value}
+                          className={`filter-tag ${selectedTags.includes(item.value) ? 'selected' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (selectedTags.includes(item.value)) {
+                              setSelectedTags(
+                                selectedTags.filter((tag) => tag !== item.value)
+                              )
+                            } else {
+                              setSelectedTags([...selectedTags, item.value])
+                            }
+                          }}
+                        >
+                          <Text className="filter-tag-text">{item.label}</Text>
+                        </View>
+                      ))}
+                    </>
+                  )}
+                  {activeFilterCategory === '设施' && (
+                    <>
+                      {[
+                        '免费WiFi',
+                        '停车场',
+                        '游泳池',
+                        '健身房',
+                        '餐厅',
+                        'SPA',
+                        '商务中心',
+                        '会议室',
+                        '24小时前台',
+                        '行李寄存',
+                        '洗衣服务',
+                        '接机服务',
+                      ].map((item) => (
+                        <View
+                          key={item}
+                          className={`filter-tag ${selectedTags.includes(item) ? 'selected' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (selectedTags.includes(item)) {
+                              setSelectedTags(
+                                selectedTags.filter((tag) => tag !== item)
+                              )
+                            } else {
+                              setSelectedTags([...selectedTags, item])
+                            }
+                          }}
+                        >
+                          <Text className="filter-tag-text">{item}</Text>
+                        </View>
+                      ))}
+                    </>
+                  )}
+                  {activeFilterCategory === '床型' && (
+                    <>
+                      {[
+                        { label: '大床房', value: '大床房' },
+                        { label: '双床房', value: '双床房' },
+                        { label: '套房', value: '套房' },
+                        { label: '家庭房', value: '家庭房' },
+                        { label: '亲子房', value: '亲子房' },
+                      ].map((item) => (
+                        <View
+                          key={item.value}
+                          className={`filter-tag ${advancedOptions.roomType === item.value ? 'selected' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setAdvancedOptions((prev) => ({
+                              ...prev,
+                              roomType:
+                                prev.roomType === item.value
+                                  ? undefined
+                                  : item.value,
+                            }))
+                          }}
+                        >
+                          <Text className="filter-tag-text">{item.label}</Text>
+                        </View>
+                      ))}
+                    </>
+                  )}
+                  {activeFilterCategory === '点评' && (
+                    <>
+                      {[
+                        { label: '4.5分以上', value: 4.5 },
+                        { label: '4.0分以上', value: 4.0 },
+                        { label: '3.5分以上', value: 3.5 },
+                        { label: '3.0分以上', value: 3.0 },
+                      ].map((item) => (
+                        <View
+                          key={item.value}
+                          className={`filter-tag ${advancedOptions.minRating === item.value ? 'selected' : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setAdvancedOptions((prev) => ({
+                              ...prev,
+                              minRating:
+                                prev.minRating === item.value
+                                  ? undefined
+                                  : item.value,
+                            }))
+                          }}
+                        >
+                          <Text className="filter-tag-text">{item.label}</Text>
+                        </View>
+                      ))}
+                    </>
+                  )}
+                </View>
               </View>
-              <View
-                className="action-btn primary"
-                onClick={() => {
-                  onSearch({
-                    ...params,
-                    keyword: searchValue || params.keyword,
-                    ...advancedOptions,
-                    minPrice: priceRange.min,
-                    maxPrice: priceRange.max,
-                    starRating: selectedStarRating,
-                    facilities: selectedTags,
-                  })
-                  setShowFilterDropdown(false)
-                }}
-              >
-                <Text className="action-text primary">确定</Text>
+              <View className="dropdown-actions">
+                <View
+                  className="action-btn secondary"
+                  onClick={() => {
+                    setSelectedTags([])
+                    setAdvancedOptions({
+                      starRating: [],
+                      facilities: [],
+                      priceRange: { min: 0, max: 10000 },
+                    })
+                  }}
+                >
+                  <Text className="action-text">清除</Text>
+                </View>
+                <View
+                  className="action-btn primary"
+                  onClick={() => {
+                    onSearch({
+                      ...params,
+                      keyword: searchValue || params.keyword,
+                      ...advancedOptions,
+                      minPrice: priceRange.min,
+                      maxPrice: priceRange.max,
+                      starRating: selectedStarRating,
+                      facilities: selectedTags,
+                    })
+                    setActiveSortTab(null)
+                  }}
+                >
+                  <Text className="action-text primary">确定</Text>
+                </View>
               </View>
             </View>
-          </View>
-        )}
+          </Dropdown.Item>
+        </Dropdown>
       </View>
 
       <CitySelector
@@ -1346,6 +1366,7 @@ export default function CoreFilterHeader({
         onSelect={handleCitySelect}
         onHotSearchSelect={handleHotSearchSelect}
         currentCity={params.city}
+        defaultTab={citySelectorTab}
       />
 
       <CalendarPicker

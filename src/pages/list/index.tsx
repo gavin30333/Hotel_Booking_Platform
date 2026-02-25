@@ -3,19 +3,13 @@ import { View } from '@tarojs/components'
 import { useHotelList } from '@/hooks/useHotelList'
 import { useHotelStore } from '@/store/hotelStore'
 import { useListPageStore } from '@/store/listPageStore'
-import Dropdown from '@/components/common/display/Dropdown'
 import Taro, { useLoad, usePullDownRefresh, useRouter } from '@tarojs/taro'
 import { useState, useEffect, useCallback } from 'react'
 import './ListPage.less'
 import HotelListHeader from './components/HotelListHeader'
 import FilterTags, { FilterTagProps } from './components/FilterTags'
 import HotelListContent from './components/HotelListContent'
-import {
-  sortOptions,
-  stayDurationOptions,
-  brandOptions,
-  filterTags,
-} from './constants'
+import { filterTags } from './constants'
 import { formatSearchFilters } from './utils'
 
 export default function HotelList() {
@@ -24,42 +18,10 @@ export default function HotelList() {
     useHotelList()
   const { filters, setFilters, resetFilters } = useHotelStore()
   const { resetList } = useListPageStore()
-  const [showStayDurationPopover, setShowStayDurationPopover] = useState(false)
-  const [showBrandPopover, setShowBrandPopover] = useState(false)
-  const [showSortPopover, setShowSortPopover] = useState(false)
-  const [stayDurationArrowUp, setStayDurationArrowUp] = useState(false)
-  const [brandArrowUp, setBrandArrowUp] = useState(false)
-  const [isLocalDropdownOpen, setIsLocalDropdownOpen] = useState(false)
   const [isCoreFilterDropdownOpen, setIsCoreFilterDropdownOpen] =
     useState(false)
-  const [isAnyDropdownOpen, setIsAnyDropdownOpen] = useState(false)
   const [selectedFilters, setSelectedFilters] = useState<string[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
-
-  useEffect(() => {
-    setIsLocalDropdownOpen(
-      showStayDurationPopover || showBrandPopover || showSortPopover
-    )
-  }, [showStayDurationPopover, showBrandPopover, showSortPopover])
-
-  useEffect(() => {
-    setIsAnyDropdownOpen(isLocalDropdownOpen || isCoreFilterDropdownOpen)
-  }, [isLocalDropdownOpen, isCoreFilterDropdownOpen])
-
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setShowStayDurationPopover(false)
-      setStayDurationArrowUp(false)
-      setShowBrandPopover(false)
-      setBrandArrowUp(false)
-      setShowSortPopover(false)
-    }
-
-    document.addEventListener('click', handleClickOutside)
-    return () => {
-      document.removeEventListener('click', handleClickOutside)
-    }
-  }, [])
 
   const initFromUrl = useCallback(() => {
     const {
@@ -136,68 +98,6 @@ export default function HotelList() {
     refreshHotels()
   }
 
-  const handleStayDurationSelect = (value: string, label: string) => {
-    setShowStayDurationPopover(false)
-    setStayDurationArrowUp(false)
-    Toast.show({ content: `选择了${label}` })
-    setFilters({ stayDuration: value })
-    refreshHotels()
-    setTimeout(() => {
-      Toast.show({ content: '筛选成功，找到符合条件的酒店' })
-    }, 500)
-  }
-
-  const handleBrandSelect = (value: string, label: string) => {
-    setShowBrandPopover(false)
-    setBrandArrowUp(false)
-    Toast.show({ content: `选择了${label}` })
-    setFilters({ brand: value })
-    refreshHotels()
-    setTimeout(() => {
-      Toast.show({ content: '筛选成功，找到符合条件的酒店' })
-    }, 500)
-  }
-
-  const handleSortSelect = (key: string, label: string) => {
-    setShowSortPopover(false)
-    Toast.show({ content: `选择了${label}` })
-    setFilters({
-      sortBy: key as
-        | 'price_asc'
-        | 'price_desc'
-        | 'rating_desc'
-        | 'distance_asc',
-    })
-    refreshHotels()
-    setTimeout(() => {
-      Toast.show({ content: '排序成功' })
-    }, 500)
-  }
-
-  const handleStayDurationClick = () => {
-    setShowStayDurationPopover(!showStayDurationPopover)
-    setStayDurationArrowUp(!showStayDurationPopover)
-    setShowBrandPopover(false)
-    setBrandArrowUp(false)
-    setShowSortPopover(false)
-  }
-
-  const handleBrandClick = () => {
-    setShowBrandPopover(!showBrandPopover)
-    setBrandArrowUp(!showBrandPopover)
-    setShowStayDurationPopover(false)
-    setStayDurationArrowUp(false)
-    setShowSortPopover(false)
-  }
-
-  const handleSortClick = () => {
-    setShowSortPopover(!showSortPopover)
-    setShowStayDurationPopover(false)
-    setStayDurationArrowUp(false)
-    setShowBrandPopover(false)
-    setBrandArrowUp(false)
-  }
-
   const handleFilterTagClick = (
     filterName: string,
     filterValue: Record<string, unknown>
@@ -218,28 +118,16 @@ export default function HotelList() {
     refreshHotels()
   }
 
-  const tags: FilterTagProps[] = [
-    {
-      label: '入住时长',
-      icon: stayDurationArrowUp ? '▲' : '▼',
-      onClick: handleStayDurationClick,
-    },
-    {
-      label: '热门品牌',
-      icon: brandArrowUp ? '▲' : '▼',
-      onClick: handleBrandClick,
-    },
-    ...filterTags.map((tag) => {
-      const isActive = selectedFilters.includes(tag.name)
-      return {
-        label: tag.name,
-        onClick: () => handleFilterTagClick(tag.name, { [tag.key]: tag.value }),
-        isActive,
-        closable: isActive,
-        onClose: () => handleRemoveFilter(tag.name, tag.key),
-      }
-    }),
-  ]
+  const tags: FilterTagProps[] = filterTags.map((tag) => {
+    const isActive = selectedFilters.includes(tag.name)
+    return {
+      label: tag.name,
+      onClick: () => handleFilterTagClick(tag.name, { [tag.key]: tag.value }),
+      isActive,
+      closable: isActive,
+      onClose: () => handleRemoveFilter(tag.name, tag.key),
+    }
+  })
 
   return (
     <View
@@ -257,26 +145,8 @@ export default function HotelList() {
         initialFilters={filters}
       />
 
-      <View style={{ position: 'relative', zIndex: 100 }}>
+      <View style={{ position: 'relative', zIndex: 1 }}>
         <FilterTags tags={tags} />
-
-        <Dropdown
-          visible={showStayDurationPopover}
-          options={stayDurationOptions}
-          onSelect={handleStayDurationSelect}
-        />
-
-        <Dropdown
-          visible={showBrandPopover}
-          options={brandOptions}
-          onSelect={handleBrandSelect}
-        />
-
-        <Dropdown
-          visible={showSortPopover}
-          options={sortOptions}
-          onSelect={handleSortSelect}
-        />
       </View>
 
       <HotelListContent
@@ -284,7 +154,7 @@ export default function HotelList() {
         loading={loading}
         hasMore={hasMore}
         error={error}
-        isAnyDropdownOpen={isAnyDropdownOpen}
+        isAnyDropdownOpen={isCoreFilterDropdownOpen}
         onLoadMore={loadMore}
       />
     </View>
