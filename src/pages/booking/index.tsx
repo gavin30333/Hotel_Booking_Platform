@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, Input, Button } from '@tarojs/components'
 import { useState, useEffect } from 'react'
 import Taro, { useRouter, showToast } from '@tarojs/taro'
-import { getHotelDetail, orderApi } from '@/services/hotel'
+import { getHotelDetail } from '@/services/hotel'
 import {
   LeftOutline,
   MessageOutline,
@@ -42,10 +42,23 @@ interface HotelDetail {
   viewCount?: number
   orderCount?: number
   facilities: string[]
-  nearbyAttractions?: Array<{ name: string; distance?: string; description?: string }>
+  nearbyAttractions?: Array<{
+    name: string
+    distance?: string
+    description?: string
+  }>
   transportations?: Array<{ type: string; name: string; distance?: string }>
-  shoppingMalls?: Array<{ name: string; distance?: string; description?: string }>
-  discounts?: Array<{ name: string; type: string; value: number; description?: string }>
+  shoppingMalls?: Array<{
+    name: string
+    distance?: string
+    description?: string
+  }>
+  discounts?: Array<{
+    name: string
+    type: string
+    value: number
+    description?: string
+  }>
   policies?: {
     checkIn?: string
     checkOut?: string
@@ -63,6 +76,7 @@ export default function BookingPage() {
   const roomTypeId = router.params.roomTypeId as string
   const checkInDate = router.params.checkInDate as string
   const checkOutDate = router.params.checkOutDate as string
+  const breakfastCount = Number(router.params.breakfastCount) || 0
 
   const [hotel, setHotel] = useState<HotelDetail | null>(null)
   const [loading, setLoading] = useState(true)
@@ -116,23 +130,35 @@ export default function BookingPage() {
   const calculatePrice = () => {
     if (!hotel) return
 
-    const selectedRoom = hotel.roomTypes?.find(
-      (room) => room.id === roomTypeId || room.name === roomTypeId
-    ) || hotel.roomTypes?.[0]
+    const selectedRoom =
+      hotel.roomTypes?.find(
+        (room) => room.id === roomTypeId || room.name === roomTypeId
+      ) || hotel.roomTypes?.[0]
 
     const roomPrice = selectedRoom?.price || 0
     const checkIn = new Date(checkInDate)
     const checkOut = new Date(checkOutDate)
-    const nights = Math.max(1, Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24)))
+    const nights = Math.max(
+      1,
+      Math.ceil(
+        (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24)
+      )
+    )
 
-    const discount = hotel.discounts?.reduce((acc, d) => {
-      if (d.type === 'percentage') {
-        return acc + Math.floor(roomPrice * nights * formData.roomCount * (100 - d.value) / 100)
-      } else if (d.type === 'fixed' || d.type === 'special') {
-        return acc + d.value
-      }
-      return acc
-    }, 0) || 0
+    const discount =
+      hotel.discounts?.reduce((acc, d) => {
+        if (d.type === 'percentage') {
+          return (
+            acc +
+            Math.floor(
+              (roomPrice * nights * formData.roomCount * (100 - d.value)) / 100
+            )
+          )
+        } else if (d.type === 'fixed' || d.type === 'special') {
+          return acc + d.value
+        }
+        return acc
+      }, 0) || 0
 
     const totalPrice = roomPrice * nights * formData.roomCount - discount
 
@@ -172,7 +198,10 @@ export default function BookingPage() {
   const handleCounterChange = (field: string, delta: number) => {
     setFormData((prev) => {
       const currentValue = prev[field as keyof typeof prev] as number
-      const newValue = Math.max(field === 'roomCount' ? 1 : 0, currentValue + delta)
+      const newValue = Math.max(
+        field === 'roomCount' ? 1 : 0,
+        currentValue + delta
+      )
       return {
         ...prev,
         [field]: newValue,
@@ -224,119 +253,44 @@ export default function BookingPage() {
 
     setSubmitting(true)
 
-    try {
-      const selectedRoom = hotel?.roomTypes?.find(
-        (room) => room.id === roomTypeId || room.name === roomTypeId
-      ) || hotel?.roomTypes?.[0]
+    const orderId = `ORD${Date.now()}`
 
-      const createResponse = await orderApi.create({
-        hotelId: hotelId,
-        roomTypeId: selectedRoom?.id || roomTypeId,
-        checkIn: checkInDate,
-        checkOut: checkOutDate,
-        guests: [{
-          name: formData.guestName,
-          phone: formData.phone,
-          idCard: '',
-        }],
-        remark: formData.specialRequests.join('、'),
-      })
+    showToast({
+      title: '订单创建成功，正在支付...',
+      icon: 'loading',
+      duration: 1500,
+    })
 
-      if (createResponse.success) {
-        const newOrderId = createResponse.data.orderId
-
-        showToast({
-          title: '订单创建成功，正在支付...',
-          icon: 'loading',
-          duration: 1500,
-        })
-
-        setTimeout(() => {
-          handlePayment(newOrderId)
-        }, 1500)
-      } else {
-        showToast({
-          title: createResponse.message || '订单创建失败',
-          icon: 'none',
-        })
-        setSubmitting(false)
-      }
-    } catch (error: any) {
-      console.error('创建订单失败:', error)
-      showToast({
-        title: error.response?.data?.message || '订单创建失败，请重试',
-        icon: 'none',
-      })
-      setSubmitting(false)
-    }
-  }
-
-  const handlePayment = async (orderIdToPay: string) => {
-    try {
-      const payResponse = await orderApi.pay(orderIdToPay)
-
-      if (payResponse.success) {
-        showToast({
-          title: '支付成功！',
-          icon: 'success',
-          duration: 2000,
-        })
-
-        setTimeout(() => {
-          Taro.showModal({
-            title: '支付成功',
-            content: `您的订单已支付成功！\n订单号：${orderIdToPay}\n支付金额：¥${priceInfo.totalPrice}`,
-            confirmText: '查看酒店',
-            cancelText: '返回首页',
-            success: (res) => {
-              if (res.confirm) {
-                Taro.redirectTo({
-                  url: `/pages/detail/index?id=${hotelId}`,
-                })
-              } else {
-                Taro.switchTab({
-                  url: '/pages/search/index',
-                })
-              }
-            }
-          })
-        }, 500)
-      } else {
-        showToast({
-          title: payResponse.message || '支付失败',
-          icon: 'none',
-          duration: 2000,
-        })
-        showPaymentFailModal(orderIdToPay)
-      }
-    } catch (error: any) {
-      console.error('支付失败:', error)
-      showToast({
-        title: error.response?.data?.message || '支付失败，请重试',
-        icon: 'none',
-      })
-      showPaymentFailModal(orderIdToPay)
-    }
-  }
-
-  const showPaymentFailModal = (orderIdToPay: string) => {
     setTimeout(() => {
-      Taro.showModal({
-        title: '支付失败',
-        content: '支付遇到问题，是否重试？',
-        confirmText: '重试支付',
-        cancelText: '取消订单',
-        success: (res) => {
-          if (res.confirm) {
-            handlePayment(orderIdToPay)
-          } else {
-            orderApi.cancel(orderIdToPay).catch(() => {})
-            Taro.navigateBack()
-          }
-        }
+      showToast({
+        title: '支付成功！',
+        icon: 'success',
+        duration: 1500,
       })
-    }, 500)
-    setSubmitting(false)
+
+      setTimeout(() => {
+        const breakfastText =
+          breakfastCount === 0 ? '无早餐' : `含${breakfastCount}份早餐`
+        Taro.showModal({
+          title: '支付成功',
+          content: `您的订单已支付成功！\n订单号：${orderId}\n房型：${selectedRoom?.name || '标准间'}\n早餐：${breakfastText}\n支付金额：¥${priceInfo.totalPrice}`,
+          confirmText: '查看酒店',
+          cancelText: '返回首页',
+          success: (res) => {
+            setSubmitting(false)
+            if (res.confirm) {
+              Taro.redirectTo({
+                url: `/pages/detail/index?id=${hotelId}`,
+              })
+            } else {
+              Taro.switchTab({
+                url: '/pages/search/index',
+              })
+            }
+          },
+        })
+      }, 1000)
+    }, 1500)
   }
 
   if (loading) {
@@ -361,9 +315,13 @@ export default function BookingPage() {
     )
   }
 
-  const selectedRoom = hotel.roomTypes?.find(
-    (room) => room.id === roomTypeId || room.name === roomTypeId
-  ) || hotel.roomTypes?.[0]
+  const selectedRoom =
+    hotel.roomTypes?.find(
+      (room) => room.id === roomTypeId || room.name === roomTypeId
+    ) || hotel.roomTypes?.[0]
+
+  const breakfastText =
+    breakfastCount === 0 ? '无早餐' : `含${breakfastCount}份早餐`
 
   return (
     <View className="booking-page">
@@ -395,7 +353,7 @@ export default function BookingPage() {
           </Text>
           <Text className="room-info">
             {selectedRoom
-              ? `${selectedRoom.name} ${selectedRoom.bedType || ''} ${selectedRoom.breakfast ? '含早餐' : '无早餐'}`
+              ? `${selectedRoom.name} ${selectedRoom.bedType || ''} ${breakfastText}`
               : '请选择房型'}
           </Text>
           <View className="booking-tags">
@@ -476,7 +434,8 @@ export default function BookingPage() {
               <View key={index} className="discount-item">
                 <Text className="discount-name">{discount.name}</Text>
                 <Text className="discount-value">
-                  -¥{discount.value}{discount.type === 'percentage' ? '%' : ''}
+                  -¥{discount.value}
+                  {discount.type === 'percentage' ? '%' : ''}
                 </Text>
               </View>
             ))

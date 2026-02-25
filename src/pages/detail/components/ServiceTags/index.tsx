@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from '@tarojs/components'
-import { Tag, Button } from 'antd-mobile'
+import { Button } from 'antd-mobile'
 import { RightOutline } from 'antd-mobile-icons'
 import { getFacilityIcon } from '../../utils'
 import './ServiceTags.less'
@@ -19,7 +19,7 @@ export default function ServiceTags({ facilities, onPolicyClick }: ServiceTagsPr
             return (
               <View key={index} className="service-tag">
                 <View className="tag-icon">
-                  <IconComponent color="#1890ff" fontSize={20} />
+                  <IconComponent className="icon-svg" fontSize={18} />
                 </View>
                 <Text className="tag-text">{facility}</Text>
               </View>
