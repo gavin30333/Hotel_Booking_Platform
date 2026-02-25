@@ -3,6 +3,7 @@
 .top-nav-bar {
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: @spacing-md @spacing-lg;
   background-color: @bg-color;
   border-bottom: 1px solid @border-color;
@@ -12,8 +13,9 @@
 }
 
 .back-btn {
+  position: absolute;
+  left: @spacing-lg;
   padding: @spacing-sm;
-  margin-right: @spacing-lg;
   color: @text-color;
   cursor: pointer;
 }
@@ -23,11 +25,7 @@
 }
 
 .header-title {
-  flex: 1;
   text-align: center;
-}
-
-.header-title Text {
   font-size: @font-size-lg;
   font-weight: 500;
   color: @text-color;

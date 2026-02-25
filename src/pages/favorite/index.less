@@ -40,39 +40,18 @@
   color: @text-color;
 }
 
-.date-selection {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.date-selection-wrapper {
   background-color: @bg-color;
   padding: @spacing-md @spacing-lg;
-  margin: @spacing-sm @spacing-lg;
-  border-radius: @border-radius-md;
-  box-shadow: @shadow-card;
-}
 
-.date-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
-
-.date-item {
-  font-size: @font-size-base;
-  color: @text-color;
-}
-
-.date-separator {
-  font-size: @font-size-base;
-  color: @text-secondary;
-  margin: 0 @spacing-sm;
-}
-
-.night-count {
-  color: @text-secondary;
-  font-size: @font-size-sm;
-  margin-top: @spacing-xs;
+  :global {
+    .field-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+  }
 }
 
 .city-filter {

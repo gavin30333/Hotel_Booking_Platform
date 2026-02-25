@@ -5,6 +5,8 @@ import HotelCard from '@/components/common/display/HotelCard'
 import BottomTabBar from '@/components/common/navigation/BottomTabBar/BottomTabBar'
 import TopNavBar from '@/components/common/navigation/TopNavBar/TopNavBar'
 import CityFilter from '@/components/common/filters/CityFilter/CityFilter'
+import { DateField } from '@/components/FieldRenderers'
+import { useQueryStore } from '@/store/useQueryStore'
 import { Hotel } from '@/services/hotel'
 import './index.less'
 
@@ -42,6 +44,11 @@ export default function FavoritePage() {
   const [activeCity, setActiveCity] = useState('all')
   const cities = ['上海']
 
+  const dates = useQueryStore((state) => state.scenes[state.activeScene].dates)
+  const updateActiveSceneParams = useQueryStore(
+    (state) => state.updateActiveSceneParams
+  )
+
   const handleCityChange = (city: string) => {
     setActiveCity(city)
   }
@@ -55,15 +62,18 @@ export default function FavoritePage() {
   return (
     <>
       <View className="favorite-page">
-        <TopNavBar title="我的收藏" showBack={false} />
+        <TopNavBar
+          title="我的收藏"
+          showBack
+          onBack={() => Taro.switchTab({ url: '/search' })}
+        />
 
-        <View className="date-selection">
-          <View className="date-row">
-            <Text className="date-item">02月24日 周二</Text>
-            <Text className="date-separator">-</Text>
-            <Text className="date-item">02月26日 周四</Text>
-          </View>
-          <Text className="night-count">共2晚</Text>
+        <View className="date-selection-wrapper">
+          <DateField
+            config={{ key: 'dates', type: 'date', label: '日期', props: {} }}
+            value={dates}
+            onChange={(val) => updateActiveSceneParams({ dates: val })}
+          />
         </View>
 
         <CityFilter
