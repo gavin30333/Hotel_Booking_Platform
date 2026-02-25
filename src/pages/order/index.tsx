@@ -103,6 +103,14 @@ export default function OrderPage() {
     return `${date.getMonth() + 1}月${date.getDate()}日`
   }
 
+  const calculateNights = (checkIn: string, checkOut: string) => {
+    const start = new Date(checkIn)
+    const end = new Date(checkOut)
+    const diffTime = Math.abs(end.getTime() - start.getTime())
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays
+  }
+
   return (
     <>
       <View className="order-page">
@@ -117,7 +125,6 @@ export default function OrderPage() {
             placeholder="搜索订单"
             value={searchValue}
             onChange={setSearchValue}
-            prefix={<SearchOutline />}
             className="search-input"
           />
           <View className="search-actions">
@@ -187,9 +194,8 @@ export default function OrderPage() {
                   <Text className="hotel-address">{order.hotelAddress}</Text>
                   <View className="order-date-info">
                     <Text className="order-date">
-                      {formatDate(order.checkInDate)} -{' '}
-                      {formatDate(order.checkOutDate)} · 共
-                      {calculateNights(order.checkInDate, order.checkOutDate)}晚
+                      {formatDate(order.checkIn)} - {formatDate(order.checkOut)}{' '}
+                      · 共{calculateNights(order.checkIn, order.checkOut)}晚
                     </Text>
                     <OrderStatus
                       status={statusMap[order.status] || order.status}
@@ -207,16 +213,11 @@ export default function OrderPage() {
                   </View>
                   <View className="room-detail">
                     <Text className="room-name">{order.roomTypeName}</Text>
-                    <Text className="room-desc">
-                      {order.room.bedType} · {order.room.area}㎡ ·{' '}
-                      {order.room.maxOccupancy}人入住
-                    </Text>
+                    <Text className="room-desc">豪华客房 · 40㎡ · 2人入住</Text>
                     <Text className="room-breakfast">含早餐</Text>
                     <View className="room-price-row">
-                      <Text className="room-price">
-                        ¥{order.room.currentPrice}
-                      </Text>
-                      {order.room.originalPrice > order.room.currentPrice && (
+                      <Text className="room-price">¥{order.finalPrice}</Text>
+                      {order.totalPrice > order.finalPrice && (
                         <Text className="room-original-price">
                           ¥{order.totalPrice}
                         </Text>
