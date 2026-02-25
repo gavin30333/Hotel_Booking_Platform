@@ -22,52 +22,56 @@ interface FavoriteHotel extends Hotel {
 
 export default function FavoritePage() {
   console.log('Favorite page loaded')
-  // 模拟收藏的酒店数据
   const [favorites, setFavorites] = useState<FavoriteHotel[]>([
     {
       id: '1',
-      name: '上海浦东丽呈酒店(国际旅游度假区店)',
-      address: '上海·迪士尼·近川沙老街',
-      minPrice: 274,
-      rating: 4.7,
-      reviewCount: 2860,
-      starRating: 4,
-      images: ['https://picsum.photos/400/300?random=1'],
-      tags: ['免费升房', '亲子主题房', '免费停车', '洗衣房'],
+      name: '上海外滩华尔道夫酒店',
+      address: '上海市黄浦区中山东一路2号',
+      minPrice: 1280,
+      rating: 4.8,
+      reviewCount: 1256,
+      starRating: 5,
+      images: [
+        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
+      ],
+      tags: ['奢华酒店', '商务出行', '近地铁', '江景房'],
       city: '上海',
     },
   ])
 
-  // 城市筛选状态
   const [activeCity, setActiveCity] = useState('all')
-  const cities = ['上海'] // 从收藏数据中提取城市列表
+  const cities = ['上海']
 
   const handleCityChange = (city: string) => {
     setActiveCity(city)
-    // 这里可以添加根据城市筛选收藏酒店的逻辑
+  }
+
+  const handleHotelClick = (hotelId: string) => {
+    Taro.navigateTo({
+      url: `/pages/detail/index?id=${hotelId}`,
+    })
   }
 
   return (
     <>
       <View className="favorite-page">
-        {/* 顶部导航 */}
-        <TopNavBar title="我的收藏" />
+        <TopNavBar title="我的收藏" showBack={false} />
 
-        {/* 日期选择区域 */}
         <View className="date-selection">
-          <Text className="date-item">02月24日 周二入住</Text>
-          <Text className="date-item night-count">2晚</Text>
-          <Text className="date-item">02月26日 周四离店</Text>
+          <View className="date-row">
+            <Text className="date-item">02月24日 周二</Text>
+            <Text className="date-separator">-</Text>
+            <Text className="date-item">02月26日 周四</Text>
+          </View>
+          <Text className="night-count">共2晚</Text>
         </View>
 
-        {/* 城市筛选标签 */}
         <CityFilter
           cities={cities}
           activeCity={activeCity}
           onCityChange={handleCityChange}
         />
 
-        {/* 酒店列表 */}
         {favorites.length === 0 ? (
           <View className="no-favorites">
             <Text>暂无收藏的酒店</Text>
@@ -75,20 +79,22 @@ export default function FavoritePage() {
         ) : (
           <View className="favorite-list">
             {favorites.map((hotel) => (
-              <View key={hotel.id} className="favorite-item">
+              <View
+                key={hotel.id}
+                className="favorite-item"
+                onClick={() => handleHotelClick(hotel.id)}
+              >
                 <HotelCard hotel={hotel} />
               </View>
             ))}
           </View>
         )}
 
-        {/* 无更多结果 */}
         <View className="no-more-results">
           <Text>无更多结果</Text>
         </View>
       </View>
 
-      {/* 底部导航栏区域 */}
       <BottomTabBar activeKey="favorite" />
     </>
   )

@@ -1,4 +1,4 @@
-import { View, Text } from '@tarojs/components'
+import { View, Text, Image } from '@tarojs/components'
 import { useState, useEffect } from 'react'
 import { Dialog } from 'antd-mobile'
 import {
@@ -20,38 +20,38 @@ import Taro, { showToast } from '@tarojs/taro'
 import BottomTabBar from '@/components/common/navigation/BottomTabBar/BottomTabBar'
 import './index.less'
 
+const DEFAULT_AVATAR =
+  'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop'
+
 export default function ProfilePage() {
   console.log('Profile page loaded')
   const [userInfo, setUserInfo] = useState({
-    name: '未登录',
+    name: '旅行达人',
     phone: '',
-    avatar: '',
+    avatar: DEFAULT_AVATAR,
   })
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(true)
 
   useEffect(() => {
-    // 从本地存储获取用户信息
     const storedUserInfo = Taro.getStorageSync('userInfo')
     const loggedIn = Taro.getStorageSync('isLoggedIn')
 
     if (loggedIn && storedUserInfo) {
       setIsLoggedIn(true)
       setUserInfo({
-        name: storedUserInfo.name || storedUserInfo.nickname || '用户',
+        name: storedUserInfo.name || storedUserInfo.nickname || '旅行达人',
         phone: storedUserInfo.phone || '',
-        avatar: storedUserInfo.avatar || '',
+        avatar: storedUserInfo.avatar || DEFAULT_AVATAR,
       })
     }
   }, [])
 
-  // 登录处理
   const handleLogin = () => {
     Taro.navigateTo({
       url: '/pages/login/index',
     })
   }
 
-  // 退出登录处理
   const handleLogout = () => {
     Dialog.confirm({
       title: '确认退出',
@@ -60,17 +60,15 @@ export default function ProfilePage() {
       cancelText: '取消',
     })
       .then(() => {
-        // 清除本地存储的用户信息
         Taro.removeStorageSync('isLoggedIn')
         Taro.removeStorageSync('token')
         Taro.removeStorageSync('userInfo')
 
-        // 更新状态
         setIsLoggedIn(false)
         setUserInfo({
           name: '未登录',
           phone: '',
-          avatar: '',
+          avatar: DEFAULT_AVATAR,
         })
 
         showToast({
@@ -78,26 +76,12 @@ export default function ProfilePage() {
           icon: 'success',
         })
       })
-      .catch(() => {
-        // 取消退出
-      })
+      .catch(() => {})
   }
-
-  const menuItems = [
-    { title: '我的订单', action: () => console.log('我的订单') },
-    {
-      title: '我的收藏',
-      action: () => Taro.navigateTo({ url: '/pages/favorite/index' }),
-    },
-    { title: '优惠券', action: () => console.log('优惠券') },
-    { title: '客服中心', action: () => console.log('客服中心') },
-    { title: '设置', action: () => console.log('设置') },
-  ]
 
   return (
     <>
       <View className="profile-page">
-        {/* 顶部操作栏 */}
         <View className="top-actions">
           <View className="action-icon" onClick={() => console.log('扫一扫')}>
             <ScanCodeOutline />
@@ -113,50 +97,30 @@ export default function ProfilePage() {
           </View>
         </View>
 
-        {/* 用户信息区域 */}
-        {isLoggedIn ? (
-          <View className="user-info-section">
-            <View className="user-avatar">
-              {userInfo.avatar ? (
-                <Text>{userInfo.name.charAt(0)}</Text>
-              ) : (
-                <UserOutline color="white" size={40} />
-              )}
-            </View>
-            <View className="user-info">
-              <Text className="user-name">{userInfo.name}</Text>
-              <Text className="user-stats">粉丝 0 关注 0 赞 0 费过 0</Text>
-            </View>
-            <View
-              className="home-link"
-              onClick={() => Taro.switchTab({ url: '/pages/search/index' })}
-            >
-              <Text>主页 ＞</Text>
-            </View>
+        <View className="user-info-section">
+          <View className="user-avatar">
+            <Image
+              src={userInfo.avatar || DEFAULT_AVATAR}
+              className="avatar-img"
+              mode="aspectFill"
+            />
           </View>
-        ) : (
-          <View className="user-info-section">
-            <View className="user-avatar">
-              <UserOutline color="white" size={40} />
-            </View>
-            <View className="user-info">
-              <Text className="user-name">未登录</Text>
-              <Text className="user-stats">登录后查看个人信息</Text>
-            </View>
-            <View
-              className="home-link"
-              onClick={() => Taro.switchTab({ url: '/pages/search/index' })}
-            >
-              <Text>主页 ＞</Text>
-            </View>
+          <View className="user-info">
+            <Text className="user-name">{userInfo.name}</Text>
+            <Text className="user-stats">粉丝 128 关注 56 赞 89 费过 32</Text>
           </View>
-        )}
+          <View
+            className="home-link"
+            onClick={() => Taro.switchTab({ url: '/pages/search/index' })}
+          >
+            <Text>主页 ＞</Text>
+          </View>
+        </View>
 
-        {/* 会员等级区域 */}
         <View className="membership-section">
           <View className="membership-info">
             <View className="membership-badge">
-              <Text>普通会员</Text>
+              <Text>黄金会员</Text>
             </View>
             <View
               className="membership-center"
@@ -171,7 +135,6 @@ export default function ProfilePage() {
           </View>
         </View>
 
-        {/* 权益区域 */}
         <View className="benefits-section">
           <View className="benefit-item">
             <CollectMoneyOutline className="benefit-icon" />
@@ -190,7 +153,6 @@ export default function ProfilePage() {
           </View>
         </View>
 
-        {/* 数据统计区域 */}
         <View className="stats-section">
           <View className="stat-item">
             <Text className="stat-value">1</Text>
@@ -201,16 +163,15 @@ export default function ProfilePage() {
             <Text className="stat-label">浏览历史</Text>
           </View>
           <View className="stat-item">
-            <Text className="stat-value">0</Text>
+            <Text className="stat-value">1280</Text>
             <Text className="stat-label">积分</Text>
           </View>
           <View className="stat-item">
-            <Text className="stat-value">0</Text>
+            <Text className="stat-value">3</Text>
             <Text className="stat-label">优惠券</Text>
           </View>
         </View>
 
-        {/* 订单状态入口 */}
         <View className="order-entries-section">
           <View className="order-entry" onClick={() => console.log('待付款')}>
             <ShopbagOutline />
@@ -240,7 +201,6 @@ export default function ProfilePage() {
           </View>
         </View>
 
-        {/* 登录/退出登录按钮 */}
         <View className="auth-buttons">
           {isLoggedIn ? (
             <View className="logout-btn" onClick={handleLogout}>
@@ -254,7 +214,6 @@ export default function ProfilePage() {
         </View>
       </View>
 
-      {/* 底部导航栏区域 */}
       <BottomTabBar activeKey="profile" />
     </>
   )

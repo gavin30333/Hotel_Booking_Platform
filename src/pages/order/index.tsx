@@ -1,6 +1,6 @@
 import { View, Text } from '@tarojs/components'
 import { useState, useEffect } from 'react'
-import { Input } from 'antd-mobile'
+import { Input, Image } from 'antd-mobile'
 import {
   SearchOutline,
   FilterOutline,
@@ -9,25 +9,48 @@ import {
   LeftOutline,
 } from 'antd-mobile-icons'
 import Taro from '@tarojs/taro'
-import RoomItem from '@/pages/detail/components/RoomItem'
 import NoData from '@/components/common/feedback/NoData'
 import BottomTabBar from '@/components/common/navigation/BottomTabBar/BottomTabBar'
-import TopNavBar from '@/components/common/navigation/TopNavBar/TopNavBar'
 import OrderStatus from '@/components/common/status/OrderStatus/OrderStatus'
-import { Room } from '@/pages/detail/types'
 import './index.less'
+
+interface OrderRoom {
+  id: string
+  name: string
+  description: string
+  bedType: string
+  area: number
+  maxOccupancy: number
+  price: number
+  currentPrice: number
+  originalPrice: number
+  breakfast: boolean
+  images: string[]
+}
+
+interface Order {
+  id: string
+  hotelId: string
+  hotelName: string
+  hotelAddress: string
+  checkInDate: string
+  checkOutDate: string
+  status: 'confirmed' | 'completed' | 'cancelled' | 'pending'
+  room: OrderRoom
+  hotelImages: string[]
+}
 
 export default function OrderPage() {
   console.log('Order page loaded')
-  const [orders, setOrders] = useState<any[]>([])
+  const [orders, setOrders] = useState<Order[]>([])
   const [activeTab, setActiveTab] = useState('all')
   const [searchValue, setSearchValue] = useState('')
 
   useEffect(() => {
-    // 模拟订单数据
-    const mockOrders = [
+    const mockOrders: Order[] = [
       {
         id: '1',
+        hotelId: '1',
         hotelName: '上海外滩华尔道夫酒店',
         hotelAddress: '上海市黄浦区中山东一路2号',
         checkInDate: '2026-03-01',
@@ -54,6 +77,7 @@ export default function OrderPage() {
       },
       {
         id: '2',
+        hotelId: '2',
         hotelName: '上海浦东香格里拉大酒店',
         hotelAddress: '上海市浦东新区富城路33号',
         checkInDate: '2026-02-15',
@@ -82,19 +106,40 @@ export default function OrderPage() {
     setOrders(mockOrders)
   }, [])
 
-  const handleBookNow = (orderId: string, breakfastCount?: number) => {
-    console.log(
-      'Book now clicked for order:',
-      orderId,
-      'breakfastCount:',
-      breakfastCount
+  const handleOrderClick = (order: Order) => {
+    if (order.status === 'completed' || order.status === 'cancelled') {
+      return
+    }
+    Taro.navigateTo({
+      url: `/pages/detail/index?id=${order.hotelId}`,
+    })
+  }
+
+  const filteredOrders = orders.filter((order) => {
+    if (activeTab === 'all') return true
+    if (activeTab === 'unpaid') return order.status === 'pending'
+    if (activeTab === 'upcoming') return order.status === 'confirmed'
+    if (activeTab === 'refund') return order.status === 'cancelled'
+    if (activeTab === 'review') return order.status === 'completed'
+    return true
+  })
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr)
+    return `${date.getMonth() + 1}月${date.getDate()}日`
+  }
+
+  const calculateNights = (checkIn: string, checkOut: string) => {
+    const checkInDate = new Date(checkIn)
+    const checkOutDate = new Date(checkOut)
+    return Math.ceil(
+      (checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24)
     )
   }
 
   return (
     <>
       <View className="order-page">
-        {/* 顶部导航 */}
         <View className="search-bar">
           <View
             className="back-btn"
@@ -119,7 +164,6 @@ export default function OrderPage() {
           </View>
         </View>
 
-        {/* 订单状态标签 */}
         <View className="order-tabs">
           <View
             className={`tab-item ${activeTab === 'all' ? 'active' : ''}`}
@@ -153,9 +197,8 @@ export default function OrderPage() {
           </View>
         </View>
 
-        {/* 订单列表 */}
         <View className="order-list">
-          {orders.length === 0 ? (
+          {filteredOrders.length === 0 ? (
             <View className="empty-order">
               <View className="empty-icon">
                 <FileOutline size={80} color="#ccc" />
@@ -163,33 +206,63 @@ export default function OrderPage() {
               <NoData message="暂无相关订单" subMessage="" />
             </View>
           ) : (
-            orders.map((order, index) => (
-              <View key={order.id} className="order-item">
+            filteredOrders.map((order) => (
+              <View
+                key={order.id}
+                className={`order-item ${order.status === 'completed' || order.status === 'cancelled' ? 'order-item-disabled' : ''}`}
+                onClick={() => handleOrderClick(order)}
+              >
                 <View className="order-hotel-info">
                   <Text className="hotel-name">{order.hotelName}</Text>
                   <Text className="hotel-address">{order.hotelAddress}</Text>
                   <View className="order-date-info">
                     <Text className="order-date">
-                      {order.checkInDate} - {order.checkOutDate}
+                      {formatDate(order.checkInDate)} - {formatDate(order.checkOutDate)} · 共{calculateNights(order.checkInDate, order.checkOutDate)}晚
                     </Text>
                     <OrderStatus status={order.status} />
                   </View>
                 </View>
 
-                <RoomItem
-                  room={order.room}
-                  index={index}
-                  roomCount={1}
-                  onBookNow={() => handleBookNow(order.id)}
-                  hotelImages={order.hotelImages}
-                />
+                <View className="order-room-info">
+                  <View className="room-image">
+                    <Image
+                      src={order.room.images?.[0] || order.hotelImages[0]}
+                      fit="cover"
+                      className="room-img"
+                    />
+                  </View>
+                  <View className="room-detail">
+                    <Text className="room-name">{order.room.name}</Text>
+                    <Text className="room-desc">
+                      {order.room.bedType} · {order.room.area}㎡ · {order.room.maxOccupancy}人入住
+                    </Text>
+                    <Text className="room-breakfast">
+                      {order.room.breakfast ? '含早餐' : '无早餐'}
+                    </Text>
+                    <View className="room-price-row">
+                      <Text className="room-price">¥{order.room.currentPrice}</Text>
+                      {order.room.originalPrice > order.room.currentPrice && (
+                        <Text className="room-original-price">
+                          ¥{order.room.originalPrice}
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                </View>
+
+                {order.status !== 'completed' && order.status !== 'cancelled' && (
+                  <View className="order-actions">
+                    <View className="action-btn-secondary">
+                      <Text>再次预订</Text>
+                    </View>
+                  </View>
+                )}
               </View>
             ))
           )}
         </View>
       </View>
 
-      {/* 底部导航栏区域 */}
       <BottomTabBar activeKey="order" />
     </>
   )
