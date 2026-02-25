@@ -9,31 +9,20 @@ export default defineAppConfig({
     'pages/favorite/index',
     'pages/profile/index',
     'pages/order/index',
+    'pages/error/404',
+    'pages/error/403',
+    'pages/error/500',
   ],
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',
-    navigationBarTitleText: 'WeChat',
+    navigationBarTitleText: '酒店预订',
     navigationBarTextStyle: 'black',
+    backgroundColor: '#f5f5f5',
   },
-  tabBar: {
-    list: [
-      {
-        pagePath: 'pages/search/index',
-        text: '首页',
-      },
-      {
-        pagePath: 'pages/favorite/index',
-        text: '收藏',
-      },
-      {
-        pagePath: 'pages/order/index',
-        text: '订单',
-      },
-      {
-        pagePath: 'pages/profile/index',
-        text: '我的',
-      },
-    ],
+  networkTimeout: {
+    request: 15000,
+    downloadFile: 30000,
   },
+  debug: process.env.NODE_ENV === 'development',
 })

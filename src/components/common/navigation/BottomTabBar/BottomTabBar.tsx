@@ -40,16 +40,16 @@ export default function BottomTabBar({ activeKey }: BottomTabBarProps) {
   const handleTabChange = (key: string) => {
     switch (key) {
       case 'recommend':
-        Taro.switchTab({ url: '/search' })
+        Taro.redirectTo({ url: '/pages/search/index' })
         break
       case 'favorite':
-        Taro.switchTab({ url: '/favorite' })
+        Taro.redirectTo({ url: '/pages/favorite/index' })
         break
       case 'order':
-        Taro.switchTab({ url: '/order' })
+        Taro.redirectTo({ url: '/pages/order/index' })
         break
       case 'profile':
-        Taro.switchTab({ url: '/profile' })
+        Taro.redirectTo({ url: '/pages/profile/index' })
         break
       default:
         break
@@ -63,7 +63,12 @@ export default function BottomTabBar({ activeKey }: BottomTabBarProps) {
       onChange={handleTabChange}
     >
       {tabs.map((item) => (
-        <TabBar.Item key={item.key} icon={item.icon} title={item.title} />
+        <TabBar.Item
+          key={item.key}
+          value={item.key}
+          icon={item.icon}
+          title={item.title}
+        />
       ))}
     </TabBar>
   )

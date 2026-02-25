@@ -1,6 +1,8 @@
 import { View, Text } from '@tarojs/components'
 import { useState, useEffect, useRef } from 'react'
 import { Image, Tag, Button } from 'antd-mobile'
+import { DEFAULT_HOTEL_IMAGE } from '@/constants'
+import { RoomCountPopup } from '@/components/common/popup'
 import {
   DownOutline,
   UpOutline,
@@ -8,8 +10,7 @@ import {
   TravelOutline,
 } from 'antd-mobile-icons'
 import { Room } from '../../types'
-import { DEFAULT_HOTEL_IMAGE } from '@/constants'
-import { RoomCountPopup } from '@/components/common/popup'
+
 import './RoomItem.less'
 
 interface RoomItemProps {

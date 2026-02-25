@@ -1,0 +1,117 @@
+@import '@/styles/variables.less';
+
+.price-star-field {
+  width: 100%;
+}
+
+.field-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: @spacing-md;
+  background-color: @page-bg;
+  border-radius: @border-radius-md;
+  cursor: pointer;
+}
+
+.field-text {
+  font-size: @font-size-base;
+  color: @text-color;
+}
+
+.field-arrow {
+  font-size: 12px;
+  color: @text-secondary;
+}
+
+.price-star-popup {
+  padding: @spacing-lg;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: @spacing-lg;
+  padding-bottom: @spacing-md;
+  border-bottom: 1px solid @border-color;
+}
+
+.popup-title {
+  font-size: @font-size-lg;
+  font-weight: 600;
+  color: @text-color;
+}
+
+.popup-confirm {
+  font-size: @font-size-base;
+  color: @primary-color;
+  cursor: pointer;
+}
+
+.popup-section {
+  margin-bottom: @spacing-lg;
+}
+
+.section-title {
+  font-size: @font-size-md;
+  font-weight: 500;
+  color: @text-color;
+  margin-bottom: @spacing-md;
+  display: block;
+}
+
+.price-ranges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: @spacing-sm;
+}
+
+.price-range-item {
+  padding: @spacing-sm @spacing-md;
+  background-color: @page-bg;
+  border-radius: @border-radius-md;
+  border: 1px solid @border-color;
+  cursor: pointer;
+
+  &.active {
+    background-color: @primary-color;
+    border-color: @primary-color;
+
+    Text {
+      color: @bg-color;
+    }
+  }
+
+  Text {
+    font-size: @font-size-sm;
+    color: @text-color;
+  }
+}
+
+.star-options {
+  display: flex;
+  gap: @spacing-sm;
+}
+
+.star-option {
+  padding: @spacing-sm @spacing-md;
+  background-color: @page-bg;
+  border-radius: @border-radius-md;
+  border: 1px solid @border-color;
+  cursor: pointer;
+
+  &.active {
+    background-color: @primary-color;
+    border-color: @primary-color;
+
+    Text {
+      color: @bg-color;
+    }
+  }
+
+  Text {
+    font-size: @font-size-sm;
+    color: @text-color;
+  }
+}

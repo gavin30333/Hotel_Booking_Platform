@@ -52,7 +52,7 @@ export default function DatePriceSelector({
 
     if (dStr === tStr) return '今天'
     if (dStr === tmStr) return '明天'
-    
+
     return getWeekDay(dateStr)
   }
 
@@ -61,8 +61,10 @@ export default function DatePriceSelector({
       <View className="date-price-main">
         <View className="date-section" onClick={onDateClick}>
           <View className="date-combined">
-            <View className="date-group">
-              <View className="date-item">
+            {/* 日期组合行 */}
+            <View className="date-row">
+              {/* 今天日期组 */}
+              <View className="date-group">
                 <Text className="date-label">
                   {getDateLabel(checkInDate, true)}
                 </Text>
@@ -73,15 +75,19 @@ export default function DatePriceSelector({
                   })()}
                 </Text>
               </View>
+
+              {/* 分隔符 */}
               <View className="date-separator">
                 <Text className="separator-text">-</Text>
               </View>
-              <View className="date-item">
+
+              {/* 明天日期组 */}
+              <View className="date-group">
                 <View className="date-label-row">
                   <Text className="date-label">
                     {getDateLabel(checkOutDate, false)}
                   </Text>
-                  <Tag className="low-price-badge" color="primary">
+                  <Tag className="low-price-badge" color="warning">
                     <Text className="low-price-text">看低价</Text>
                   </Tag>
                 </View>
@@ -92,11 +98,13 @@ export default function DatePriceSelector({
                   })()}
                 </Text>
               </View>
-            </View>
-            <View className="night-count">
-              <Text className="night-count-text">
-                共{getNightsCount(checkInDate, checkOutDate)}晚
-              </Text>
+
+              {/* 共1晚 */}
+              <View className="night-count">
+                <Text className="night-count-text">
+                  共{getNightsCount(checkInDate, checkOutDate)}晚
+                </Text>
+              </View>
             </View>
           </View>
         </View>

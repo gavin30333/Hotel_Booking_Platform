@@ -1,0 +1,40 @@
+@import '@/styles/variables.less';
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: @spacing-md;
+
+  &.primary {
+    color: @primary-color;
+  }
+
+  &.white {
+    color: #fff;
+  }
+
+  &.default {
+    color: @text-secondary;
+  }
+
+  .loading-text {
+    margin-top: @spacing-sm;
+    font-size: @font-size-sm;
+    color: @text-secondary;
+  }
+}
+
+.loading-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 9999;
+}

@@ -19,6 +19,7 @@ import {
   DiscountPopup,
 } from '@/components/common/popup'
 import { GuestInfo } from '@/types/query.types'
+import { useQueryStore } from '@/store/useQueryStore'
 import { getTransportIcon } from './utils'
 import {
   DEFAULT_HOTEL_RATING,
@@ -44,25 +45,33 @@ export default function HotelDetailPage() {
   const [hotel, setHotel] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
-  const today = new Date()
-  const tomorrow = new Date()
-  tomorrow.setDate(tomorrow.getDate() + 1)
+  const getDates = useQueryStore((state) => state.getDates)
+  const getGuests = useQueryStore((state) => state.getGuests)
+  const updateDates = useQueryStore((state) => state.updateDates)
+  const updateGuests = useQueryStore((state) => state.updateGuests)
+  const getSearchParams = useQueryStore((state) => state.getSearchParams)
+
+  const storeDates = getDates()
+  const storeGuests = getGuests()
 
   const [checkInDate, setCheckInDate] = useState<string>(
-    router.params.checkInDate || today.toISOString().split('T')[0]
+    router.params.checkInDate || storeDates.startDate
   )
   const [checkOutDate, setCheckOutDate] = useState<string>(
-    router.params.checkOutDate || tomorrow.toISOString().split('T')[0]
+    router.params.checkOutDate || storeDates.endDate
   )
-  const [roomCount, setRoomCount] = useState<number>(
-    Number(router.params.roomCount) || 1
-  )
-  const [adultCount, setAdultCount] = useState<number>(
-    Number(router.params.adultCount) || 1
-  )
-  const [childCount, setChildCount] = useState<number>(
-    Number(router.params.childCount) || 0
-  )
+  const [roomCount, setRoomCount] = useState<number>(() => {
+    const val = storeGuests.rooms
+    return Array.isArray(val) ? (val.length > 0 ? val[0] : 1) : val || 1
+  })
+  const [adultCount, setAdultCount] = useState<number>(() => {
+    const val = storeGuests.adults
+    return Array.isArray(val) ? (val.length > 0 ? val[0] : 2) : val || 2
+  })
+  const [childCount, setChildCount] = useState<number>(() => {
+    const val = storeGuests.children
+    return Array.isArray(val) ? (val.length > 0 ? val[0] : 0) : val || 0
+  })
 
   const [showCalendar, setShowCalendar] = useState(false)
   const [showPolicyPopup, setShowPolicyPopup] = useState(false)
@@ -80,7 +89,6 @@ export default function HotelDetailPage() {
   const isDatePriceFixedRef = useRef(false)
   const TOP_NAV_BAR_HEIGHT = 56
 
-  // Use memo to prevent re-generating mock data on every render
   const carouselData = useMemo(() => {
     if (!hotel) return []
     return getCarouselImages(hotel.images || [])
@@ -151,6 +159,7 @@ export default function HotelDetailPage() {
     if (range.start && range.end) {
       setCheckInDate(range.start)
       setCheckOutDate(range.end)
+      updateDates(range.start, range.end)
     }
     setShowCalendar(false)
   }
@@ -164,9 +173,14 @@ export default function HotelDetailPage() {
       if (Array.isArray(val)) return val.length > 0 ? val[0] : defaultVal
       return val
     }
-    setRoomCount(getNumber(guestInfo.rooms, 1))
-    setAdultCount(getNumber(guestInfo.adults, 1))
-    setChildCount(getNumber(guestInfo.children, 0))
+    const rooms = getNumber(guestInfo.rooms, 1)
+    const adults = getNumber(guestInfo.adults, 2)
+    const children = getNumber(guestInfo.children, 0)
+
+    setRoomCount(rooms)
+    setAdultCount(adults)
+    setChildCount(children)
+    updateGuests(rooms, adults, children)
   }
 
   const guestInfo: GuestInfo = {

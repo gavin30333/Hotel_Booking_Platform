@@ -1,13 +1,14 @@
 import { View, Text } from '@tarojs/components'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Taro, { showToast } from '@tarojs/taro'
 import HotelCard from '@/components/common/display/HotelCard'
 import BottomTabBar from '@/components/common/navigation/BottomTabBar/BottomTabBar'
 import TopNavBar from '@/components/common/navigation/TopNavBar/TopNavBar'
 import CityFilter from '@/components/common/filters/CityFilter/CityFilter'
-import { DateField } from '@/components/FieldRenderers'
+import { DateField } from '@/components/FieldRenderers/DateField'
 import { useQueryStore } from '@/store/useQueryStore'
 import { Hotel } from '@/services/hotel'
+import dayjs from 'dayjs'
 import './index.less'
 
 interface FavoriteHotel extends Hotel {
@@ -44,10 +45,9 @@ export default function FavoritePage() {
   const [activeCity, setActiveCity] = useState('all')
   const cities = ['上海']
 
-  const dates = useQueryStore((state) => state.scenes[state.activeScene].dates)
-  const updateActiveSceneParams = useQueryStore(
-    (state) => state.updateActiveSceneParams
-  )
+  const getDates = useQueryStore((state) => state.getDates)
+  const updateDates = useQueryStore((state) => state.updateDates)
+  const dates = getDates()
 
   const handleCityChange = (city: string) => {
     setActiveCity(city)
@@ -70,9 +70,11 @@ export default function FavoritePage() {
 
         <View className="date-selection-wrapper">
           <DateField
-            config={{ key: 'dates', type: 'date', label: '日期', props: {} }}
+            config={{ props: { singleDay: false } }}
             value={dates}
-            onChange={(val) => updateActiveSceneParams({ dates: val })}
+            onChange={(dateRange) =>
+              updateDates(dateRange.startDate, dateRange.endDate)
+            }
           />
         </View>
 

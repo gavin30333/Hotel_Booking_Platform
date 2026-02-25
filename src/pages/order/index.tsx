@@ -33,7 +33,10 @@ interface Order {
 }
 
 // 状态映射：后端状态 -> 前端显示状态
-const statusMap: Record<string, 'pending' | 'confirmed' | 'completed' | 'cancelled'> = {
+const statusMap: Record<
+  string,
+  'pending' | 'confirmed' | 'completed' | 'cancelled'
+> = {
   pending: 'pending',
   paid: 'confirmed',
   completed: 'completed',
@@ -100,13 +103,21 @@ export default function OrderPage() {
     return `${date.getMonth() + 1}月${date.getDate()}日`
   }
 
+  const calculateNights = (checkIn: string, checkOut: string) => {
+    const start = new Date(checkIn)
+    const end = new Date(checkOut)
+    const diffTime = Math.abs(end.getTime() - start.getTime())
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays
+  }
+
   return (
     <>
       <View className="order-page">
         <View className="search-bar">
           <View
             className="back-btn"
-            onClick={() => Taro.switchTab({ url: '/search' })}
+            onClick={() => Taro.reLaunch({ url: '/pages/search/index' })}
           >
             <LeftOutline />
           </View>
@@ -114,7 +125,6 @@ export default function OrderPage() {
             placeholder="搜索订单"
             value={searchValue}
             onChange={setSearchValue}
-            prefix={<SearchOutline />}
             className="search-input"
           />
           <View className="search-actions">
@@ -184,9 +194,12 @@ export default function OrderPage() {
                   <Text className="hotel-address">{order.hotelAddress}</Text>
                   <View className="order-date-info">
                     <Text className="order-date">
-                      {formatDate(order.checkIn)} - {formatDate(order.checkOut)} · 共{order.nights}晚
+                      {formatDate(order.checkIn)} - {formatDate(order.checkOut)}{' '}
+                      · 共{calculateNights(order.checkIn, order.checkOut)}晚
                     </Text>
-                    <OrderStatus status={statusMap[order.status] || order.status} />
+                    <OrderStatus
+                      status={statusMap[order.status] || order.status}
+                    />
                   </View>
                 </View>
 
@@ -200,12 +213,8 @@ export default function OrderPage() {
                   </View>
                   <View className="room-detail">
                     <Text className="room-name">{order.roomTypeName}</Text>
-                    <Text className="room-desc">
-                      豪华客房 · 40㎡ · 2人入住
-                    </Text>
-                    <Text className="room-breakfast">
-                      含早餐
-                    </Text>
+                    <Text className="room-desc">豪华客房 · 40㎡ · 2人入住</Text>
+                    <Text className="room-breakfast">含早餐</Text>
                     <View className="room-price-row">
                       <Text className="room-price">¥{order.finalPrice}</Text>
                       {order.totalPrice > order.finalPrice && (
@@ -217,13 +226,14 @@ export default function OrderPage() {
                   </View>
                 </View>
 
-                {order.status !== 'completed' && order.status !== 'cancelled' && (
-                  <View className="order-actions">
-                    <View className="action-btn-secondary">
-                      <Text>再次预订</Text>
+                {order.status !== 'completed' &&
+                  order.status !== 'cancelled' && (
+                    <View className="order-actions">
+                      <View className="action-btn-secondary">
+                        <Text>再次预订</Text>
+                      </View>
                     </View>
-                  </View>
-                )}
+                  )}
               </View>
             ))
           )}

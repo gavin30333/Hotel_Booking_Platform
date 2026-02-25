@@ -18,7 +18,11 @@ export default function TopNavBar({
     if (onBack) {
       onBack()
     } else {
-      Taro.switchTab({ url: '/search' })
+      Taro.navigateBack({
+        fail: () => {
+          Taro.reLaunch({ url: '/pages/search/index' })
+        },
+      })
     }
   }
 

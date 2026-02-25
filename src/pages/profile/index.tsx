@@ -83,17 +83,21 @@ export default function ProfilePage() {
     <>
       <View className="profile-page">
         <View className="top-actions">
-          <View className="action-icon" onClick={() => console.log('扫一扫')}>
-            <ScanCodeOutline />
+          <View className="action-item" onClick={() => console.log('扫一扫')}>
+            <ScanCodeOutline className="action-icon" />
+            <Text className="action-text">扫一扫</Text>
           </View>
-          <View className="action-icon" onClick={() => console.log('签到')}>
-            <CheckCircleOutline />
+          <View className="action-item" onClick={() => console.log('签到')}>
+            <CheckCircleOutline className="action-icon" />
+            <Text className="action-text">签到</Text>
           </View>
-          <View className="action-icon" onClick={() => console.log('客服')}>
-            <MessageOutline />
+          <View className="action-item" onClick={() => console.log('客服')}>
+            <MessageOutline className="action-icon" />
+            <Text className="action-text">客服</Text>
           </View>
-          <View className="action-icon" onClick={() => console.log('设置')}>
-            <SetOutline />
+          <View className="action-item" onClick={() => console.log('设置')}>
+            <SetOutline className="action-icon" />
+            <Text className="action-text">设置</Text>
           </View>
         </View>
 
@@ -106,21 +110,23 @@ export default function ProfilePage() {
             />
           </View>
           <View className="user-info">
-            <Text className="user-name">{userInfo.name}</Text>
-            <Text className="user-stats">粉丝 128 关注 56 赞 89 费过 32</Text>
-          </View>
-          <View
-            className="home-link"
-            onClick={() => Taro.switchTab({ url: '/pages/search/index' })}
-          >
-            <Text>主页 ＞</Text>
+            <View className="user-name-row">
+              <Text className="user-name">尊敬的会员</Text>
+              <View
+                className="home-link"
+                onClick={() => Taro.reLaunch({ url: '/pages/search/index' })}
+              >
+                <Text>主页 ＞</Text>
+              </View>
+            </View>
+            <Text className="user-stats">粉丝 0 关注 0 获赞 0 赞过 0</Text>
           </View>
         </View>
 
         <View className="membership-section">
           <View className="membership-info">
             <View className="membership-badge">
-              <Text>黄金会员</Text>
+              <Text>普通会员</Text>
             </View>
             <View
               className="membership-center"
@@ -194,7 +200,7 @@ export default function ProfilePage() {
           </View>
           <View
             className="order-entry"
-            onClick={() => Taro.switchTab({ url: '/order' })}
+            onClick={() => Taro.redirectTo({ url: '/pages/order/index' })}
           >
             <FileOutlineIcon />
             <Text>全部订单</Text>
