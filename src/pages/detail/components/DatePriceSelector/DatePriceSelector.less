@@ -2,7 +2,7 @@
 
 .date-price-section {
   background-color: #fff;
-  padding: @spacing-lg;
+  padding: @spacing-md;
   margin: 0 0 0 0;
   position: relative;
   border-radius: 0;
@@ -11,8 +11,17 @@
   /* 日期价格主容器 */
   .date-price-main {
     display: flex;
+    align-items: center;
     margin-bottom: @spacing-md;
     position: relative;
+
+    /* 确保左右部分高度一致 */
+    .date-section,
+    .guest-section {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
 
     /* 左侧日期部分 */
     .date-section {
@@ -22,107 +31,91 @@
       /* 日期标签和内容组合 */
       .date-combined {
         display: flex;
-        align-items: flex-end; /* Align bottom */
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
 
-        .date-part {
+        /* 日期组合行 */
+        .date-row {
           display: flex;
           align-items: flex-end;
+          width: 100%;
+          justify-content: space-between;
+        }
 
-          /* 日期项 - 今天和起始日期 */
-          .date-item {
+        /* 日期组 */
+        .date-group {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          margin-right: @spacing-md;
+
+          .date-label {
+            font-size: @font-size-sm;
+            color: @text-secondary;
+            margin-bottom: 4px;
+            cursor: pointer;
+          }
+
+          .date-value {
+            font-size: @font-size-lg;
+            font-weight: 600;
+            color: @text-color;
+          }
+
+          /* 日期标签行，包含标签和看低价 */
+          .date-label-row {
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
 
             .date-label {
-              font-size: @font-size-xs;
-              color: @text-secondary;
-              margin-bottom: 2px;
-              cursor: pointer;
+              margin-right: @spacing-xs;
+              margin-bottom: 0;
             }
 
-            .date-label-row {
-              display: flex;
-              align-items: center;
-              margin-bottom: 2px;
-
-              .date-label {
-                margin-bottom: 0;
-                margin-right: 4px;
-              }
-
-              /* 看低价角标 */
-              .low-price-badge {
-                background-color: #ff7a45;
-                padding: 1px 4px;
-                border-radius: 4px 4px 4px 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 14px;
-
-                .low-price-text {
-                  font-size: 10px;
-                  color: #fff;
-                  font-weight: 500;
-                  line-height: 1;
-                }
-              }
-            }
-
-            .date-value {
-              font-size: 20px;
-              font-weight: 600;
-              color: @text-color;
-            }
-
+            /* 看低价角标 */
             .low-price-badge {
-              position: absolute;
-              top: 26px;
-              right: -10px;
-              background-color: #ff7a45;
-              padding: 1px @spacing-xs;
-              border-radius: @border-radius-sm;
+              background-color: @warning-color;
+              padding: 2px 6px;
+              border-radius: 4px;
               display: flex;
               align-items: center;
               justify-content: center;
-              min-width: auto;
-              transform: translate(50%, -50%);
+              border: none;
 
               .low-price-text {
                 font-size: @font-size-xs;
                 color: #fff;
                 font-weight: 500;
-                line-height: 1.2;
-                margin: 0;
+                line-height: 1;
               }
             }
           }
+        }
 
-          .date-separator {
-            margin: 0 4px;
-            padding-bottom: 2px;
+        /* 分隔符 */
+        .date-separator {
+          margin: 0 @spacing-xs;
+          display: flex;
+          align-items: flex-end;
+          padding-bottom: 0;
 
-            .separator-text {
-              font-size: 20px;
-              color: @text-color;
-              font-weight: 600;
-            }
+          .separator-text {
+            font-size: @font-size-lg;
+            color: @text-color;
+            font-weight: 600;
           }
         }
 
         /* 共1晚 */
         .night-count {
           display: flex;
-          align-items: center;
-          margin-left: 0;
-          margin-bottom: 4px;
+          align-items: flex-end;
+          padding-bottom: 4px;
 
           .night-count-text {
-            font-size: 11px;
+            font-size: @font-size-sm;
             color: @text-secondary;
-            letter-spacing: -0.5px;
           }
         }
       }
@@ -131,8 +124,8 @@
     /* 分隔线 */
     .divider {
       width: 1px;
-      height: 60px;
-      background-color: #e0e0e0;
+      height: 40px;
+      background-color: @border-color;
       margin: 0 @spacing-md;
     }
 
@@ -150,9 +143,9 @@
         align-items: flex-start;
 
         .guest-label {
-          font-size: @font-size-xs;
+          font-size: @font-size-sm;
           color: @text-secondary;
-          margin-bottom: 2px;
+          margin-bottom: 4px;
           cursor: pointer;
         }
 
@@ -163,23 +156,23 @@
           .guest-item {
             display: flex;
             align-items: center;
-            margin-right: 8px;
+            margin-right: @spacing-xs;
 
             &:last-child {
               margin-right: 0;
             }
 
             .val {
-              font-size: 20px;
+              font-size: @font-size-lg;
               font-weight: 600;
               color: @text-color;
               line-height: 1.2;
+              margin-right: 2px;
             }
 
             .icon {
-              font-size: 14px;
-              color: #666;
-              margin-left: 2px;
+              font-size: @font-size-base;
+              color: @text-secondary;
             }
           }
         }
@@ -221,7 +214,7 @@
     .filter-tag {
       display: inline-flex;
       align-items: center;
-      margin-right: @spacing-lg;
+      margin-right: @spacing-md;
       padding: @spacing-xs @spacing-md;
       border-radius: @border-radius-sm;
       font-size: @font-size-base;
@@ -237,6 +230,14 @@
       &.active {
         background-color: #e6f7ff;
         color: @primary-color;
+
+        /* 对勾图标 */
+        &::after {
+          content: '✓';
+          margin-left: 4px;
+          font-size: @font-size-sm;
+          font-weight: bold;
+        }
       }
 
       .filter-tag-text {
@@ -245,7 +246,7 @@
 
       .filter-tag-arrow {
         font-size: @font-size-sm;
-        color: #999;
+        color: @text-placeholder;
       }
 
       .filter-tag-close {
@@ -258,12 +259,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: #999;
+        background-color: @text-secondary;
         border-radius: 50%;
         transition: all 0.2s ease;
 
         &:active {
-          background-color: #666;
+          background-color: @text-color;
         }
       }
     }
@@ -290,7 +291,7 @@
 
       .filter-button-arrow {
         font-size: @font-size-sm;
-        color: #999;
+        color: @text-placeholder;
       }
     }
   }

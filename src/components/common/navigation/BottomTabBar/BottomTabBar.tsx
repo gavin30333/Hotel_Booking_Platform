@@ -63,7 +63,12 @@ export default function BottomTabBar({ activeKey }: BottomTabBarProps) {
       onChange={handleTabChange}
     >
       {tabs.map((item) => (
-        <TabBar.Item key={item.key} icon={item.icon} title={item.title} />
+        <TabBar.Item
+          key={item.key}
+          value={item.key}
+          icon={item.icon}
+          title={item.title}
+        />
       ))}
     </TabBar>
   )
