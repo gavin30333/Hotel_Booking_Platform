@@ -4,23 +4,51 @@ type Banner = {
   id: number
   imgUrl: string
   title: string
+  hotelId: string
+  hotelName: string
+  city: string
+  price: number
 }
 type BannerResponse = {
   code: number
   msg: string
   data: Banner[]
 }
+
+const bannerAds: Banner[] = [
+  {
+    id: 1,
+    imgUrl:
+      'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
+    title: '杭州西湖畔奢华体验',
+    hotelId: '699835352d89deaf4d16816f',
+    hotelName: '杭州西子湖四季酒店',
+    city: '杭州',
+    price: 1680,
+  },
+  {
+    id: 2,
+    imgUrl: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',
+    title: '上海外滩江景房特惠',
+    hotelId: '1',
+    hotelName: '上海外滩华尔道夫酒店',
+    city: '上海',
+    price: 1280,
+  },
+  {
+    id: 3,
+    imgUrl:
+      'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800',
+    title: '浦东香格里拉尊享礼遇',
+    hotelId: '2',
+    hotelName: '上海浦东香格里拉大酒店',
+    city: '上海',
+    price: 1080,
+  },
+]
+
 export const getBanners = () => {
-  const data = Mock.mock({
-    'list|3-8': [
-      {
-        'id|+1': 1,
-        imgUrl: 'https://picsum.photos/750/350?random=@integer(1, 1000)',
-        title: '@ctitle(4, 8)',
-      },
-    ],
-  })
-  return data.list
+  return bannerAds
 }
 export type { Banner, BannerResponse }
 
@@ -35,7 +63,8 @@ const hotelDetailMock1 = {
   rating: 4.8,
   reviewCount: 1256,
   minPrice: 1280,
-  imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
+  imageUrl:
+    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
   images: [
     'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
     'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800',
