@@ -82,6 +82,7 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@faker-js/faker": "^10.3.0",
+    "@playwright/test": "^1.58.2",
     "@tarojs/cli": "4.1.11",
     "@tarojs/plugin-generator": "4.1.11",
     "@tarojs/vite-runner": "4.1.11",
