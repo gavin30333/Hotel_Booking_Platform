@@ -1,6 +1,6 @@
 import { View, Text } from '@tarojs/components'
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { SearchBar, Toast, Dropdown, DropdownRef } from 'antd-mobile'
+import { SearchBar, Dropdown, DropdownRef } from 'antd-mobile'
 import { MoreOutline, EnvironmentOutline, DownOutline } from 'antd-mobile-icons'
 import AMapLoader from '@amap/amap-jsapi-loader'
 import Taro from '@tarojs/taro'
@@ -267,10 +267,7 @@ export default function CoreFilterHeader({
     async (category: string, cityOverride?: string) => {
       const apiKey = process.env.AMAP_API_KEY || 'your_amap_api_key_here'
 
-      if (!apiKey || apiKey === 'your_amap_api_key_here') {
-        Toast.fail('高德地图API密钥未配置')
-        return
-      }
+
 
       try {
         setIsSearchingPOIs(true)
@@ -361,7 +358,6 @@ export default function CoreFilterHeader({
         })
       } catch (error) {
         console.error('搜索POI出错:', error)
-        Toast.fail('搜索位置信息失败，请稍后重试')
       } finally {
         setIsSearchingPOIs(false)
       }
@@ -465,7 +461,6 @@ export default function CoreFilterHeader({
       starRating: selectedStarRating,
       facilities: selectedTags,
     })
-    Toast.success('搜索成功')
   }, [
     params,
     searchValue,
