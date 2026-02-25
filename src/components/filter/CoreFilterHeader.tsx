@@ -16,6 +16,7 @@ import {
   CityTab,
 } from '@/components/CitySelector'
 import { GuestSelectionPopup } from '@/components/common/popup/GuestSelectionPopup'
+import { PriceStarSelectionContent } from '@/components/common/popup/PriceStarSelectionPopup/PriceStarSelectionContent'
 import { CalendarPicker } from '@/components/common/form/CalendarPicker'
 import { LocationField, DateField, GuestField } from '@/components/FieldRenderers'
 import { useLocation } from '@/hooks/useLocation'
@@ -103,8 +104,6 @@ export default function CoreFilterHeader({
   const [selectedDistanceOption, setSelectedDistanceOption] = useState('')
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 })
   const [selectedStarRating, setSelectedStarRating] = useState<number[]>([])
-  const [isDragging, setIsDragging] = useState(false)
-  const [draggedHandle, setDraggedHandle] = useState<'min' | 'max' | null>(null)
   const [activeLocationCategory, setActiveLocationCategory] =
     useState('热门地标')
   const [activeFilterCategory, setActiveFilterCategory] = useState('品牌')
@@ -596,66 +595,6 @@ export default function CoreFilterHeader({
     }
   }
 
-  const handlePriceSliderStart = (handle: 'min' | 'max') => (e: any) => {
-    e.stopPropagation()
-    setIsDragging(true)
-    setDraggedHandle(handle)
-  }
-
-  const handlePriceSliderMove = useCallback(
-    (e: any) => {
-      if (!isDragging || !draggedHandle) return
-
-      const slider = document.querySelector('.price-slider')
-      if (!slider) return
-
-      const rect = slider.getBoundingClientRect()
-      let x: number
-
-      if (e.touches) {
-        x = Math.max(0, Math.min(e.touches[0].clientX - rect.left, rect.width))
-      } else if (e.clientX) {
-        x = Math.max(0, Math.min(e.clientX - rect.left, rect.width))
-      } else {
-        return
-      }
-
-      const percentage = x / rect.width
-      const price = Math.round(percentage * 10000)
-      const roundedPrice = Math.round(price / 100) * 100
-
-      setPriceRange((prev) => {
-        if (draggedHandle === 'min') {
-          return { min: Math.min(roundedPrice, prev.max - 100), max: prev.max }
-        } else {
-          return { min: prev.min, max: Math.max(roundedPrice, prev.min + 100) }
-        }
-      })
-    },
-    [isDragging, draggedHandle]
-  )
-
-  const handlePriceSliderEnd = useCallback(() => {
-    setIsDragging(false)
-    setDraggedHandle(null)
-  }, [])
-
-  useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handlePriceSliderMove)
-      document.addEventListener('mouseup', handlePriceSliderEnd)
-      document.addEventListener('touchmove', handlePriceSliderMove)
-      document.addEventListener('touchend', handlePriceSliderEnd)
-
-      return () => {
-        document.removeEventListener('mousemove', handlePriceSliderMove)
-        document.removeEventListener('mouseup', handlePriceSliderEnd)
-        document.removeEventListener('touchmove', handlePriceSliderMove)
-        document.removeEventListener('touchend', handlePriceSliderEnd)
-      }
-    }
-  }, [isDragging, draggedHandle, handlePriceSliderMove, handlePriceSliderEnd])
-
   const guestInfo: GuestInfo = {
     rooms: params.rooms,
     adults: params.adults,
@@ -1001,92 +940,26 @@ export default function CoreFilterHeader({
           </Dropdown.Item>
 
           <Dropdown.Item key="price" title="价格/星级">
-            <View className="dropdown-panel-content price-dropdown">
-              <View className="price-section">
-                <Text className="section-title">价格区间</Text>
-                <View className="price-slider-container">
-                  <View className="price-slider">
-                    <View
-                      className="slider-track"
-                      style={{
-                        left: `${(priceRange.min / 10000) * 100}%`,
-                        width: `${((priceRange.max - priceRange.min) / 10000) * 100}%`,
-                      }}
-                    />
-                    <View
-                      className="slider-handle"
-                      style={{ left: `${(priceRange.min / 10000) * 100}%` }}
-                      onMouseDown={handlePriceSliderStart('min')}
-                      onTouchStart={handlePriceSliderStart('min')}
-                    />
-                    <View
-                      className="slider-handle"
-                      style={{ left: `${(priceRange.max / 10000) * 100}%` }}
-                      onMouseDown={handlePriceSliderStart('max')}
-                      onTouchStart={handlePriceSliderStart('max')}
-                    />
-                  </View>
-                  <View className="price-labels">
-                    <Text className="price-label">¥0</Text>
-                    <Text className="price-current">
-                      ¥{priceRange.min}-¥{priceRange.max}
-                    </Text>
-                    <Text className="price-label">¥10000以上</Text>
-                  </View>
-                </View>
-                <View className="price-presets">
-                  {['¥200以下', '¥200-500', '¥500-1000', '¥1000以上'].map(
-                    (item) => (
-                      <View
-                        key={item}
-                        className="preset-tag"
-                        onClick={() => {
-                          if (item === '¥200以下')
-                            setPriceRange({ min: 0, max: 200 })
-                          else if (item === '¥200-500')
-                            setPriceRange({ min: 200, max: 500 })
-                          else if (item === '¥500-1000')
-                            setPriceRange({ min: 500, max: 1000 })
-                          else setPriceRange({ min: 1000, max: 10000 })
-                        }}
-                      >
-                        <Text className="preset-text">{item}</Text>
-                      </View>
-                    )
-                  )}
-                </View>
-              </View>
-              <View className="star-section">
-                <Text className="section-title">星级/档次</Text>
-                <View className="star-options">
-                  {[
-                    { label: '2星及以下', value: 2 },
-                    { label: '3星/舒适', value: 3 },
-                    { label: '4星/高档', value: 4 },
-                    { label: '5星/豪华', value: 5 },
-                  ].map((item) => (
-                    <View
-                      key={item.label}
-                      className={`star-tag ${selectedStarRating.includes(item.value) ? 'selected' : ''}`}
-                      onClick={() => {
-                        if (selectedStarRating.includes(item.value)) {
-                          setSelectedStarRating(
-                            selectedStarRating.filter((s) => s !== item.value)
-                          )
-                        } else {
-                          setSelectedStarRating([
-                            ...selectedStarRating,
-                            item.value,
-                          ])
-                        }
-                      }}
-                    >
-                      <Text className="star-text">{item.label}</Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
-              <View className="dropdown-actions">
+            <View className="dropdown-panel-content price-dropdown price-popup-container" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '60vh' }}>
+              <PriceStarSelectionContent
+      min={priceRange.min}
+      max={priceRange.max}
+      stars={selectedStarRating.map(String)}
+      visible={activeSortTab === 'price'}
+      enableSpecialStars={false}
+      onChange={(val) => {
+                  setPriceRange({ min: val.min, max: val.max })
+                  // Convert strings back to numbers, filtering out non-numeric values
+                  const newStars = val.stars
+                    .map((s) => {
+                      const n = Number(s)
+                      return isNaN(n) ? NaN : n
+                    })
+                    .filter((n) => !isNaN(n))
+                  setSelectedStarRating(newStars)
+                }}
+              />
+              <View className="dropdown-actions" style={{ padding: '16px', borderTop: '1px solid #eee' }}>
                 <View
                   className="action-btn secondary"
                   onClick={() => {
