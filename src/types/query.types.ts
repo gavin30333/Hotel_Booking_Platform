@@ -80,5 +80,7 @@ export interface SearchParams {
   dates: DateRange
   guests?: GuestInfo
   tags?: string[]
-  keyword?: string // For homestay/hourly
+  keyword?: string
+  priceRange?: { min: number; max: number }
+  starRating?: number[]
 }

@@ -22,7 +22,7 @@ export const SCENE_CONFIGS: Record<TabType, SceneConfig> = {
         type: 'guest',
         key: 'guests',
         label: '人数',
-        props: { showPriceFilter: true, priceLabel: '价格/星级' },
+        props: { priceLabel: '价格/星级' },
       },
       {
         type: 'tags',
@@ -30,6 +30,18 @@ export const SCENE_CONFIGS: Record<TabType, SceneConfig> = {
         props: {
           items: ['迪士尼', '双床房', '南京路步行街', '外滩'],
         },
+      },
+    ],
+    specialFeatures: [
+      {
+        type: 'notice',
+        content: '超级会员专享价，预订立省¥30',
+        style: 'blue',
+      },
+      {
+        type: 'guarantee',
+        content: '安心订 · 入住前免费取消',
+        style: 'green',
       },
     ],
   },
@@ -42,7 +54,7 @@ export const SCENE_CONFIGS: Record<TabType, SceneConfig> = {
         key: 'location',
         label: '国家/城市',
         placeholder: '位置/品牌/酒店',
-        props: { isInternational: true },
+        props: { showIcon: true },
       },
       {
         type: 'date',
@@ -54,11 +66,7 @@ export const SCENE_CONFIGS: Record<TabType, SceneConfig> = {
         type: 'guest',
         key: 'guests',
         label: '人数',
-        props: {
-          showPriceFilter: true,
-          priceLabel: '价格/钻级',
-          isInternational: true,
-        },
+        props: { priceLabel: '价格/星级', isInternational: true },
       },
       {
         type: 'tags',
@@ -71,13 +79,8 @@ export const SCENE_CONFIGS: Record<TabType, SceneConfig> = {
     specialFeatures: [
       {
         type: 'notice',
-        content: '海外酒店按人数收费，请准确选择成人和儿童数',
+        content: '海外酒店特惠，最高立减500',
         style: 'blue',
-      },
-      {
-        type: 'guarantee',
-        content: '安心出境游 入住保障·7x24h客服·应急支援',
-        style: 'green',
       },
     ],
   },
@@ -88,15 +91,9 @@ export const SCENE_CONFIGS: Record<TabType, SceneConfig> = {
       {
         type: 'location',
         key: 'location',
-        label: '城市',
-        placeholder: '关键词/位置',
-        props: { showSettings: false },
-      },
-      {
-        type: 'date',
-        key: 'dates',
-        label: '日期',
-        required: true,
+        label: '地点',
+        placeholder: '位置/品牌/民宿',
+        props: { showIcon: true },
       },
       {
         type: 'guest',

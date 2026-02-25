@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text } from '@tarojs/components'
 import { FieldConfig } from '@/types/query.types'
+import { useQueryStore } from '@/store/useQueryStore'
+import { getCityHotSearch } from '@/mock/index'
 import './TagField.less'
 
 interface TagFieldProps {
@@ -16,7 +18,25 @@ export const TagField: React.FC<TagFieldProps> = ({
   onChange,
   onSearch,
 }) => {
-  const items = config.props?.items || []
+  const currentCity = useQueryStore(
+    (state) => state.scenes[state.activeScene].location.city
+  )
+  const [items, setItems] = useState<string[]>([])
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const res = await getCityHotSearch(currentCity)
+        if (res.code === 200 && res.data) {
+          setItems(res.data.slice(0, 4))
+        }
+      } catch (e) {
+        console.error('Failed to fetch hot tags:', e)
+        setItems(config.props?.items || [])
+      }
+    }
+    fetchTags()
+  }, [currentCity])
 
   const handleTagClick = (item: string) => {
     if (onChange) {
@@ -24,7 +44,6 @@ export const TagField: React.FC<TagFieldProps> = ({
     }
 
     if (onSearch) {
-      // Pass the selected item directly to onSearch to allow immediate searching with correct data
       onSearch(item)
     }
   }

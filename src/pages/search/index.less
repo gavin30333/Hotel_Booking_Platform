@@ -1,58 +1,138 @@
 @import '@/styles/variables.less';
 
 page {
-  background-color: @bg-color;
+  background-color: @page-bg;
 }
 
-.banner-section {
-  background-color: @bg-color;
+.search-page {
+  min-height: 100vh;
+  background: linear-gradient(
+    180deg,
+    @primary-color 0%,
+    @primary-color 120px,
+    @page-bg 120px
+  );
+  padding-bottom: 70px;
+}
 
-  .banner-swiper {
+.banner-swiper {
+  width: 100%;
+  height: @banner-height;
+
+  .banner-image {
     width: 100%;
-    height: @banner-height;
-
-    .banner-image {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover; // Ensure image covers the area
-    }
+    height: 100%;
+    display: block;
+    object-fit: cover;
   }
 }
 
 .card-container {
   position: relative;
+  margin: @spacing-md;
   margin-top: @card-overlap;
-  margin-left: @spacing-md;
-  margin-right: @spacing-md;
   z-index: 9;
+}
+
+.hot-tags-section {
+  margin: @spacing-md;
+  padding: @spacing-md;
+  background-color: @bg-color;
+  border-radius: @border-radius-lg;
+  box-shadow: @shadow-card;
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: @spacing-sm;
+
+    .fire-icon {
+      color: @error-color;
+      font-size: 18px;
+      margin-right: @spacing-xs;
+    }
+
+    .section-title {
+      font-size: @font-size-base;
+      font-weight: 600;
+      color: @text-color;
+    }
+  }
+
+  .tags-scroll {
+    white-space: nowrap;
+  }
+
+  .tags-container {
+    display: inline-flex;
+    gap: @spacing-sm;
+    padding-bottom: @spacing-xs;
+  }
+
+  .hot-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: @spacing-xs @spacing-md;
+    background: linear-gradient(135deg, #e6f4ff 0%, #f0f5ff 100%);
+    border-radius: @border-radius-xl;
+    border: 1px solid @primary-color;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:active {
+      background: @primary-color;
+
+      Text {
+        color: @bg-color;
+      }
+    }
+
+    Text {
+      font-size: @font-size-sm;
+      color: @primary-color;
+      white-space: nowrap;
+    }
+  }
 }
 
 .hotel-ranking-section {
   padding: @spacing-md;
   background-color: @bg-color;
-  margin-top: @spacing-lg;
-  position: relative;
-  z-index: 1;
+  margin: @spacing-md;
+  border-radius: @border-radius-lg;
+  box-shadow: @shadow-card;
+  overflow: hidden;
 }
 
 .ranking-lists-scroll {
   margin-bottom: @spacing-md;
   padding: 0 @spacing-md;
   padding-bottom: @spacing-md;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .ranking-list-wrapper {
+  display: inline-block;
+  vertical-align: top;
   margin-right: @spacing-md;
+  white-space: normal;
 }
 
 .ranking-list-card {
   width: 300px;
-  background: #f8f0d9; // Light gold background
+  background: linear-gradient(135deg, #f0f5ff 0%, #e6f4ff 100%);
   border-radius: @border-radius-md;
-  padding: @spacing-sm;
+  padding: @spacing-md;
   margin-bottom: @spacing-sm;
-  box-shadow: @shadow-card; // Card shadow effect
+  box-shadow: @shadow-card;
 }
 
 .ranking-header-card {
@@ -64,12 +144,12 @@ page {
   .ranking-title-card {
     font-size: @font-size-md;
     font-weight: bold;
-    color: #8b4513; // Brownish
+    color: @primary-color;
   }
 
   .ranking-more {
     font-size: @font-size-sm;
-    color: #999;
+    color: @text-secondary;
   }
 }
 
@@ -141,7 +221,7 @@ page {
         margin-top: @spacing-xs;
 
         .item-score {
-          color: #0086f6;
+          color: @primary-color;
           font-weight: bold;
           margin-right: @spacing-xs;
         }
@@ -156,6 +236,13 @@ page {
       }
     }
   }
+}
+
+.no-data {
+  padding: @spacing-xl;
+  text-align: center;
+  color: @text-placeholder;
+  font-size: @font-size-base;
 }
 
 .bottom-tab-bar {

@@ -12,12 +12,14 @@ import React, { useState, useRef } from 'react'
 import { View } from '@tarojs/components'
 import { Popup, Tabs } from 'antd-mobile'
 import { useThrottleFn } from 'ahooks'
+import Taro from '@tarojs/taro'
 import { SearchHeader } from '@/components/CitySelector/SearchHeader'
 import { HistorySection } from '@/components/CitySelector/HistorySection'
 import { LocationStatus } from '@/components/common/display/LocationStatus'
 import { DomesticTab } from './components/TabContent/DomesticTab'
 import { OverseasTab } from './components/TabContent/OverseasTab'
 import { HotSearchTab } from './components/TabContent/HotSearchTab'
+import { useQueryStore } from '@/store/useQueryStore'
 import './CitySelector.less'
 
 export * from '@/types/citySelector'
@@ -45,6 +47,7 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
   const [isSticky, setIsSticky] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
+  const getSearchParams = useQueryStore((state) => state.getSearchParams)
 
   React.useEffect(() => {
     if (visible) {
@@ -62,6 +65,15 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
 
   const handleHotSearchSelect = React.useCallback(
     (result: HotSearchSelectResult) => {
+      if (result.type === 'hotel' && result.hotelId) {
+        const params = getSearchParams()
+        onClose()
+        Taro.navigateTo({
+          url: `/pages/detail/index?id=${result.hotelId}&checkInDate=${encodeURIComponent(params.checkInDate)}&checkOutDate=${encodeURIComponent(params.checkOutDate)}&roomCount=${params.rooms}&adultCount=${params.adults}&childCount=${params.children}`,
+        })
+        return
+      }
+
       if (onHotSearchSelect) {
         onHotSearchSelect(result)
         onClose()
@@ -70,7 +82,7 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
         onClose()
       }
     },
-    [onHotSearchSelect, onSelect, onClose]
+    [onHotSearchSelect, onSelect, onClose, getSearchParams]
   )
 
   const memoizedDomesticTab = React.useMemo(

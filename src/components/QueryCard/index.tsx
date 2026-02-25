@@ -27,6 +27,8 @@ export const QueryCard: React.FC<QueryCardProps> = ({
   const updateDates = useQueryStore((state) => state.updateDates)
   const updateGuests = useQueryStore((state) => state.updateGuests)
   const updateLocation = useQueryStore((state) => state.updateLocation)
+  const updatePriceRange = useQueryStore((state) => state.updatePriceRange)
+  const updateStarRating = useQueryStore((state) => state.updateStarRating)
   const getSearchParams = useQueryStore((state) => state.getSearchParams)
 
   const currentConfig = SCENE_CONFIGS[activeTab]
@@ -56,6 +58,16 @@ export const QueryCard: React.FC<QueryCardProps> = ({
         getNumber(guests.adults, 2),
         getNumber(guests.children, 0)
       )
+
+      if (guests.priceStar) {
+        updatePriceRange(
+          guests.priceStar.minPrice || 0,
+          guests.priceStar.maxPrice || 99999
+        )
+        updateStarRating(
+          (guests.priceStar.starRatings || []).map((s: string) => Number(s))
+        )
+      }
     }
 
     if (location) {
@@ -67,8 +79,21 @@ export const QueryCard: React.FC<QueryCardProps> = ({
     const checkInDate = params.checkInDate
     const checkOutDate = params.checkOutDate
 
+    const urlParams = new URLSearchParams()
+    urlParams.append('city', city)
+    urlParams.append('checkInDate', checkInDate)
+    urlParams.append('checkOutDate', checkOutDate)
+    urlParams.append('rooms', String(params.rooms))
+    urlParams.append('adults', String(params.adults))
+    urlParams.append('children', String(params.children))
+    urlParams.append('minPrice', String(params.minPrice))
+    urlParams.append('maxPrice', String(params.maxPrice))
+    if (params.starRatings && params.starRatings.length > 0) {
+      urlParams.append('starRatings', params.starRatings.join(','))
+    }
+
     Taro.navigateTo({
-      url: `/pages/list/index?city=${encodeURIComponent(city)}&checkInDate=${encodeURIComponent(checkInDate)}&checkOutDate=${encodeURIComponent(checkOutDate)}&rooms=${params.rooms}&adults=${params.adults}&children=${params.children}`,
+      url: `/pages/list/index?${urlParams.toString()}`,
     })
 
     if (onSearch) {

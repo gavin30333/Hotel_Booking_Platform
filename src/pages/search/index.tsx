@@ -1,14 +1,6 @@
 import { View, Image, Text } from '@tarojs/components'
 import { Swiper } from 'antd-mobile'
 import { QueryCard } from '@/components/QueryCard'
-import {
-  ArrowDownCircleOutline,
-  FireFill,
-  UnorderedListOutline,
-  GiftOutline,
-  FillinOutline,
-  FileOutline,
-} from 'antd-mobile-icons'
 import Taro, { useLoad } from '@tarojs/taro'
 import { useState, useEffect } from 'react'
 import { getBanners, getCityHotelRankings } from '@/mock/index'
@@ -22,13 +14,25 @@ export default function Search() {
   console.log('Search page loaded')
   const [banners, setBanners] = useState<Banner[]>([])
   const [luxuryHotels, setLuxuryHotels] = useState<
-    { name: string; desc: string }[]
+    {
+      hotelId: string
+      name: string
+      desc: string
+      score?: string
+      imageUrl?: string
+    }[]
   >([])
   const [familyHotels, setFamilyHotels] = useState<
-    { name: string; desc: string }[]
+    {
+      hotelId: string
+      name: string
+      desc: string
+      score?: string
+      imageUrl?: string
+    }[]
   >([])
+  const [loading, setLoading] = useState(false)
 
-  // Get current city from query store
   const currentCity = useQueryStore(
     (state) => state.scenes[state.activeScene].location.city
   )
@@ -39,37 +43,36 @@ export default function Search() {
     })
   }
 
-  // Function to fetch hotel rankings by city
-  const fetchHotelRankings = async (city: string) => {
+  const fetchData = async (city: string) => {
+    setLoading(true)
     try {
-      const rankingsData = await getCityHotelRankings(city)
-      if (rankingsData.code === 200 && rankingsData.data) {
-        setLuxuryHotels(rankingsData.data.luxuryHotels || [])
-        setFamilyHotels(rankingsData.data.familyHotels || [])
+      const rankingsRes = await getCityHotelRankings(city)
+
+      if (rankingsRes.code === 200 && rankingsRes.data) {
+        setLuxuryHotels(rankingsRes.data.luxuryHotels || [])
+        setFamilyHotels(rankingsRes.data.familyHotels || [])
       }
     } catch (error) {
-      console.error('Failed to fetch hotel rankings:', error)
+      console.error('Failed to fetch data:', error)
+      setLuxuryHotels([])
+      setFamilyHotels([])
+    } finally {
+      setLoading(false)
     }
   }
 
   useLoad(async () => {
-    // 获取轮播图数据
     const bannerData = getBanners()
     setBanners(bannerData)
-
-    // 获取热门酒店榜单数据
-    await fetchHotelRankings(currentCity)
   })
 
-  // Update hotel rankings when city changes
   useEffect(() => {
-    fetchHotelRankings(currentCity)
+    fetchData(currentCity)
   }, [currentCity])
 
   return (
     <>
-      {/* 轮播图区域 */}
-      <View className="banner-section">
+      <View className="search-page">
         {banners.length > 0 && (
           <Swiper
             className="banner-swiper"
@@ -93,17 +96,18 @@ export default function Search() {
             ))}
           </Swiper>
         )}
+
+        <View className="card-container">
+          <QueryCard />
+        </View>
+
+        <HotelRanking
+          luxuryHotels={luxuryHotels}
+          familyHotels={familyHotels}
+          loading={loading}
+        />
       </View>
 
-      {/* 查询框区域 */}
-      <View className="card-container">
-        <QueryCard></QueryCard>
-      </View>
-
-      {/* 热门推荐酒店榜单区域 */}
-      <HotelRanking luxuryHotels={luxuryHotels} familyHotels={familyHotels} />
-
-      {/* 底部导航栏区域 */}
       <BottomTabBar activeKey="recommend" />
     </>
   )

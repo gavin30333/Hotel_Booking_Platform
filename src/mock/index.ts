@@ -265,32 +265,640 @@ const cityHotSearchMock = {
   ],
 }
 
-const cityHotelRankingsMock = {
-  code: 200,
-  data: {
+const cityHotSearchData: Record<string, string[]> = {
+  上海: [
+    '外滩',
+    '南京路',
+    '陆家嘴',
+    '迪士尼',
+    '新天地',
+    '静安寺',
+    '徐家汇',
+    '五角场',
+  ],
+  杭州: [
+    '西湖',
+    '灵隐寺',
+    '西溪湿地',
+    '宋城',
+    '龙井',
+    '断桥',
+    '雷峰塔',
+    '千岛湖',
+  ],
+  北京: [
+    '故宫',
+    '天安门',
+    '长城',
+    '颐和园',
+    '三里屯',
+    '王府井',
+    '鸟巢',
+    '南锣鼓巷',
+  ],
+  成都: [
+    '春熙路/太古里商业区',
+    '成都东站',
+    '宽窄巷子',
+    '天府广场',
+    '成都南站',
+    '武侯区',
+    '文殊院',
+  ],
+  广州: ['珠江新城', '天河城', '北京路', '上下九', '白云山', '长隆'],
+  深圳: ['世界之窗', '欢乐谷', '东部华侨城', '大梅沙', '华强北', '深圳湾'],
+  南京: ['夫子庙', '中山陵', '玄武湖', '新街口', '总统府', '秦淮河'],
+  苏州: ['拙政园', '虎丘', '平江路', '观前街', '金鸡湖', '寒山寺'],
+}
+
+interface RankingHotel {
+  hotelId: string
+  name: string
+  desc: string
+  score?: string
+  imageUrl?: string
+}
+
+const cityHotelRankingsData: Record<
+  string,
+  {
+    luxuryHotels: RankingHotel[]
+    familyHotels: RankingHotel[]
+  }
+> = {
+  上海: {
     luxuryHotels: [
-      { name: '上海外滩华尔道夫酒店', desc: '奢华体验，江景绝佳' },
-      { name: '上海浦东香格里拉大酒店', desc: '豪华商务，交通便利' },
-      { name: '上海和平饭店', desc: '历史悠久，文化底蕴' },
-      { name: '上海浦东丽思卡尔顿酒店', desc: '高端奢华，服务一流' },
-      { name: '上海柏悦酒店', desc: '现代简约，高空景观' },
+      {
+        hotelId: 'sh-waldorf-001',
+        name: '上海外滩华尔道夫酒店',
+        desc: '奢华体验，江景绝佳',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500',
+      },
+      {
+        hotelId: 'sh-shangri-002',
+        name: '上海浦东香格里拉大酒店',
+        desc: '豪华商务，交通便利',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=500',
+      },
+      {
+        hotelId: 'sh-peace-003',
+        name: '上海和平饭店',
+        desc: '历史悠久，文化底蕴',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=500',
+      },
+      {
+        hotelId: 'sh-ritz-004',
+        name: '上海浦东丽思卡尔顿酒店',
+        desc: '高端奢华，服务一流',
+        score: '4.9分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=500',
+      },
+      {
+        hotelId: 'sh-park-005',
+        name: '上海柏悦酒店',
+        desc: '现代简约，高空景观',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=500',
+      },
     ],
     familyHotels: [
-      { name: '上海迪士尼乐园酒店', desc: '迪士尼主题，亲子友好' },
-      { name: '上海玩具总动员酒店', desc: '玩具主题，适合儿童' },
-      { name: '上海浦东嘉里大酒店', desc: '儿童俱乐部，设施齐全' },
-      { name: '上海外滩W酒店', desc: '时尚设计，家庭套房' },
-      { name: '上海环球港凯悦酒店', desc: '购物便利，亲子设施' },
+      {
+        hotelId: 'sh-disney-101',
+        name: '上海迪士尼乐园酒店',
+        desc: '迪士尼主题，亲子友好',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1575424909138-46b05e5919ec?w=500',
+      },
+      {
+        hotelId: 'sh-toy-102',
+        name: '上海玩具总动员酒店',
+        desc: '玩具主题，适合儿童',
+        score: '4.6分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=500',
+      },
+      {
+        hotelId: 'sh-kerry-103',
+        name: '上海浦东嘉里大酒店',
+        desc: '儿童俱乐部，设施齐全',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1504829857797-ddff29c27927?w=500',
+      },
+      {
+        hotelId: 'sh-w-104',
+        name: '上海外滩W酒店',
+        desc: '时尚设计，家庭套房',
+        score: '4.6分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=500',
+      },
+      {
+        hotelId: 'sh-hyatt-105',
+        name: '上海环球港凯悦酒店',
+        desc: '购物便利，亲子设施',
+        score: '4.5分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=500',
+      },
+    ],
+  },
+  杭州: {
+    luxuryHotels: [
+      {
+        hotelId: 'hz-four-seasons-001',
+        name: '杭州西子湖四季酒店',
+        desc: '西湖畔奢华体验',
+        score: '4.9分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500',
+      },
+      {
+        hotelId: 'hz-aman-002',
+        name: '杭州法云安缦',
+        desc: '古村落中的隐世奢华',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=500',
+      },
+      {
+        hotelId: 'hz-banyan-003',
+        name: '杭州西溪悦榕庄',
+        desc: '湿地秘境，私密奢华',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=500',
+      },
+      {
+        hotelId: 'hz-ic-004',
+        name: '杭州洲际酒店',
+        desc: '城市地标，高端商务',
+        score: '4.6分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=500',
+      },
+      {
+        hotelId: 'hz-jw-005',
+        name: '杭州JW万豪酒店',
+        desc: '钱江新城，现代奢华',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=500',
+      },
+    ],
+    familyHotels: [
+      {
+        hotelId: 'hz-songcheng-101',
+        name: '杭州宋城千古情酒店',
+        desc: '主题乐园，亲子首选',
+        score: '4.6分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1575424909138-46b05e5919ec?w=500',
+      },
+      {
+        hotelId: 'hz-paradise-102',
+        name: '杭州乐园酒店',
+        desc: '欢乐时光，家庭出游',
+        score: '4.5分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=500',
+      },
+      {
+        hotelId: 'hz-zoo-103',
+        name: '杭州野生动物世界酒店',
+        desc: '亲近自然，寓教于乐',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1504829857797-ddff29c27927?w=500',
+      },
+      {
+        hotelId: 'hz-senbo-104',
+        name: '杭州开元森泊度假酒店',
+        desc: '水上乐园，亲子度假',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=500',
+      },
+      {
+        hotelId: 'hz-liangzhu-105',
+        name: '杭州良渚君澜度假酒店',
+        desc: '文化探索，家庭休闲',
+        score: '4.6分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=500',
+      },
+    ],
+  },
+  北京: {
+    luxuryHotels: [
+      {
+        hotelId: 'bj-mandarin-001',
+        name: '北京王府井文华东方酒店',
+        desc: '皇城根下的奢华',
+        score: '4.9分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500',
+      },
+      {
+        hotelId: 'bj-rosewood-002',
+        name: '北京瑰丽酒店',
+        desc: '现代艺术，极致体验',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=500',
+      },
+      {
+        hotelId: 'bj-waldorf-003',
+        name: '北京华尔道夫酒店',
+        desc: '胡同里的优雅',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=500',
+      },
+      {
+        hotelId: 'bj-four-004',
+        name: '北京四季酒店',
+        desc: 'CBD核心，商务首选',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=500',
+      },
+      {
+        hotelId: 'bj-park-005',
+        name: '北京柏悦酒店',
+        desc: '高空景观，都市奢华',
+        score: '4.6分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=500',
+      },
+    ],
+    familyHotels: [
+      {
+        hotelId: 'bj-universal-101',
+        name: '北京环球影城酒店',
+        desc: '电影主题，亲子乐园',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1575424909138-46b05e5919ec?w=500',
+      },
+      {
+        hotelId: 'bj-happy-102',
+        name: '北京欢乐谷酒店',
+        desc: '游乐天堂，家庭欢乐',
+        score: '4.5分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=500',
+      },
+      {
+        hotelId: 'bj-zoo-103',
+        name: '北京动物园酒店',
+        desc: '亲近动物，寓教于乐',
+        score: '4.6分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1504829857797-ddff29c27927?w=500',
+      },
+      {
+        hotelId: 'bj-gubei-104',
+        name: '北京古北水镇酒店',
+        desc: '长城脚下，古镇风情',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=500',
+      },
+      {
+        hotelId: 'bj-expo-105',
+        name: '北京世园会酒店',
+        desc: '自然探索，生态度假',
+        score: '4.5分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=500',
+      },
+    ],
+  },
+  成都: {
+    luxuryHotels: [
+      {
+        hotelId: 'cd-temple-001',
+        name: '成都博舍酒店',
+        desc: '太古里核心，设计精品',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500',
+      },
+      {
+        hotelId: 'cd-stregis-002',
+        name: '成都瑞吉酒店',
+        desc: '天府广场，奢华标杆',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=500',
+      },
+      {
+        hotelId: 'cd-shangri-003',
+        name: '成都香格里拉大酒店',
+        desc: '锦江畔，商务首选',
+        score: '4.6分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=500',
+      },
+      {
+        hotelId: 'cd-niccolo-004',
+        name: '成都尼依格罗酒店',
+        desc: '国际设计，城市地标',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=500',
+      },
+      {
+        hotelId: 'cd-six-005',
+        name: '青城山六善酒店',
+        desc: '山间隐逸，绿色环保',
+        score: '4.9分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=500',
+      },
+    ],
+    familyHotels: [
+      {
+        hotelId: 'cd-panda-101',
+        name: '成都大熊猫基地酒店',
+        desc: '熊猫主题，亲子必选',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1575424909138-46b05e5919ec?w=500',
+      },
+      {
+        hotelId: 'cd-happy-102',
+        name: '成都欢乐谷酒店',
+        desc: '游乐天堂，家庭欢乐',
+        score: '4.5分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=500',
+      },
+      {
+        hotelId: 'cd-ocean-103',
+        name: '成都海昌极地海洋公园酒店',
+        desc: '海洋主题，寓教于乐',
+        score: '4.6分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1504829857797-ddff29c27927?w=500',
+      },
+      {
+        hotelId: 'cd-flora-104',
+        name: '成都国色天乡酒店',
+        desc: '童话世界，亲子度假',
+        score: '4.4分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=500',
+      },
+      {
+        hotelId: 'cd-qingcheng-105',
+        name: '都江堰青城山酒店',
+        desc: '山水之间，家庭休闲',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=500',
+      },
+    ],
+  },
+  广州: {
+    luxuryHotels: [
+      {
+        hotelId: 'gz-ritz-001',
+        name: '广州富力丽思卡尔顿酒店',
+        desc: '珠江新城，奢华标杆',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500',
+      },
+      {
+        hotelId: 'gz-four-002',
+        name: '广州四季酒店',
+        desc: '高空景观，俯瞰珠江',
+        score: '4.9分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=500',
+      },
+      {
+        hotelId: 'gz-peninsula-003',
+        name: '广州半岛酒店',
+        desc: '经典奢华，服务一流',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=500',
+      },
+    ],
+    familyHotels: [
+      {
+        hotelId: 'gz-chimelong-101',
+        name: '广州长隆酒店',
+        desc: '野生动物主题，亲子首选',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1575424909138-46b05e5919ec?w=500',
+      },
+      {
+        hotelId: 'gz-panda-102',
+        name: '广州长隆熊猫酒店',
+        desc: '熊猫主题，儿童乐园',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=500',
+      },
+      {
+        hotelId: 'gz-crocodile-103',
+        name: '广州长隆鳄鱼酒店',
+        desc: '鳄鱼主题，探险体验',
+        score: '4.5分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1504829857797-ddff29c27927?w=500',
+      },
+    ],
+  },
+  深圳: {
+    luxuryHotels: [
+      {
+        hotelId: 'sz-ritz-001',
+        name: '深圳星河丽思卡尔顿酒店',
+        desc: 'CBD核心，奢华体验',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500',
+      },
+      {
+        hotelId: 'sz-four-002',
+        name: '深圳四季酒店',
+        desc: '福田中心，商务首选',
+        score: '4.9分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=500',
+      },
+      {
+        hotelId: 'sz-peninsula-003',
+        name: '深圳鹏瑞莱佛士酒店',
+        desc: '深圳湾畔，高空景观',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=500',
+      },
+    ],
+    familyHotels: [
+      {
+        hotelId: 'sz-window-101',
+        name: '深圳世界之窗酒店',
+        desc: '世界主题，亲子探索',
+        score: '4.5分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1575424909138-46b05e5919ec?w=500',
+      },
+      {
+        hotelId: 'sz-happy-102',
+        name: '深圳欢乐谷酒店',
+        desc: '游乐天堂，家庭欢乐',
+        score: '4.6分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=500',
+      },
+      {
+        hotelId: 'sz-oct-103',
+        name: '深圳东部华侨城酒店',
+        desc: '山海之间，生态度假',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1504829857797-ddff29c27927?w=500',
+      },
+    ],
+  },
+  南京: {
+    luxuryHotels: [
+      {
+        hotelId: 'nj-inter-001',
+        name: '南京紫金山洲际酒店',
+        desc: '紫金山畔，景观绝佳',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500',
+      },
+      {
+        hotelId: 'nj-shangri-002',
+        name: '南京香格里拉大酒店',
+        desc: '玄武湖畔，商务首选',
+        score: '4.6分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=500',
+      },
+      {
+        hotelId: 'nj-ritz-003',
+        name: '南京丽思卡尔顿酒店',
+        desc: '新街口核心，奢华体验',
+        score: '4.8分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=500',
+      },
+    ],
+    familyHotels: [
+      {
+        hotelId: 'nj-tangshan-101',
+        name: '南京汤山温泉酒店',
+        desc: '温泉度假，家庭休闲',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1575424909138-46b05e5919ec?w=500',
+      },
+      {
+        hotelId: 'nj-confucius-102',
+        name: '南京夫子庙酒店',
+        desc: '文化体验，亲子教育',
+        score: '4.5分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=500',
+      },
+      {
+        hotelId: 'nj-hongshan-103',
+        name: '南京红山森林动物园酒店',
+        desc: '亲近动物，寓教于乐',
+        score: '4.4分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1504829857797-ddff29c27927?w=500',
+      },
+    ],
+  },
+  苏州: {
+    luxuryHotels: [
+      {
+        hotelId: 'szhou-shangri-001',
+        name: '苏州香格里拉大酒店',
+        desc: '金鸡湖畔，现代奢华',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500',
+      },
+      {
+        hotelId: 'szhou-w-002',
+        name: '苏州W酒店',
+        desc: '设计时尚，年轻活力',
+        score: '4.6分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=500',
+      },
+      {
+        hotelId: 'szhou-niulang-003',
+        name: '苏州尼依格罗酒店',
+        desc: '国际品牌，商务首选',
+        score: '4.7分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=500',
+      },
+    ],
+    familyHotels: [
+      {
+        hotelId: 'szhou-garden-101',
+        name: '苏州拙政园酒店',
+        desc: '园林体验，文化传承',
+        score: '4.6分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1575424909138-46b05e5919ec?w=500',
+      },
+      {
+        hotelId: 'szhou-zhouzhuang-102',
+        name: '周庄水乡客栈',
+        desc: '古镇风情，亲子体验',
+        score: '4.5分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=500',
+      },
+      {
+        hotelId: 'szhou-land-103',
+        name: '苏州乐园酒店',
+        desc: '游乐天堂，家庭欢乐',
+        score: '4.4分',
+        imageUrl:
+          'https://images.unsplash.com/photo-1504829857797-ddff29c27927?w=500',
+      },
     ],
   },
 }
 
-export const getCityHotSearch = (_cityName: string) => {
-  return Promise.resolve(cityHotSearchMock)
+export const getCityHotSearch = (cityName: string) => {
+  const tags = cityHotSearchData[cityName] || cityHotSearchMock.data
+  return Promise.resolve({ code: 200, data: tags })
 }
 
-export const getCityHotelRankings = (_cityName: string) => {
-  return Promise.resolve(cityHotelRankingsMock)
+export const getCityHotelRankings = (cityName: string) => {
+  const rankings = cityHotelRankingsData[cityName] || {
+    luxuryHotels: [],
+    familyHotels: [],
+  }
+  return Promise.resolve({ code: 200, data: rankings })
 }
 
 export const getHotelDetail = (id: string) => {

@@ -98,6 +98,8 @@ export default function CoreFilterHeader({
   const updateDates = useQueryStore((state) => state.updateDates)
   const updateGuests = useQueryStore((state) => state.updateGuests)
   const updateLocation = useQueryStore((state) => state.updateLocation)
+  const updatePriceRange = useQueryStore((state) => state.updatePriceRange)
+  const updateStarRating = useQueryStore((state) => state.updateStarRating)
   const storeParams = getSearchParams()
 
   const [params, setParams] = useState<SearchParams>({
@@ -120,8 +122,13 @@ export default function CoreFilterHeader({
   const [searchValue, setSearchValue] = useState('')
   const [selectedSortOption, setSelectedSortOption] = useState('')
   const [selectedDistanceOption, setSelectedDistanceOption] = useState('')
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 })
-  const [selectedStarRating, setSelectedStarRating] = useState<number[]>([])
+  const [priceRange, setPriceRange] = useState({
+    min: initialFilters?.minPrice || storeParams.minPrice || 0,
+    max: initialFilters?.maxPrice || storeParams.maxPrice || 10000,
+  })
+  const [selectedStarRating, setSelectedStarRating] = useState<number[]>(
+    initialFilters?.starRating || storeParams.starRatings || []
+  )
   const [activeLocationCategory, setActiveLocationCategory] =
     useState('热门地标')
   const [activeFilterCategory, setActiveFilterCategory] = useState('品牌')
@@ -159,10 +166,14 @@ export default function CoreFilterHeader({
     }
     updateGuests(tempParams.rooms, tempParams.adults, tempParams.children)
     updateLocation({ city: tempParams.city })
+    updatePriceRange(priceRange.min, priceRange.max)
+    updateStarRating(selectedStarRating)
     onSearch({
       ...tempParams,
       keyword: searchValue || tempParams.keyword,
-      ...advancedOptions,
+      minPrice: priceRange.min,
+      maxPrice: priceRange.max,
+      starRating: selectedStarRating,
     })
     setShowMainSelector(false)
   }
