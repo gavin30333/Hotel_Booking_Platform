@@ -145,7 +145,7 @@ export default function HotelList() {
         initialFilters={filters}
       />
 
-      <View style={{ position: 'relative', zIndex: 100 }}>
+      <View style={{ position: 'relative', zIndex: 1 }}>
         <FilterTags tags={tags} />
       </View>
 

@@ -1,17 +1,25 @@
 import { View, Text } from '@tarojs/components'
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { SearchBar, Toast, Dropdown, DropdownRef } from 'antd-mobile'
-import { MoreOutline } from 'antd-mobile-icons'
+import { MoreOutline, EnvironmentOutline, DownOutline } from 'antd-mobile-icons'
 import AMapLoader from '@amap/amap-jsapi-loader'
+import Taro from '@tarojs/taro'
+import dayjs from 'dayjs'
+import 'dayjs/locale/zh-cn'
+
+dayjs.locale('zh-cn')
+
 import {
   CitySelector,
   CitySelectResult,
   HotSearchSelectResult,
+  CityTab,
 } from '@/components/CitySelector'
 import { GuestSelectionPopup } from '@/components/common/popup/GuestSelectionPopup'
 import { CalendarPicker } from '@/components/common/form/CalendarPicker'
+import { LocationField, DateField, GuestField } from '@/components/FieldRenderers'
 import { useLocation } from '@/hooks/useLocation'
-import { GuestInfo } from '@/types/query.types'
+import { GuestInfo, TabType, LocationData, DateRange, FieldConfig } from '@/types/query.types'
 import './CoreFilterHeader.less'
 
 let AMap: any = null
@@ -115,7 +123,32 @@ export default function CoreFilterHeader({
     lng: number
   } | null>(null)
 
+  // Temp params for the filter popup
+  const [tempParams, setTempParams] = useState<SearchParams>(params)
+  const [citySelectorTab, setCitySelectorTab] = useState<CityTab>('domestic')
+
   const dropdownRef = useRef<DropdownRef>(null)
+
+  useEffect(() => {
+    if (showMainSelector) {
+      setTempParams(params)
+    }
+  }, [showMainSelector, params])
+
+  const handleConfirmMainSelector = () => {
+    setParams(tempParams)
+    onSearch({
+      ...tempParams,
+      keyword: searchValue || tempParams.keyword,
+      ...advancedOptions,
+    })
+    setShowMainSelector(false)
+  }
+
+  const handleCancelMainSelector = () => {
+    setTempParams(params)
+    setShowMainSelector(false)
+  }
 
   const [advancedOptions, setAdvancedOptions] = useState({
     starRating: [] as number[],
@@ -635,10 +668,65 @@ export default function CoreFilterHeader({
     childAges: [],
   }
 
+  const locationConfig: FieldConfig = {
+    type: 'location',
+    key: 'location',
+    props: {
+      placeholder: '我的附近',
+      isInternational: false,
+    },
+  }
+
+  const dateConfig: FieldConfig = {
+    type: 'date',
+    key: 'date',
+    props: {
+      singleDay: false,
+    },
+  }
+
+  const guestConfig: FieldConfig = {
+    type: 'guest',
+    key: 'guest',
+    props: {
+      customText: '',
+      isHomestay: false,
+    },
+  }
+
+  const handleLocationChange = (locationData: LocationData) => {
+    setTempParams((prev) => ({
+      ...prev,
+      city: locationData.city,
+    }))
+  }
+
+  const handleDateChange = (dateRange: DateRange) => {
+    setTempParams((prev) => ({
+      ...prev,
+      checkInDate: dateRange.startDate,
+      checkOutDate: dateRange.endDate,
+    }))
+  }
+
+  const handleGuestChangePopup = (info: GuestInfo) => {
+    const getNumber = (val: number | number[] | undefined, defaultVal: number = 0): number => {
+      if (val === undefined) return defaultVal
+      if (Array.isArray(val)) return val.length > 0 ? val[0] : defaultVal
+      return val
+    }
+    setTempParams((prev) => ({
+      ...prev,
+      rooms: getNumber(info.rooms, 1),
+      adults: getNumber(info.adults, 2),
+      children: getNumber(info.children, 0),
+    }))
+  }
+
   return (
     <View className="core-filter-header">
       <View className="top-filter-bar">
-        <View className="back-button" onClick={() => window.history.back()}>
+        <View className="back-button" onClick={() => Taro.navigateBack()}>
           <Text className="back-icon">‹</Text>
         </View>
 
@@ -650,49 +738,42 @@ export default function CoreFilterHeader({
               setShowMainSelector(true)
             }}
           >
-            <View
-              className="filter-item compact"
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowCityPicker(true)
-              }}
-            >
-              <Text className="filter-value filter-value-xs">
+            <View className="filter-item compact">
+              <Text className="filter-value city-text">
                 {params.city}
               </Text>
             </View>
 
-            <View
-              className="filter-item compact"
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowDatePicker(true)
-              }}
-            >
-              <Text className="filter-value filter-value-xs">
-                {params.checkInDate && params.checkOutDate
-                  ? `${params.checkInDate.split('-')[1]}-${params.checkInDate.split('-')[2]} 至 ${params.checkOutDate.split('-')[1]}-${params.checkOutDate.split('-')[2]}`
-                  : '选择日期'}
-              </Text>
+            <View className="filter-info-group">
+              <View className="info-column">
+                <Text className="filter-value filter-value-xs">
+                  {params.checkInDate ? `${params.checkInDate.split('-')[1]}-${params.checkInDate.split('-')[2]}` : '入住'}
+                </Text>
+                <Text className="filter-value filter-value-xs">
+                  {params.checkOutDate ? `${params.checkOutDate.split('-')[1]}-${params.checkOutDate.split('-')[2]}` : '离店'}
+                </Text>
+              </View>
+              <View className="info-column">
+                <Text className="filter-value filter-value-xs">
+                  {params.rooms}间
+                </Text>
+                <Text className="filter-value filter-value-xs">
+                  {params.adults}人
+                </Text>
+              </View>
             </View>
-
-            <View
-              className="filter-item compact"
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowRoomPicker(true)
-              }}
-            >
-              <Text className="filter-value filter-value-xs">
-                {params.rooms}间
-              </Text>
-              <Text className="filter-value filter-value-xs">
-                {params.adults}人
-              </Text>
-            </View>
+            <DownOutline fontSize={10} color="#333" style={{ marginLeft: 4 }} />
           </View>
 
-          <View className="search-item">
+          <View className="vertical-divider" />
+
+          <View
+            className="search-item"
+            onClick={() => {
+              setCitySelectorTab('hot_search')
+              setShowCityPicker(true)
+            }}
+          >
             <SearchBar
               placeholder="位置/品牌/酒店"
               value={searchValue || params.keyword}
@@ -704,65 +785,105 @@ export default function CoreFilterHeader({
                 handleSearch()
               }}
               className="search-bar-compact"
+              style={{ pointerEvents: 'none' }}
             />
           </View>
         </View>
 
-        {/* <View className="map-icon">
-          <EnvironmentOutline fontSize={20} color="#666" />
+        <View className="map-icon" onClick={() => {
+            // Handle map click if needed, currently just UI
+             Taro.showToast({ title: '地图模式开发中', icon: 'none' })
+        }}>
+          <EnvironmentOutline fontSize={20} color="#333" />
           <Text className="icon-text">地图</Text>
-        </View> */}
+        </View>
 
         <View className="more-options">
-          <MoreOutline fontSize={20} color="#666" />
+          <MoreOutline fontSize={20} color="#333" />
           <Text className="icon-text">更多</Text>
         </View>
       </View>
 
       {showMainSelector && (
-        <View className="main-selector" onClick={(e) => e.stopPropagation()}>
-          <View
-            className="selector-row"
-            onClick={(e) => {
-              e.stopPropagation()
-              setShowCityPicker(true)
-            }}
-          >
-            <Text className="selector-value">{params.city}</Text>
-            <Text className="location-icon">📍</Text>
+        <View className="main-selector-popup" onClick={(e) => e.stopPropagation()}>
+          <View className="popup-content">
+            {/* City Row */}
+            <View
+              className="selector-row"
+              onClick={() => {
+                setCitySelectorTab('domestic')
+                setShowCityPicker(true)
+              }}
+            >
+              <View className="row-left">
+                <Text className="city-name">{tempParams.city}</Text>
+              </View>
+              <View className="row-right" onClick={(e) => {
+                e.stopPropagation()
+                handleLocationClick()
+              }}>
+                <View className="location-icon-wrapper">
+                  <EnvironmentOutline fontSize={20} color="#0086F6" />
+                  <Text className="location-text">我的位置</Text>
+                </View>
+              </View>
+            </View>
+
+            <View className="popup-divider" />
+
+            {/* Date Row */}
+            <View
+              className="selector-row"
+              onClick={() => setShowDatePicker(true)}
+            >
+              <View className="row-left date-row-content">
+                <View className="date-group">
+                  <Text className="date-value">
+                    {tempParams.checkInDate ? dayjs(tempParams.checkInDate).format('M月D日') : '入住日期'}
+                  </Text>
+                  <Text className="date-tag">
+                    {tempParams.checkInDate ? (dayjs(tempParams.checkInDate).isSame(dayjs(), 'day') ? '今天' : dayjs(tempParams.checkInDate).format('ddd')) : ''}
+                  </Text>
+                </View>
+                <Text className="date-separator">-</Text>
+                <View className="date-group">
+                  <Text className="date-value">
+                    {tempParams.checkOutDate ? dayjs(tempParams.checkOutDate).format('M月D日') : '离店日期'}
+                  </Text>
+                  <Text className="date-tag">
+                    {tempParams.checkOutDate ? (dayjs(tempParams.checkOutDate).isSame(dayjs().add(2, 'day'), 'day') ? '后天' : dayjs(tempParams.checkOutDate).format('ddd')) : ''}
+                  </Text>
+                </View>
+              </View>
+              <View className="row-right">
+                <Text className="nights-count">
+                  共{tempParams.checkOutDate && tempParams.checkInDate ? dayjs(tempParams.checkOutDate).diff(dayjs(tempParams.checkInDate), 'day') : 1}晚
+                </Text>
+              </View>
+            </View>
+
+            <View className="popup-divider" />
+
+            {/* Guest Row */}
+            <View
+              className="selector-row"
+              onClick={() => setShowRoomPicker(true)}
+            >
+              <View className="row-left">
+                <Text className="guest-value">
+                  {tempParams.rooms}间房 {tempParams.adults}成人 {tempParams.children}儿童
+                </Text>
+              </View>
+              <View className="row-right">
+                {/* Arrow or empty */}
+              </View>
+            </View>
           </View>
 
-          <View
-            className="selector-row"
-            onClick={(e) => {
-              e.stopPropagation()
-              setShowDatePicker(true)
-            }}
-          >
-            <Text className="selector-value">
-              {params.checkInDate && params.checkOutDate
-                ? `${params.checkInDate.split('-')[1]}月${params.checkInDate.split('-')[2]}日 至 ${params.checkOutDate.split('-')[1]}月${params.checkOutDate.split('-')[2]}日`
-                : '选择日期'}
-            </Text>
-          </View>
-
-          <View
-            className="selector-row"
-            onClick={(e) => {
-              e.stopPropagation()
-              setShowRoomPicker(true)
-            }}
-          >
-            <Text className="selector-value">
-              {params.rooms}间房 {params.adults}成人 {params.children}儿童
-            </Text>
-          </View>
-
-          <View
-            className="confirm-button"
-            onClick={() => setShowMainSelector(false)}
-          >
-            <Text className="confirm-text">确定</Text>
+          <View className="popup-footer">
+            <View className="action-btn primary full-width" onClick={handleConfirmMainSelector}>
+              <Text className="action-text">确定</Text>
+            </View>
           </View>
         </View>
       )}
@@ -1245,6 +1366,7 @@ export default function CoreFilterHeader({
         onSelect={handleCitySelect}
         onHotSearchSelect={handleHotSearchSelect}
         currentCity={params.city}
+        defaultTab={citySelectorTab}
       />
 
       <CalendarPicker
