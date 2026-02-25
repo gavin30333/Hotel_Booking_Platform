@@ -889,12 +889,14 @@ const cityHotelRankingsData: Record<
 }
 
 export const getCityHotSearch = (cityName: string) => {
-  const tags = cityHotSearchData[cityName] || cityHotSearchMock.data
+  const key = cityName.replace('市', '')
+  const tags = cityHotSearchData[key] || cityHotSearchMock.data
   return Promise.resolve({ code: 200, data: tags })
 }
 
 export const getCityHotelRankings = (cityName: string) => {
-  const rankings = cityHotelRankingsData[cityName] || {
+  const key = cityName.replace('市', '')
+  const rankings = cityHotelRankingsData[key] || {
     luxuryHotels: [],
     familyHotels: [],
   }

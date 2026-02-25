@@ -13,6 +13,7 @@ import { View } from '@tarojs/components'
 import { Popup, Tabs } from 'antd-mobile'
 import { useThrottleFn } from 'ahooks'
 import Taro from '@tarojs/taro'
+import useLocation from '@/hooks/useLocation'
 import { SearchHeader } from '@/components/CitySelector/SearchHeader'
 import { HistorySection } from '@/components/CitySelector/HistorySection'
 import { LocationStatus } from '@/components/common/display/LocationStatus'
@@ -45,6 +46,8 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<CityTab>(defaultTab)
   const [isSticky, setIsSticky] = useState(false)
+  const [viewingCity, setViewingCity] = useState(currentCity)
+  const { location, loading, error, locateByGPS } = useLocation()
   const scrollRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
   const getSearchParams = useQueryStore((state) => state.getSearchParams)
@@ -54,6 +57,25 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
       setActiveTab(defaultTab)
     }
   }, [visible, defaultTab])
+
+  React.useEffect(() => {
+    setViewingCity(currentCity)
+  }, [currentCity])
+
+  React.useEffect(() => {
+    if (location?.city) {
+      setViewingCity(location.city)
+    }
+  }, [location?.city])
+
+  const handleLocationClick = React.useCallback(() => {
+    if (location?.city) {
+      onSelect({ city: location.city, source: 'domestic' })
+      onClose()
+    } else {
+      locateByGPS()
+    }
+  }, [location, onSelect, onClose, locateByGPS])
 
   const handleSelect = React.useCallback(
     (city: string) => {
@@ -90,12 +112,12 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
       <DomesticTab
         groups={domesticCities}
         hotCities={hotCities}
-        currentCity={currentCity}
+        currentCity={viewingCity}
         onSelect={handleSelect}
         scrollEnabled={isSticky}
       />
     ),
-    [domesticCities, hotCities, currentCity, handleSelect, isSticky]
+    [domesticCities, hotCities, viewingCity, handleSelect, isSticky]
   )
 
   const memoizedOverseasTab = React.useMemo(
@@ -106,16 +128,16 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
   const memoizedHotSearchTab = React.useMemo(
     () => (
       <HotSearchTab
-        currentCity={currentCity}
+        currentCity={viewingCity}
         onSelect={handleHotSearchSelect}
       />
     ),
-    [currentCity, handleHotSearchSelect]
+    [viewingCity, handleHotSearchSelect]
   )
 
   const getHotSearchTabTitle = () => {
-    if (currentCity) {
-      return `${currentCity}热搜`
+    if (viewingCity) {
+      return `${viewingCity}热搜`
     }
     return '热搜推荐'
   }
@@ -152,7 +174,19 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
         ref={scrollRef}
       >
         <div ref={headerRef} className="city-selector-header">
-          <LocationStatus status="disabled" />
+          <LocationStatus
+            status={
+              loading
+                ? 'loading'
+                : error
+                  ? 'failed'
+                  : location
+                    ? 'success'
+                    : 'disabled'
+            }
+            city={location?.city}
+            onClick={handleLocationClick}
+          />
           <HistorySection
             cities={historyCities}
             onSelect={handleSelect}
