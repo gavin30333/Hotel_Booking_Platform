@@ -1,0 +1,213 @@
+@import '@/styles/variables.less';
+
+.order-page {
+  min-height: 100vh;
+  background-color: @page-bg;
+  padding-bottom: 60px;
+}
+
+/* 搜索栏 */
+.search-bar {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: @bg-color;
+  border-bottom: 1px solid @border-color;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.back-btn {
+  padding: 8px;
+  color: @text-color;
+  cursor: pointer;
+}
+
+.back-btn :global(svg) {
+  font-size: 20px;
+}
+
+.search-input {
+  flex: 1;
+  margin-right: 12px;
+  border-radius: 20px;
+  background-color: @page-bg;
+  :global {
+    .adm-input-control {
+      background-color: transparent;
+    }
+  }
+}
+
+.search-actions {
+  display: flex;
+  align-items: center;
+}
+
+.action-btn {
+  padding: 8px;
+  margin-left: 8px;
+  color: @text-color;
+}
+
+/* 订单状态标签 */
+.order-tabs {
+  display: flex;
+  background-color: @bg-color;
+  padding: 0 16px;
+  border-bottom: 1px solid @border-color;
+  overflow-x: auto;
+  white-space: nowrap;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.tab-item {
+  padding: 14px 12px;
+  margin-right: 8px;
+  font-size: 14px;
+  color: @text-secondary;
+  position: relative;
+  cursor: pointer;
+
+  &.active {
+    color: @primary-color;
+    font-weight: 500;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 12px;
+      right: 12px;
+      height: 2px;
+      background-color: @primary-color;
+      border-radius: 1px;
+    }
+  }
+}
+
+.order-list {
+  padding: @spacing-sm;
+}
+
+.order-item {
+  background-color: @bg-color;
+  border-radius: @border-radius-lg;
+  margin-bottom: 15px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.order-hotel-info {
+  padding: @spacing-lg @spacing-xl;
+  border-bottom: 1px solid @border-color;
+}
+
+.hotel-name {
+  font-size: @font-size-md;
+  font-weight: bold;
+  color: @text-color;
+  margin-bottom: @spacing-sm;
+  display: block;
+}
+
+.hotel-address {
+  font-size: @font-size-base;
+  color: @text-secondary;
+  margin-bottom: @spacing-md;
+  display: block;
+  line-height: 1.4;
+}
+
+.order-date-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-date {
+  font-size: @font-size-base;
+  color: @text-color;
+}
+
+.order-status {
+  padding: @spacing-xs @spacing-md;
+  border-radius: @border-radius-lg;
+  font-size: @font-size-sm;
+  font-weight: 500;
+
+  &.confirmed {
+    background-color: rgba(82, 196, 26, 0.1);
+    color: @success-color;
+  }
+
+  &.completed {
+    background-color: rgba(24, 144, 255, 0.1);
+    color: @primary-color;
+  }
+
+  &.cancelled {
+    background-color: rgba(255, 77, 79, 0.1);
+    color: @error-color;
+  }
+
+  &.pending {
+    background-color: rgba(250, 173, 20, 0.1);
+    color: @warning-color;
+  }
+}
+
+.empty-order {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  background-color: @bg-color;
+  margin: @spacing-lg @spacing-sm;
+  border-radius: @border-radius-lg;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.empty-icon {
+  margin-bottom: @spacing-lg;
+  opacity: 0.6;
+}
+
+.empty-text {
+  font-size: @font-size-md;
+  font-weight: 500;
+  color: @text-color;
+  margin-bottom: @spacing-sm;
+}
+
+.empty-subtext {
+  font-size: @font-size-base;
+  color: @text-secondary;
+}
+
+.bottom-tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background: @bg-color;
+  border-top: 1px solid @border-color;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 1000;
+
+  :global {
+    .adm-tab-bar-item-icon {
+      font-size: 22px;
+    }
+    .adm-tab-bar-item-title {
+      font-size: @font-size-xs;
+    }
+  }
+}

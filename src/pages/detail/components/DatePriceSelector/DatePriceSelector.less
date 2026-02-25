@@ -6,17 +6,20 @@
   margin: 0 0 0 0;
   position: relative;
   border-radius: 0;
-  overflow: visible;
+  overflow: hidden;
 
+  /* 日期价格主容器 */
   .date-price-main {
     display: flex;
     margin-bottom: @spacing-md;
     position: relative;
 
+    /* 左侧日期部分 */
     .date-section {
       flex: 1;
       position: relative;
 
+      /* 日期标签和内容组合 */
       .date-combined {
         display: flex;
         align-items: flex-end; /* Align bottom */
@@ -26,6 +29,7 @@
           display: flex;
           align-items: flex-end;
 
+          /* 日期项 - 今天和起始日期 */
           .date-item {
             display: flex;
             flex-direction: column;
@@ -108,6 +112,7 @@
           }
         }
 
+        /* 共1晚 */
         .night-count {
           display: flex;
           align-items: center;
@@ -123,6 +128,7 @@
       }
     }
 
+    /* 分隔线 */
     .divider {
       width: 1px;
       height: 60px;
@@ -130,12 +136,14 @@
       margin: 0 @spacing-md;
     }
 
+    /* 右侧人数部分 */
     .guest-section {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       margin-left: 12px;
 
+      /* 人数标签和内容组合 */
       .guest-combined {
         display: flex;
         flex-direction: column;
@@ -179,6 +187,7 @@
     }
   }
 
+  /* 筛选标签容器 */
   .filter-tags-container {
     display: flex;
     align-items: center;
@@ -259,6 +268,7 @@
       }
     }
 
+    /* 右侧筛选按钮 */
     .filter-button {
       position: sticky;
       right: 0;
@@ -291,4 +301,20 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
+}
+
+.date-price-placeholder {
+  height: 80px;
+}
+
+.date-price-main.fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  background-color: #fff;
+  padding: @spacing-lg @spacing-lg @spacing-xs @spacing-lg;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }

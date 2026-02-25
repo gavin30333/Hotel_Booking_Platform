@@ -1,5 +1,5 @@
 import { View, Text } from '@tarojs/components'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Image, Tag, Button } from 'antd-mobile'
 import {
   DownOutline,

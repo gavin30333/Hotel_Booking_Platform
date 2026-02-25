@@ -390,6 +390,8 @@ export default function HotelDetailPage() {
             onGuestClick={() => setShowGuestPicker(true)}
             onFilterTagClick={handleFilterTagClick}
             onRemoveFilter={handleRemoveFilter}
+            isFixed={isDatePriceFixed}
+            topOffset={TOP_NAV_BAR_HEIGHT}
           />
         </View>
 

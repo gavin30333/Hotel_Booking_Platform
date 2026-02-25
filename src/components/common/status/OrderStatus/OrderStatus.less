@@ -1,0 +1,28 @@
+@import '@/styles/variables.less';
+
+.order-status {
+  padding: @spacing-xs @spacing-md;
+  border-radius: @border-radius-lg;
+  font-size: @font-size-sm;
+  font-weight: 500;
+
+  &.confirmed {
+    background-color: rgba(82, 196, 26, 0.1);
+    color: @success-color;
+  }
+
+  &.completed {
+    background-color: rgba(24, 144, 255, 0.1);
+    color: @primary-color;
+  }
+
+  &.cancelled {
+    background-color: rgba(255, 77, 79, 0.1);
+    color: @error-color;
+  }
+
+  &.pending {
+    background-color: rgba(250, 173, 20, 0.1);
+    color: @warning-color;
+  }
+}
