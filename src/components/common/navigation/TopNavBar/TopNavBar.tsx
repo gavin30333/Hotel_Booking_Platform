@@ -30,7 +30,9 @@ export default function TopNavBar({
         </View>
       )}
       <View className="header-title">
-        <Text>{title}</Text>
+        <Text style={{ fontSize: '18px', fontWeight: 500, color: '#333333' }}>
+          {title}
+        </Text>
       </View>
     </View>
   )

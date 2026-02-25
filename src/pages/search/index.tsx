@@ -33,9 +33,9 @@ export default function Search() {
     (state) => state.scenes[state.activeScene].location.city
   )
 
-  const handleBannerClick = (id: number) => {
+  const handleBannerClick = (banner: Banner) => {
     Taro.navigateTo({
-      url: `/hotel?id=${id}`,
+      url: `/pages/detail/index?id=${banner.hotelId}`,
     })
   }
 
@@ -82,7 +82,7 @@ export default function Search() {
             {banners.map((item) => (
               <Swiper.Item
                 key={item.id}
-                onClick={() => handleBannerClick(item.id)}
+                onClick={() => handleBannerClick(item)}
               >
                 <Image
                   src={item.imgUrl}

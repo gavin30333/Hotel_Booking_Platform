@@ -158,38 +158,63 @@ export const orderController = {
 
   async getList(req: AuthRequest, res: Response) {
     try {
-      const customerId = getCustomerId(req)
+      console.log('获取订单列表请求:', req.query)
+
       const { status, page = 1, pageSize = 10 } = req.query
 
-      const query: any = { customer: customerId }
+      const query: any = {} // 不按 customer 过滤，返回所有订单
       if (status) {
         query.status = status
       }
 
+      console.log('查询条件:', query)
+
       const total = await OrderModel.countDocuments(query)
+      console.log('订单总数:', total)
+
       const orders = await OrderModel.find(query)
         .sort({ createdAt: -1 })
         .skip((Number(page) - 1) * Number(pageSize))
         .limit(Number(pageSize))
         .lean()
 
-      const ordersData = orders.map((order) => ({
-        id: order._id,
-        orderNo: order.orderNo,
-        hotelId: order.hotel,
-        hotelName: order.hotelName,
-        hotelAddress: order.hotelAddress,
-        roomTypeName: order.roomTypeName,
-        roomPrice: order.roomPrice,
-        checkIn: order.checkIn.toISOString().split('T')[0],
-        checkOut: order.checkOut.toISOString().split('T')[0],
-        nights: order.nights,
-        totalPrice: order.totalPrice,
-        discountAmount: order.discountAmount,
-        finalPrice: order.finalPrice,
-        status: order.status,
-        createdAt: order.createdAt,
-      }))
+      console.log('查询到的订单:', orders)
+
+      // 处理可能的日期格式问题
+      const ordersData = orders
+        .map((order) => {
+          try {
+            return {
+              id: order._id,
+              orderNo: order.orderNo,
+              hotelId: order.hotel,
+              hotelName: order.hotelName,
+              hotelAddress: order.hotelAddress,
+              roomTypeName: order.roomTypeName,
+              roomPrice: order.roomPrice,
+              checkIn:
+                typeof order.checkIn === 'string'
+                  ? order.checkIn.split('T')[0]
+                  : order.checkIn.toISOString().split('T')[0],
+              checkOut:
+                typeof order.checkOut === 'string'
+                  ? order.checkOut.split('T')[0]
+                  : order.checkOut.toISOString().split('T')[0],
+              nights: order.nights,
+              totalPrice: order.totalPrice,
+              discountAmount: order.discountAmount,
+              finalPrice: order.finalPrice,
+              status: order.status,
+              createdAt: order.createdAt,
+            }
+          } catch (error) {
+            console.error('处理订单数据错误:', error, '订单数据:', order)
+            return null
+          }
+        })
+        .filter(Boolean)
+
+      console.log('处理后的订单数据:', ordersData)
 
       return res.json({
         success: true,

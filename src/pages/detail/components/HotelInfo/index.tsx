@@ -1,5 +1,5 @@
 import { View, Text } from '@tarojs/components'
-import { Tag } from 'antd-mobile'
+import { Tag, Space } from 'antd-mobile'
 import './HotelInfo.less'
 
 interface HotelInfoProps {
@@ -18,7 +18,18 @@ export default function HotelInfo({
   return (
     <View className="hotel-header-info">
       <View>
-        <Text className="hotel-name">{name}</Text>
+        <Space className="title-row" align="center" style={{ '--gap': '4px' }}>
+          <Text className="hotel-name">{name}</Text>
+          <View className="diamonds">
+            {Array(starRating || 5)
+              .fill(0)
+              .map((_, i) => (
+                <Text key={i} className="diamond">
+                  ♦
+                </Text>
+              ))}
+          </View>
+        </Space>
         <View className="hotel-badges">
           <Tag className="hotel-badge" color="default">
             <Text className="hotel-badge-text">{starRating || 5}星级酒店</Text>

@@ -34,8 +34,7 @@ export default function RoomItem({
   const roomCardId = `room-card-${index}`
 
   const handleToggle = () => {
-    const newExpanded = !isExpanded
-    setIsExpanded(newExpanded)
+    setIsExpanded(!isExpanded)
   }
 
   const handleRoomCountConfirm = (count: number) => {
@@ -96,9 +95,7 @@ export default function RoomItem({
   return (
     <>
       <View id={roomCardId} className="room-card" data-index={index}>
-        <View
-          className={`room-item${isExpanded ? ' expanded' : ''}`}
-        >
+        <View className={`room-item${isExpanded ? ' expanded' : ''}`}>
           {index === 0 && (
             <View className="sales-tag">
               <Text className="sales-tag-text">本店销量No.1</Text>

@@ -25,7 +25,7 @@
         align-items: flex-end; /* Align bottom */
         justify-content: space-between;
 
-        .date-group {
+        .date-part {
           display: flex;
           align-items: flex-end;
 
@@ -75,14 +75,35 @@
               font-size: 20px;
               font-weight: 600;
               color: @text-color;
-              line-height: 1.2;
+            }
+
+            .low-price-badge {
+              position: absolute;
+              top: 26px;
+              right: -10px;
+              background-color: #ff7a45;
+              padding: 1px @spacing-xs;
+              border-radius: @border-radius-sm;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              min-width: auto;
+              transform: translate(50%, -50%);
+
+              .low-price-text {
+                font-size: @font-size-xs;
+                color: #fff;
+                font-weight: 500;
+                line-height: 1.2;
+                margin: 0;
+              }
             }
           }
 
           .date-separator {
             margin: 0 4px;
             padding-bottom: 2px;
-            
+
             .separator-text {
               font-size: 20px;
               color: @text-color;

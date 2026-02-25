@@ -1,6 +1,7 @@
 import { View, Text, ScrollView } from '@tarojs/components'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import Taro, { useRouter, showToast, usePageScroll } from '@tarojs/taro'
+import ImageCarousel from '@/components/common/display/ImageCarousel'
 import { getHotelDetail } from '@/services/hotel'
 import { getCarouselImages } from '@/mock/carousel'
 import dayjs from 'dayjs'
@@ -12,7 +13,6 @@ import {
   LocationOutline,
 } from 'antd-mobile-icons'
 import { CalendarPicker } from '@/components/common/form/CalendarPicker'
-import ImageCarousel from '@/components/common/display/ImageCarousel'
 import {
   PolicyPopup,
   GuestSelectionPopup,
@@ -78,14 +78,13 @@ export default function HotelDetailPage() {
   const [isDatePriceFixed, setIsDatePriceFixed] = useState(false)
   const datePriceSectionTop = useRef(0)
   const isDatePriceFixedRef = useRef(false)
+  const TOP_NAV_BAR_HEIGHT = 56
 
   // Use memo to prevent re-generating mock data on every render
   const carouselData = useMemo(() => {
-    if (!hotel) return [];
-    return getCarouselImages(hotel.images || []);
-  }, [hotel]);
-
-  const TOP_NAV_BAR_HEIGHT = 56
+    if (!hotel) return []
+    return getCarouselImages(hotel.images || [])
+  }, [hotel])
 
   useEffect(() => {
     fetchHotelDetail()
@@ -238,13 +237,13 @@ export default function HotelDetailPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       Taro.createSelectorQuery()
-      .select('.date-price-card')
-      .boundingClientRect((rect: any) => {
-        if (rect) {
-          datePriceSectionTop.current = rect.top + (window?.scrollY || 0)
-        }
-      })
-      .exec()
+        .select('.date-price-card')
+        .boundingClientRect((rect: any) => {
+          if (rect) {
+            datePriceSectionTop.current = rect.top + (window?.scrollY || 0)
+          }
+        })
+        .exec()
     }, 500)
 
     return () => clearTimeout(timer)

@@ -6,7 +6,6 @@
   padding-bottom: 60px;
 }
 
-/* 搜索栏 */
 .search-bar {
   display: flex;
   align-items: center;
@@ -30,7 +29,9 @@
 
 .search-input {
   flex: 1;
-  margin-right: 12px;
+  margin-left: @spacing-xxl;
+  margin-right: @spacing-lg;
+  padding-left: @spacing-md;
   border-radius: 20px;
   background-color: @page-bg;
   :global {
@@ -51,7 +52,6 @@
   color: @text-color;
 }
 
-/* 订单状态标签 */
 .order-tabs {
   display: flex;
   background-color: @bg-color;
@@ -100,6 +100,12 @@
   margin-bottom: 15px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+
+  &.order-item-disabled {
+    opacity: 0.7;
+    cursor: default;
+  }
 }
 
 .order-hotel-info {
@@ -132,6 +138,84 @@
 .order-date {
   font-size: @font-size-base;
   color: @text-color;
+}
+
+.order-room-info {
+  display: flex;
+  padding: @spacing-lg @spacing-xl;
+}
+
+.room-image {
+  width: 100px;
+  height: 80px;
+  border-radius: @border-radius-sm;
+  overflow: hidden;
+  margin-right: @spacing-md;
+  flex-shrink: 0;
+
+  .room-img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.room-detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.room-name {
+  font-size: @font-size-base;
+  font-weight: 500;
+  color: @text-color;
+  margin-bottom: @spacing-xs;
+}
+
+.room-desc {
+  font-size: @font-size-sm;
+  color: @text-secondary;
+  margin-bottom: @spacing-xs;
+}
+
+.room-breakfast {
+  font-size: @font-size-sm;
+  color: @text-secondary;
+  margin-bottom: @spacing-xs;
+}
+
+.room-price-row {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+}
+
+.room-price {
+  font-size: @font-size-md;
+  font-weight: 600;
+  color: @primary-color;
+  margin-right: @spacing-sm;
+}
+
+.room-original-price {
+  font-size: @font-size-sm;
+  color: @text-placeholder;
+  text-decoration: line-through;
+}
+
+.order-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: @spacing-md @spacing-xl;
+  border-top: 1px solid @border-color;
+}
+
+.action-btn-secondary {
+  padding: @spacing-sm @spacing-lg;
+  border: 1px solid @primary-color;
+  border-radius: @border-radius-xl;
+  color: @primary-color;
+  font-size: @font-size-sm;
 }
 
 .order-status {

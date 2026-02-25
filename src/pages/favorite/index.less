@@ -3,12 +3,13 @@
 .favorite-page {
   min-height: 100vh;
   background-color: @page-bg;
+  padding-bottom: 60px;
 }
 
-/* 顶部导航 */
 .favorite-header {
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: @spacing-md @spacing-lg;
   background-color: @bg-color;
   border-bottom: 1px solid @border-color;
@@ -39,30 +40,20 @@
   color: @text-color;
 }
 
-/* 日期选择区域 */
-.date-selection {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.date-selection-wrapper {
   background-color: @bg-color;
-  padding: @spacing-lg;
-  border-radius: @border-radius-md;
-  box-shadow: @shadow-card;
+  padding: @spacing-md @spacing-lg;
+
+  :global {
+    .field-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+  }
 }
 
-.date-item {
-  font-size: @font-size-base;
-  color: @text-color;
-  flex: 1;
-  text-align: center;
-}
-
-.night-count {
-  color: @text-placeholder;
-  font-size: @font-size-sm;
-}
-
-/* 城市筛选标签 */
 .city-filter {
   display: flex;
   padding: 0 @spacing-lg @spacing-md;
@@ -86,9 +77,8 @@
   color: @bg-color;
 }
 
-/* 酒店列表 */
 .favorite-list {
-  padding: @spacing-lg @spacing-lg;
+  padding: @spacing-sm @spacing-lg;
 }
 
 .favorite-item {
@@ -96,9 +86,10 @@
   overflow: hidden;
   background-color: @bg-color;
   box-shadow: @shadow-card;
+  margin-bottom: @spacing-md;
+  cursor: pointer;
 }
 
-/* 无更多结果 */
 .no-more-results {
   text-align: center;
   padding: 40px @spacing-lg;
