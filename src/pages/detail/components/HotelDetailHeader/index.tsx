@@ -15,11 +15,13 @@ import './HotelDetailHeader.less'
 interface HotelDetailHeaderProps {
   onBack: () => void
   hotelName: string
+  showOnlyFavorite?: boolean
 }
 
 export default function HotelDetailHeader({
   onBack,
   hotelName,
+  showOnlyFavorite = false,
 }: HotelDetailHeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
@@ -41,7 +43,7 @@ export default function HotelDetailHeader({
   }
 
   return (
-    <View className={`top-nav-bar ${isScrolled ? 'scrolled' : ''}`}>
+    <View className={`hotel-detail-header ${isScrolled ? 'scrolled' : ''}`}>
       <View className="nav-left">
         <Button className="back-btn" onClick={onBack} fill="none">
           <LeftOutline color={isScrolled ? '#000' : '#fff'} />

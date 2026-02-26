@@ -1,66 +1,78 @@
 @import '@/styles/variables.less';
 
-.top-nav-bar {
+.hotel-detail-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: @spacing-lg;
+  padding: @spacing-md @spacing-lg;
   background-color: transparent;
   color: #fff;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  height: 56px;
+  box-sizing: border-box;
   z-index: 100;
   transition: all 0.3s ease;
 
   .nav-left {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+
     .back-btn {
       font-size: @font-size-xl;
       cursor: pointer;
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       background-color: rgba(0, 0, 0, 0.5);
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 0;
+      margin: 0;
     }
   }
 
   .nav-center {
-    width: 110px;
+    flex: 1;
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin: 0 @spacing-md;
+    justify-content: flex-start;
+    margin-left: 38px;
+    min-width: 0;
 
     .hotel-name {
-      font-size: @font-size-md;
+      font-size: @font-size-base;
       font-weight: 600;
       color: #000;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      max-width: 100%;
+      max-width: 180px;
     }
   }
 
   .nav-right {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
+    gap: @spacing-xs;
 
     .nav-icon {
       font-size: @font-size-xl;
-      margin-left: @spacing-sm;
       cursor: pointer;
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       background-color: rgba(0, 0, 0, 0.5);
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 0;
+      margin: 0;
     }
   }
 
@@ -68,6 +80,7 @@
     background-color: #fff;
     color: #000;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid @border-color;
 
     .nav-left {
       .back-btn {

@@ -17,20 +17,20 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: @spacing-md @spacing-lg;
+    padding: @spacing-sm @spacing-md;
     border-bottom: 1px solid @border-color;
 
     .header-title {
-      font-size: @font-size-lg;
+      font-size: @font-size-base;
       font-weight: 600;
       color: @text-color;
     }
 
     .nights-count {
-      font-size: @font-size-sm;
+      font-size: @font-size-xs;
       color: @primary-color;
       background-color: fade(@primary-color, 10%);
-      padding: @spacing-xs @spacing-sm;
+      padding: 2px @spacing-xs;
       border-radius: @border-radius-sm;
     }
   }
@@ -39,12 +39,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: @spacing-md 0;
-    gap: @spacing-lg;
+    padding: @spacing-sm 0;
+    gap: @spacing-md;
 
     .month-arrow {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -57,16 +57,16 @@
       }
 
       text {
-        font-size: @font-size-lg;
+        font-size: @font-size-base;
         color: @text-color;
       }
     }
 
     .month-text {
-      font-size: @font-size-md;
+      font-size: @font-size-base;
       font-weight: 600;
       color: @text-color;
-      min-width: 100px;
+      min-width: 80px;
       text-align: center;
     }
   }
@@ -74,14 +74,14 @@
   .week-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    padding: @spacing-sm @spacing-md;
+    padding: @spacing-xs @spacing-sm;
     border-bottom: 1px solid @border-color;
 
     .week-day {
       text-align: center;
-      font-size: @font-size-sm;
+      font-size: @font-size-xs;
       color: @text-secondary;
-      padding: @spacing-xs;
+      padding: 2px;
 
       &.weekend {
         color: @error-color;
@@ -92,13 +92,13 @@
   .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-    padding: @spacing-sm @spacing-md;
+    gap: 1px;
+    padding: @spacing-xs @spacing-sm;
     flex: 1;
     overflow-y: auto;
 
     .calendar-day {
-      aspect-ratio: 0.8;
+      aspect-ratio: 0.85;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -111,18 +111,20 @@
       padding: 0;
 
       .day-text {
-        font-size: @font-size-base;
+        font-size: @font-size-sm;
         color: @text-color;
+        line-height: 1.2;
       }
 
       .price-text {
-        font-size: @font-size-xs;
+        font-size: 10px;
         color: @text-secondary;
-        margin-top: -2px;
+        margin-top: -1px;
+        line-height: 1;
       }
 
       .holiday-label {
-        font-size: @font-size-xs;
+        font-size: 10px;
         color: @error-color;
         position: absolute;
         top: 1px;
@@ -130,7 +132,7 @@
       }
 
       .select-label {
-        font-size: @font-size-xs;
+        font-size: 10px;
         color: @primary-color;
         position: absolute;
         bottom: -1px;
@@ -213,14 +215,14 @@
 
   .calendar-footer {
     display: flex;
-    gap: @spacing-md;
-    padding: @spacing-md @spacing-lg;
+    gap: @spacing-sm;
+    padding: @spacing-sm @spacing-md;
     border-top: 1px solid @border-color;
 
     .btn-cancel,
     .btn-confirm {
       flex: 1;
-      padding: @spacing-md;
+      padding: @spacing-sm;
       border-radius: @border-radius-md;
       text-align: center;
       cursor: pointer;
@@ -232,7 +234,7 @@
       background-color: @bg-color;
 
       text {
-        font-size: @font-size-md;
+        font-size: @font-size-sm;
         color: @text-color;
       }
 
@@ -245,125 +247,13 @@
       background-color: @primary-color;
 
       text {
-        font-size: @font-size-md;
+        font-size: @font-size-sm;
         color: @bg-color;
         font-weight: 600;
       }
 
       &:hover {
         opacity: 0.9;
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 375px) {
-  .calendar-picker-container {
-    .calendar-header {
-      padding: @spacing-sm @spacing-md;
-
-      .header-title {
-        font-size: @font-size-md;
-      }
-
-      .nights-count {
-        font-size: @font-size-xs;
-        padding: 2px @spacing-xs;
-      }
-    }
-
-    .month-selector {
-      padding: @spacing-sm 0;
-
-      .month-text {
-        font-size: @font-size-base;
-        min-width: 80px;
-      }
-    }
-
-    .calendar-grid {
-      .calendar-day {
-        .day-text {
-          font-size: @font-size-sm;
-        }
-
-        .today-label {
-          font-size: 8px;
-        }
-      }
-    }
-
-    .calendar-footer {
-      padding: @spacing-sm @spacing-md;
-
-      .btn-cancel,
-      .btn-confirm {
-        padding: @spacing-sm;
-
-        text {
-          font-size: @font-size-sm;
-        }
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 320px) {
-  .calendar-picker-container {
-    .calendar-header {
-      padding: @spacing-xs @spacing-sm;
-
-      .header-title {
-        font-size: @font-size-base;
-      }
-    }
-
-    .month-selector {
-      .month-arrow {
-        width: 28px;
-        height: 28px;
-      }
-
-      .month-text {
-        font-size: @font-size-sm;
-        min-width: 70px;
-      }
-    }
-
-    .week-header {
-      padding: @spacing-xs @spacing-sm;
-
-      .week-day {
-        font-size: @font-size-xs;
-      }
-    }
-
-    .calendar-grid {
-      padding: @spacing-xs @spacing-sm;
-
-      .calendar-day {
-        .day-text {
-          font-size: @font-size-xs;
-        }
-
-        .today-label {
-          font-size: 6px;
-          bottom: 1px;
-        }
-      }
-    }
-
-    .calendar-footer {
-      padding: @spacing-xs @spacing-sm;
-      gap: @spacing-sm;
-
-      .btn-cancel,
-      .btn-confirm {
-        padding: @spacing-xs;
-
-        text {
-          font-size: @font-size-xs;
-        }
       }
     }
   }
