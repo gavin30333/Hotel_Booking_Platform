@@ -1,5 +1,5 @@
 import { View, Text } from '@tarojs/components'
-import { useState, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import Taro, { showToast } from '@tarojs/taro'
 import HotelCard from '@/components/common/display/HotelCard'
 import BottomTabBar from '@/components/common/navigation/BottomTabBar/BottomTabBar'
@@ -8,6 +8,7 @@ import CityFilter from '@/components/common/filters/CityFilter/CityFilter'
 import { DateField } from '@/components/FieldRenderers/DateField'
 import { useQueryStore } from '@/store/useQueryStore'
 import { Hotel } from '@/services/hotel'
+import { favoriteApi, hotelApi } from '@/services/api'
 import dayjs from 'dayjs'
 import './index.less'
 
@@ -25,22 +26,8 @@ interface FavoriteHotel extends Hotel {
 
 export default function FavoritePage() {
   console.log('Favorite page loaded')
-  const [favorites, setFavorites] = useState<FavoriteHotel[]>([
-    {
-      id: 'sh-waldorf-001',
-      name: '上海外滩华尔道夫酒店',
-      address: '上海市黄浦区中山东一路2号',
-      minPrice: 1280,
-      rating: 4.8,
-      reviewCount: 1256,
-      starRating: 5,
-      images: [
-        'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800',
-      ],
-      tags: ['奢华酒店', '商务出行', '近地铁', '江景房'],
-      city: '上海',
-    },
-  ])
+  const [favorites, setFavorites] = useState<FavoriteHotel[]>([])
+  const [loading, setLoading] = useState(false)
 
   const [activeCity, setActiveCity] = useState('all')
   const cities = ['上海']
@@ -50,6 +37,87 @@ export default function FavoritePage() {
   const updateDates = useQueryStore((state) => state.updateDates)
   const dates = getDates()
   const guests = getGuests()
+
+  useEffect(() => {
+    fetchFavorites()
+  }, [])
+
+  const fetchFavorites = async () => {
+    setLoading(true)
+    try {
+      const res = await favoriteApi.getList()
+      if (res.success && res.data && res.data.length > 0) {
+        const hotelList = res.data.map((h: any) => ({
+          id: h.id || h.hotelId,
+          name: h.name || h.hotelNameCn,
+          address: h.address || h.hotelAddress,
+          minPrice: h.minPrice || h.price || 0,
+          rating: h.rating || h.score || 4.5,
+          reviewCount: h.reviewCount || 0,
+          starRating: h.starRating || 5,
+          images: h.images || [h.imageUrl],
+          tags: h.tags || h.facilities || [],
+          city: h.city || '上海',
+        }))
+        setFavorites(hotelList)
+      } else {
+        const hotelRes = await hotelApi.getHotelList({
+          page: 1,
+          pageSize: 1,
+          city: '上海',
+          sortBy: 'rating_desc',
+        })
+        if (hotelRes.success && hotelRes.data && hotelRes.data.length > 0) {
+          const h = hotelRes.data[0]
+          setFavorites([
+            {
+              id: h.id,
+              name: h.name,
+              address: h.address,
+              minPrice: h.minPrice || h.price || 0,
+              rating: h.rating || 4.8,
+              reviewCount: h.reviewCount || 0,
+              starRating: h.starRating || 5,
+              images: h.images || [h.imageUrl],
+              tags: h.tags || h.facilities || [],
+              city: h.city || '上海',
+            },
+          ])
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch favorites:', error)
+      try {
+        const hotelRes = await hotelApi.getHotelList({
+          page: 1,
+          pageSize: 1,
+          city: '上海',
+          sortBy: 'rating_desc',
+        })
+        if (hotelRes.success && hotelRes.data && hotelRes.data.length > 0) {
+          const h = hotelRes.data[0]
+          setFavorites([
+            {
+              id: h.id,
+              name: h.name,
+              address: h.address,
+              minPrice: h.minPrice || h.price || 0,
+              rating: h.rating || 4.8,
+              reviewCount: h.reviewCount || 0,
+              starRating: h.starRating || 5,
+              images: h.images || [h.imageUrl],
+              tags: h.tags || h.facilities || [],
+              city: h.city || '上海',
+            },
+          ])
+        }
+      } catch (e) {
+        console.error('Failed to fetch fallback hotel:', e)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleCityChange = (city: string) => {
     setActiveCity(city)

@@ -3,11 +3,12 @@ import { Swiper } from 'antd-mobile'
 import { QueryCard } from '@/components/QueryCard'
 import Taro, { useLoad } from '@tarojs/taro'
 import { useState, useEffect } from 'react'
-import { getBanners, getCityHotelRankings } from '@/mock/index'
+import { getBanners } from '@/mock/index'
 import type { Banner } from '@/mock/index'
 import { useQueryStore } from '@/store/useQueryStore'
 import BottomTabBar from '@/components/common/navigation/BottomTabBar/BottomTabBar'
 import HotelRanking from '@/components/common/display/HotelRanking/HotelRanking'
+import { hotelApi } from '@/services/api'
 import './index.less'
 
 export default function Search() {
@@ -38,19 +39,72 @@ export default function Search() {
   )
 
   const handleBannerClick = (banner: Banner) => {
+    const getSearchParams = useQueryStore.getState().getSearchParams
+    const params = getSearchParams()
     Taro.navigateTo({
-      url: `/pages/detail/index?id=${banner.hotelId}`,
+      url: `/pages/detail/index?id=${banner.hotelId}&checkInDate=${encodeURIComponent(params.checkInDate)}&checkOutDate=${encodeURIComponent(params.checkOutDate)}&roomCount=${params.rooms}&adultCount=${params.adults}&childCount=${params.children}`,
     })
   }
 
   const fetchData = async (city: string) => {
     setLoading(true)
     try {
-      const rankingsRes = await getCityHotelRankings(city)
+      const res = await hotelApi.getHotelList({
+        page: 1,
+        pageSize: 10,
+        city: city,
+        sortBy: 'rating_desc',
+      })
 
-      if (rankingsRes.code === 200 && rankingsRes.data) {
-        setLuxuryHotels(rankingsRes.data.luxuryHotels || [])
-        setFamilyHotels(rankingsRes.data.familyHotels || [])
+      if (res.success && res.data) {
+        const hotels = res.data
+        const luxury = hotels
+          .filter((h) => h.starRating >= 4)
+          .slice(0, 5)
+          .map((h) => ({
+            hotelId: h.id,
+            name: h.name,
+            desc: h.address,
+            score: `${h.rating}分`,
+            imageUrl: h.images?.[0] || h.imageUrl,
+          }))
+        const family = hotels
+          .filter((h) =>
+            h.tags?.some((t) => t.includes('亲子') || t.includes('家庭'))
+          )
+          .slice(0, 5)
+          .map((h) => ({
+            hotelId: h.id,
+            name: h.name,
+            desc: h.address,
+            score: `${h.rating}分`,
+            imageUrl: h.images?.[0] || h.imageUrl,
+          }))
+
+        if (family.length === 0) {
+          const fallbackFamily = hotels.slice(0, 5).map((h) => ({
+            hotelId: h.id,
+            name: h.name,
+            desc: h.address,
+            score: `${h.rating}分`,
+            imageUrl: h.images?.[0] || h.imageUrl,
+          }))
+          setFamilyHotels(fallbackFamily)
+        } else {
+          setFamilyHotels(family)
+        }
+
+        setLuxuryHotels(
+          luxury.length > 0
+            ? luxury
+            : hotels.slice(0, 5).map((h) => ({
+                hotelId: h.id,
+                name: h.name,
+                desc: h.address,
+                score: `${h.rating}分`,
+                imageUrl: h.images?.[0] || h.imageUrl,
+              }))
+        )
       }
     } catch (error) {
       console.error('Failed to fetch data:', error)
