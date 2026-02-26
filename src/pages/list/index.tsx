@@ -28,6 +28,7 @@ export default function HotelList() {
   const updateGuests = useQueryStore((state) => state.updateGuests)
   const updateLocation = useQueryStore((state) => state.updateLocation)
   const getSearchParams = useQueryStore((state) => state.getSearchParams)
+  const getGuests = useQueryStore((state) => state.getGuests)
 
   const initFromUrlAndStore = useCallback(() => {
     const {
@@ -131,6 +132,27 @@ export default function HotelList() {
     }
   })
 
+  const storeGuests = getGuests()
+  const storeParams = getSearchParams()
+
+  const getNumber = (
+    val: number | number[] | undefined,
+    defaultVal: number
+  ): number => {
+    if (val === undefined) return defaultVal
+    if (Array.isArray(val)) return val.length > 0 ? val[0] : defaultVal
+    return val
+  }
+
+  const headerFilters = {
+    ...filters,
+    rooms: getNumber(storeGuests.rooms, 1),
+    adults: getNumber(storeGuests.adults, 2),
+    children: getNumber(storeGuests.children, 0),
+    checkInDate: storeParams.checkInDate,
+    checkOutDate: storeParams.checkOutDate,
+  }
+
   return (
     <View
       className="hotel-list"
@@ -144,7 +166,7 @@ export default function HotelList() {
       <HotelListHeader
         onSearch={handleSearch}
         onDropdownStateChange={setIsCoreFilterDropdownOpen}
-        initialFilters={filters}
+        initialFilters={headerFilters}
       />
 
       <View style={{ position: 'relative', zIndex: 1 }}>

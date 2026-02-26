@@ -54,23 +54,42 @@ export default function HotelDetailPage() {
   const storeDates = getDates()
   const storeGuests = getGuests()
 
+  const getNumber = (
+    val: number | number[] | undefined,
+    defaultVal: number
+  ): number => {
+    if (val === undefined) return defaultVal
+    if (Array.isArray(val)) return val.length > 0 ? val[0] : defaultVal
+    return val
+  }
+
   const [checkInDate, setCheckInDate] = useState<string>(
-    router.params.checkInDate || storeDates.startDate
+    router.params.checkInDate
+      ? decodeURIComponent(router.params.checkInDate as string)
+      : storeDates.startDate
   )
   const [checkOutDate, setCheckOutDate] = useState<string>(
-    router.params.checkOutDate || storeDates.endDate
+    router.params.checkOutDate
+      ? decodeURIComponent(router.params.checkOutDate as string)
+      : storeDates.endDate
   )
   const [roomCount, setRoomCount] = useState<number>(() => {
-    const val = storeGuests.rooms
-    return Array.isArray(val) ? (val.length > 0 ? val[0] : 1) : val || 1
+    if (router.params.roomCount) {
+      return Number(router.params.roomCount)
+    }
+    return getNumber(storeGuests.rooms, 1)
   })
   const [adultCount, setAdultCount] = useState<number>(() => {
-    const val = storeGuests.adults
-    return Array.isArray(val) ? (val.length > 0 ? val[0] : 2) : val || 2
+    if (router.params.adultCount) {
+      return Number(router.params.adultCount)
+    }
+    return getNumber(storeGuests.adults, 2)
   })
   const [childCount, setChildCount] = useState<number>(() => {
-    const val = storeGuests.children
-    return Array.isArray(val) ? (val.length > 0 ? val[0] : 0) : val || 0
+    if (router.params.childCount) {
+      return Number(router.params.childCount)
+    }
+    return getNumber(storeGuests.children, 0)
   })
 
   const [showCalendar, setShowCalendar] = useState(false)

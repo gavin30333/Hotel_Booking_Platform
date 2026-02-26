@@ -901,8 +901,50 @@ export const getCityHotelRankings = (cityName: string) => {
   return Promise.resolve({ code: 200, data: rankings })
 }
 
+const hotelIdMapping: Record<string, typeof hotelDetailMock1> = {
+  '1': hotelDetailMock1,
+  'sh-waldorf-001': hotelDetailMock1,
+  'sh-shangri-002': hotelDetailMock2,
+  'sh-peace-003': hotelDetailMock1,
+  'sh-ritz-004': hotelDetailMock2,
+  'sh-park-005': hotelDetailMock1,
+  'sh-disney-101': hotelDetailMock1,
+  'sh-toy-102': hotelDetailMock2,
+  'sh-kerry-103': hotelDetailMock1,
+  'sh-w-104': hotelDetailMock2,
+  'sh-hyatt-105': hotelDetailMock1,
+  'hz-four-seasons-001': hotelDetailMock1,
+  'hz-aman-002': hotelDetailMock2,
+  'hz-banyan-003': hotelDetailMock1,
+  'hz-ic-004': hotelDetailMock2,
+  'hz-jw-005': hotelDetailMock1,
+  'bj-mandarin-001': hotelDetailMock1,
+  'bj-rosewood-002': hotelDetailMock2,
+  'bj-waldorf-003': hotelDetailMock1,
+  'bj-four-004': hotelDetailMock2,
+  'bj-park-005': hotelDetailMock1,
+  'cd-temple-001': hotelDetailMock1,
+  'cd-stregis-002': hotelDetailMock2,
+  'cd-shangri-003': hotelDetailMock1,
+  'cd-niccolo-004': hotelDetailMock2,
+  'cd-six-005': hotelDetailMock1,
+  'gz-ritz-001': hotelDetailMock1,
+  'gz-four-002': hotelDetailMock2,
+  'gz-peninsula-003': hotelDetailMock1,
+  'sz-ritz-001': hotelDetailMock1,
+  'sz-four-002': hotelDetailMock2,
+  'sz-peninsula-003': hotelDetailMock1,
+  'nj-inter-001': hotelDetailMock1,
+  'nj-shangri-002': hotelDetailMock2,
+  'nj-ritz-003': hotelDetailMock1,
+  'szhou-shangri-001': hotelDetailMock1,
+  'szhou-w-002': hotelDetailMock2,
+  'szhou-niulang-003': hotelDetailMock1,
+  '699835352d89deaf4d16816f': hotelDetailMock1,
+}
+
 export const getHotelDetail = (id: string) => {
-  const hotelData = id === '1' ? hotelDetailMock1 : hotelDetailMock2
+  const hotelData = hotelIdMapping[id] || hotelDetailMock1
   return Promise.resolve({ code: 200, data: hotelData })
 }
 

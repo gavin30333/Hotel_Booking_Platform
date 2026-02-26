@@ -27,7 +27,7 @@ export default function FavoritePage() {
   console.log('Favorite page loaded')
   const [favorites, setFavorites] = useState<FavoriteHotel[]>([
     {
-      id: '1',
+      id: 'sh-waldorf-001',
       name: '上海外滩华尔道夫酒店',
       address: '上海市黄浦区中山东一路2号',
       minPrice: 1280,
@@ -46,16 +46,26 @@ export default function FavoritePage() {
   const cities = ['上海']
 
   const getDates = useQueryStore((state) => state.getDates)
+  const getGuests = useQueryStore((state) => state.getGuests)
   const updateDates = useQueryStore((state) => state.updateDates)
   const dates = getDates()
+  const guests = getGuests()
 
   const handleCityChange = (city: string) => {
     setActiveCity(city)
   }
 
   const handleHotelClick = (hotelId: string) => {
+    const getNumber = (
+      val: number | number[] | undefined,
+      defaultVal: number
+    ): number => {
+      if (val === undefined) return defaultVal
+      if (Array.isArray(val)) return val.length > 0 ? val[0] : defaultVal
+      return val
+    }
     Taro.navigateTo({
-      url: `/pages/detail/index?id=${hotelId}`,
+      url: `/pages/detail/index?id=${hotelId}&checkInDate=${encodeURIComponent(dates.startDate)}&checkOutDate=${encodeURIComponent(dates.endDate)}&roomCount=${getNumber(guests.rooms, 1)}&adultCount=${getNumber(guests.adults, 2)}&childCount=${getNumber(guests.children, 0)}`,
     })
   }
 
