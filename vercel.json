@@ -9,7 +9,17 @@
   ],
   "functions": {
     "api/index.ts": {
-      "includeFiles": "src/api/**/*"
+      "includeFiles": "src/**/*",
+      "memory": 1024,
+      "maxDuration": 10
     }
-  }
+  },
+  "headers": [
+    {
+      "source": "/api/:path*",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, must-revalidate" }
+      ]
+    }
+  ]
 }
