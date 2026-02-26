@@ -17,20 +17,20 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: @spacing-sm @spacing-md;
+    padding: 8px 8px;
     border-bottom: 1px solid @border-color;
 
     .header-title {
-      font-size: @font-size-base;
+      font-size: 10px;
       font-weight: 600;
       color: @text-color;
     }
 
     .nights-count {
-      font-size: @font-size-xs;
+      font-size: 10px;
       color: @primary-color;
       background-color: fade(@primary-color, 10%);
-      padding: 2px @spacing-xs;
+      padding: 2px 6px;
       border-radius: @border-radius-sm;
     }
   }
@@ -39,12 +39,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: @spacing-sm 0;
-    gap: @spacing-md;
+    padding: 6px 0;
+    gap: 10px;
 
     .month-arrow {
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -57,16 +57,16 @@
       }
 
       text {
-        font-size: @font-size-base;
+        font-size: 12px;
         color: @text-color;
       }
     }
 
     .month-text {
-      font-size: @font-size-base;
+      font-size: 12px;
       font-weight: 600;
       color: @text-color;
-      min-width: 80px;
+      min-width: 70px;
       text-align: center;
     }
   }
@@ -74,12 +74,12 @@
   .week-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    padding: @spacing-xs @spacing-sm;
+    padding: 4px 8px;
     border-bottom: 1px solid @border-color;
 
     .week-day {
       text-align: center;
-      font-size: @font-size-xs;
+      font-size: 10px;
       color: @text-secondary;
       padding: 2px;
 
@@ -93,12 +93,12 @@
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 1px;
-    padding: @spacing-xs @spacing-sm;
+    padding: 4px 8px;
     flex: 1;
     overflow-y: auto;
 
     .calendar-day {
-      aspect-ratio: 0.85;
+      aspect-ratio: 0.9;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -111,20 +111,20 @@
       padding: 0;
 
       .day-text {
-        font-size: @font-size-sm;
+        font-size: 11px;
         color: @text-color;
-        line-height: 1.2;
+        line-height: 1.1;
       }
 
       .price-text {
-        font-size: 10px;
+        font-size: 9px;
         color: @text-secondary;
         margin-top: -1px;
         line-height: 1;
       }
 
       .holiday-label {
-        font-size: 10px;
+        font-size: 8px;
         color: @error-color;
         position: absolute;
         top: 1px;
@@ -132,10 +132,10 @@
       }
 
       .select-label {
-        font-size: 10px;
+        font-size: 8px;
         color: @primary-color;
         position: absolute;
-        bottom: -1px;
+        bottom: 0;
         padding: 0;
       }
 
@@ -215,14 +215,14 @@
 
   .calendar-footer {
     display: flex;
-    gap: @spacing-sm;
-    padding: @spacing-sm @spacing-md;
+    gap: 8px;
+    padding: 8px 12px;
     border-top: 1px solid @border-color;
 
     .btn-cancel,
     .btn-confirm {
       flex: 1;
-      padding: @spacing-sm;
+      padding: 8px;
       border-radius: @border-radius-md;
       text-align: center;
       cursor: pointer;
@@ -234,7 +234,7 @@
       background-color: @bg-color;
 
       text {
-        font-size: @font-size-sm;
+        font-size: 12px;
         color: @text-color;
       }
 
@@ -247,7 +247,7 @@
       background-color: @primary-color;
 
       text {
-        font-size: @font-size-sm;
+        font-size: 12px;
         color: @bg-color;
         font-weight: 600;
       }
