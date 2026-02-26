@@ -12,11 +12,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
+  padding: 8px 8px;
   border-bottom: 1px solid #eeeeee;
 }
 .calendar-picker-container .calendar-header .header-title {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
   color: #333333;
 }
