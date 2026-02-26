@@ -132,7 +132,9 @@
 .calendar-picker-container .calendar-grid .calendar-day.disabled .day-text {
   color: #cccccc;
 }
-.calendar-picker-container .calendar-grid .calendar-day:hover:not(.empty):not(.disabled):not(.start):not(.end) {
+.calendar-picker-container
+  .calendar-grid
+  .calendar-day:hover:not(.empty):not(.disabled):not(.start):not(.end) {
   background-color: #f5f5f5;
 }
 .calendar-picker-container .calendar-footer {
